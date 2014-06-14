@@ -1,0 +1,3 @@
+[submodule "arpeggio"]
+	path = arpeggio
+	url = git://github.com/igordejanovic/arpeggio.git
