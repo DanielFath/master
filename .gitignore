@@ -1,0 +1,4 @@
+# Graphviz
+*.dot
+*.svg
+*.png
