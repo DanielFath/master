@@ -6,6 +6,11 @@
 # License: MIT License
 #
 # PEG used to describe a DOMMLite DSL
+# For more information about DOMMLite DSL please consult the guide
+#    Metamodel, model editor and business  applications generator
+# By Igor Dejanovich. The work can be found at:
+#   Library of Faculty of Engineering,
+#   Trg D. Obradovica 6, Novi Sad
 ##############################################################################
 from arpeggio import *
 from arpeggio.export import PMDOTExporter, PTDOTExporter
