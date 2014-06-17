@@ -12,10 +12,11 @@
 #   Library of Faculty of Engineering,
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
+import sys
+
 from arpeggio import *
 from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
-
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return Optional(string), Optional(string)
@@ -142,6 +143,7 @@ def model() :           return Kwd("model"), id, named_elem, ZeroOrMore(types), 
 def domm():             return OneOrMore(model), EndOfFile
 
 if __name__ == "__main__":
+    # First parameter is bibtex file
     # First we will make a parser - an instance of the DOMMLite parser model.
     # Parser model is given in the form of python constructs therefore we
     # are using ParserPython class.
@@ -153,37 +155,17 @@ if __name__ == "__main__":
     # dot -O -Tpng domm_parse_tree_model.dot
     PMDOTExporter().exportFile(parser.parser_model, "domm_parse_tree_model.dot")
 
-    # An expression we want to evaluate
-    input_expr = """model example "short desc" "long desc"
-    dataType Point
-    buildinDataType integer
-    enum Color {
-        Red "R"
-        Green "G"
-        Blue "B"
-    }
+    # We only parse if there is an input
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], "r") as bibtexfile:
+            content = bibtexfile.read()
+        # An expression we want to evaluate
 
-    package test {
-        entity Student extends Person depends Faculty {
-            key {
-                prop readonly unique int indeks
-            }
+        # We create a parse tree out of textual input_expr
+        parse_tree = parser.parse(content)
 
-            repr "name" + "last name"
-
-            op void upisKandidata(StudijskiProgram program) throws Exception
-        }
-
-        exception Exception {
-            prop readonly unique int code
-            prop readonly str exceptionText
-        }
-    }
-    """
-
-    # We create a parse tree out of textual input_expr
-    parse_tree = parser.parse(input_expr)
-
-    # Then we export it to a dot file in order to visualise it.
-    # This is also optional.
-    PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
+        # Then we export it to a dot file in order to visualise it.
+        # This is also optional.
+        PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
+    else:
+        print("Usage: python domm_peg.py file_to_parse")
