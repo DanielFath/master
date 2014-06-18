@@ -2,7 +2,10 @@ language: python
 python:
     - "2.7"
 install:
-    - python arpeggio/setup.py install
+    - cd arpeggio
+    - python setup.py install
+    - ls
+    - cd ..
 script:
     - mkdir bin
     - cp -r domm_peg/*.py bin
