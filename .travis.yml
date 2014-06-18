@@ -4,12 +4,7 @@ python:
 install:
     - cd arpeggio
     - python setup.py install
-    - ls
     - cd ..
 script:
-    - mkdir bin
-    - cp -r domm_peg/*.py bin
-    - cp -r domm_peg/*.domm bin
-    - ls
-    - python bin/domm.py bin/basic.domm
+    - make check
 
