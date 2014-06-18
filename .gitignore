@@ -2,3 +2,6 @@
 *.dot
 *.svg
 *.png
+
+# Output folder
+/build
