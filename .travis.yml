@@ -4,4 +4,9 @@ python:
 install:
     - python arpeggio/setup.py install
 script:
-    - make check
+    - mkdir build
+    - cp -r domm_peg/*.py build
+    - cp -r domm_peg/*.domm build
+    - ls
+    - python build/domm.py build/basic.domm
+
