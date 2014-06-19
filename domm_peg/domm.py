@@ -58,9 +58,9 @@ def builtin_tag():      return Kwd("buildinTagType"), common_tag
 # They determine if a given value is essentially correct.
 def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
-def builtin_valid():    return Kwd("builtInValidatorType"), common_tag
-def common_tag():       return id, Optional(constr_def), Optional(apply_def), Optional(string), Optional(string)
-def constr_def():       return "(", Optional(constr_type), ZeroOrMore(",", constr_type), ")"
+def builtin_valid():    return Kwd("buildInValidatorType"), common_tag
+def common_tag():       return id, Optional(constr_def), Optional(apply_def), named_elem
+def constr_def():       return "(", constr_type, ZeroOrMore(",", constr_type) , ")"
 def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"), Kwd("_prop"),
                             Kwd("_param"), Kwd("_op"), Kwd("_service"), Kwd("_valueObject")])
 def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref"), Kwd("...")]
@@ -74,11 +74,11 @@ def classifier():       return [entity, service, value_object, exception, data_t
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
 def entity():           return Kwd("entity"), id, Optional(Kwd("extends"), id), Optional(Kwd("depends"), id,
-                             ZeroOrMore(",", id)), named_elem, "{", key, repr, Optional(constr_def
+                             ZeroOrMore(",", id)), named_elem, "{", key, repr, Optional(constr_specs
                              ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
 def service():          return Kwd("service"), id, Optional(Kwd("extends"), id), Optional(Kwd("depends"), id,
-                             ZeroOrMore(",", id)), named_elem, "{", Optional(constr_def), ZeroOrMore(oper
+                             ZeroOrMore(",", id)), named_elem, "{", Optional(constr_specs), ZeroOrMore(oper
                              ), ZeroOrMore(oper_compart), "}"
 
 # An entity contains a key through which it is referenced.
@@ -94,9 +94,9 @@ def repr_param():       return [string, prop]
 # Constraint definition defines a set of limitations to a type
 # for instance we can define that some elements are between certain values.
 # For examples grades of a student are between 1 and 5 (or A and F)
-def constr_def():       return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
+def constr_specs():     return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
 def constr_spec():      return constraint_type, Optional("(", constr_param, ZeroOrMore(",", constr_param), ")"),
-def constr_param():     return [string, prop, integer]
+def constr_param():     return [string, id, integer]
 
 # Feature represents a combinationf of properties and operation which
 # are features of other classifiers
