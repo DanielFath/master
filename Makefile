@@ -9,6 +9,6 @@ build:
 clean:
 	rm -rf build
 
-check: build
+check: clean build
 	python ${DOMM_PARSER} ${DOMM_FILES}
 	mv *.dot build
