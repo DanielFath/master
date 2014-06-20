@@ -1,10 +1,10 @@
-DOMM_PARSER = build/domm.py
+DOMM_PARSER = build/parser.py
 DOMM_FILES = build/*.domm
 
 build:
 	mkdir build
-	cp -r domm_peg/*.py build
-	cp -r domm_peg/*.domm build
+	cp -r domm/*.py build
+	cp -r domm/*.domm build
 
 clean:
 	rm -rf build
