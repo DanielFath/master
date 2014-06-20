@@ -12,11 +12,7 @@
 #   Library of Faculty of Engineering,
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
-from arpeggio import SemanticAction
-
-
-# This class represents the meta model of the DOMMLite structure
-class Model(SemanticAction):
+class Model(object):
     """
     This class represents the meta model for DOMMLite model
     object. DOMMLite model is a container for other objects.
@@ -40,3 +36,7 @@ class Model(SemanticAction):
 
     def set_types(self, packages):
         self._packages = packages
+
+    def first_pass(self, parser, node, children):
+        print("First pass node {}".format(node))
+        print("First pass children {}".format(children))

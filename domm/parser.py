@@ -1,5 +1,5 @@
 ﻿##############################################################################
-# Name: domm.py
+# Name: parser.py
 # Purpose: PEG parser for DOMMLite domain language
 # Author: Daniel Fath <daniel DOT fath7 AT gmail DOT com>
 # Copyright: (c) 2014 Daniel Fath <daniel DOT fath7 AT gmail DOT com>
@@ -17,6 +17,8 @@ import sys
 from arpeggio import *
 from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
+
+from metamodel import Model
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return Optional(string), Optional(string)
@@ -142,6 +144,11 @@ def model() :           return Kwd("model"), id, named_elem, ZeroOrMore(types), 
 # The basic root rule of grammar defintion
 def domm():             return OneOrMore(model), EndOfFile
 
+
+# Next block connects semantic actions with
+# Parser rules.
+
+
 if __name__ == "__main__":
     # First parameter is bibtex file
     # First we will make a parser - an instance of the DOMMLite parser model.
@@ -168,4 +175,4 @@ if __name__ == "__main__":
         # This is also optional.
         PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
     else:
-        print("Usage: python domm_peg.py file_to_parse")
+        print("Usage: python domm.py file_to_parse")
