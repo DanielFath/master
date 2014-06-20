@@ -1,5 +1,5 @@
 ﻿##############################################################################
-# Name: domm_peg.py
+# Name: domm.py
 # Purpose: PEG parser for DOMMLite domain language
 # Author: Daniel Fath <daniel DOT fath7 AT gmail DOT com>
 # Copyright: (c) 2014 Daniel Fath <daniel DOT fath7 AT gmail DOT com>
