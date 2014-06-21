@@ -21,7 +21,7 @@ from arpeggio import RegExMatch as _
 from metamodel import Model
 
 # Defines a meta type named element and its sub rules
-def named_elem():       return Optional(string), Optional(string)
+def named_elem():       return [(string, string), string]
 
 # Defines basic literalls
 def string():           return '"', _('[^"]*'),'"'
@@ -34,12 +34,12 @@ def types():            return [data_types, constraint_type]
 # Defines data_types as either user made types, built-in types (e.g. integer, string)
 # and enumerations of elements
 def data_types():       return [user_type, built_type, enum]
-def user_type():        return Kwd("dataType"), id, named_elem
-def built_type():       return Kwd("buildinDataType"), id, named_elem
+def user_type():        return Kwd("dataType"), id, Optional(named_elem)
+def built_type():       return Kwd("buildinDataType"), id, Optional(named_elem)
 
 # Defines the rules for enumeration literals
-def enum():             return Kwd("enum"), id, named_elem, "{", OneOrMore(enum_literals), "}"
-def enum_literals():    return id, string, named_elem
+def enum():             return Kwd("enum"), id, Optional(named_elem), "{", OneOrMore(enum_literals), "}"
+def enum_literals():    return id, string, Optional(named_elem)
 
 # Defines rules for constraint types
 # Constraint types are defined as either a tagType (which may be built-in)
@@ -61,14 +61,14 @@ def builtin_tag():      return Kwd("buildinTagType"), common_tag
 def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
 def builtin_valid():    return Kwd("buildInValidatorType"), common_tag
-def common_tag():       return id, Optional(constr_def), Optional(apply_def), named_elem
+def common_tag():       return id, Optional(constr_def), Optional(apply_def), Optional(named_elem)
 def constr_def():       return "(", constr_type, ZeroOrMore(",", constr_type) , ")"
 def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"), Kwd("_prop"),
                             Kwd("_param"), Kwd("_op"), Kwd("_service"), Kwd("_valueObject")])
 def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref"), Kwd("...")]
 
 # Defines package which is a unit of code organization, which may contain other nested packages
-def package():          return Kwd("package"), id, named_elem, "{", ZeroOrMore(pack_elem), "}"
+def package():          return Kwd("package"), id, Optional(named_elem), "{", ZeroOrMore(pack_elem), "}"
 def pack_elem():        return [package,classifier]
 
 # Defines rules for various structure classifications (i.e. package elements)
@@ -76,11 +76,11 @@ def classifier():       return [entity, service, value_object, exception, data_t
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
 def entity():           return Kwd("entity"), id, Optional(Kwd("extends"), id), Optional(Kwd("depends"), id,
-                             ZeroOrMore(",", id)), named_elem, "{", key, repr, Optional(constr_specs
+                             ZeroOrMore(",", id)), Optional(named_elem), "{", key, repr, Optional(constr_specs
                              ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
 def service():          return Kwd("service"), id, Optional(Kwd("extends"), id), Optional(Kwd("depends"), id,
-                             ZeroOrMore(",", id)), named_elem, "{", Optional(constr_specs), ZeroOrMore(oper
+                             ZeroOrMore(",", id)), Optional(named_elem), "{", Optional(constr_specs), ZeroOrMore(oper
                              ), ZeroOrMore(oper_compart), "}"
 
 # An entity contains a key through which it is referenced.
@@ -109,7 +109,7 @@ def feature():          return [prop, oper]
 # required. Then type and it's cardinality are defined. And lastly the reference to another
 # entity is shown.
 def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),Kwd("unique"), Kwd("readonly"),
-                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_def), named_elem
+                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_def), Optional(named_elem)
 def type_def():         return id,  Optional("[", Optional(integer),"]"), id
 def ref():              return "<>", id
 
@@ -119,27 +119,28 @@ def ref():              return "<>", id
 def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique"),
                             Kwd("required")]), type_def, "(", Optional(param, ZeroOrMore(",", param)
                             ), ")", Optional("throws", id,
-                            ZeroOrMore(",", id) ), Optional(constr_def), named_elem
+                            ZeroOrMore(",", id) ), Optional(constr_def), Optional(named_elem)
 
 def param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
-                            ), type_def, Optional(constr_def), named_elem
+                            ), type_def, Optional(constr_def), Optional(named_elem)
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
-def feature_compart():  return Kwd("compartment"), id, named_elem, "{", ZeroOrMore(feature), "}"
+def feature_compart():  return Kwd("compartment"), id, Optional(named_elem), "{", ZeroOrMore(feature), "}"
 
-def oper_compart():     return Kwd("compartment"), id, named_elem, "{", ZeroOrMore(oper), "}"
+def oper_compart():     return Kwd("compartment"), id, Optional(named_elem), "{", ZeroOrMore(oper), "}"
 
 # Value objects are objects that have no operations, only properties
 def value_object():     return Kwd("valueObject"), id, Optional(Kwd("extends"), id), Optional(Kwd("depends"), id,
-                             ZeroOrMore(",", id)), named_elem, "{", Optional(constr_def), ZeroOrMore(prop), "}"
+                             ZeroOrMore(",", id)), Optional(named_elem), "{", Optional(constr_def), ZeroOrMore(prop), "}"
 
 # Defines exceptions in DOMMLite, which are entities that are used for
 # reporting errors.
-def exception():        return Kwd("exception"), id, named_elem, "{", ZeroOrMore(prop), "}"
+def exception():        return Kwd("exception"), id, Optional(named_elem), "{", ZeroOrMore(prop), "}"
 
 # Defines the model rule of DOMMLite
 # which is a container for one or more types or packages
-def model() :           return Kwd("model"), id, named_elem, ZeroOrMore(types), ZeroOrMore(package)
+def model() :           return Kwd("model"), id, Optional(named_elem), ZeroOrMore(types), ZeroOrMore(package)
+
 
 # The basic root rule of grammar defintion
 def domm():             return OneOrMore(model), EndOfFile
