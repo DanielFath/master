@@ -18,7 +18,7 @@ from arpeggio import *
 from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
 
-from metamodel import Model
+from actions import *
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return [(string, string), string]
@@ -145,17 +145,18 @@ def model() :           return Kwd("model"), id, Optional(named_elem), ZeroOrMor
 # The basic root rule of grammar defintion
 def domm():             return OneOrMore(model), EndOfFile
 
-
 # Next block connects semantic actions with
 # Parser rules.
-
+model.sem = ModelAction()
+named_elem.sem = NamedElementAction()
+string.sem = StringAction()
 
 if __name__ == "__main__":
     # First parameter is bibtex file
     # First we will make a parser - an instance of the DOMMLite parser model.
     # Parser model is given in the form of python constructs therefore we
     # are using ParserPython class.
-    parser = ParserPython(domm)
+    parser = ParserPython(domm, debug=True)
 
     # Then we export it to a dot file in order to visualise DOMMLite's model.
     # This step is optional but it is handy for debugging purposes.
@@ -165,8 +166,8 @@ if __name__ == "__main__":
 
     # We only parse if there is an input
     if len(sys.argv) > 1:
-        with open(sys.argv[1], "r") as bibtexfile:
-            content = bibtexfile.read()
+        with open(sys.argv[1], "r") as dommfile:
+            content = dommfile.read()
         # An expression we want to evaluate
 
         # We create a parse tree out of textual input_expr
@@ -175,5 +176,7 @@ if __name__ == "__main__":
         # Then we export it to a dot file in order to visualise it.
         # This is also optional.
         PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
+
+        parser.getASG()
     else:
-        print("Usage: python domm.py file_to_parse")
+        print("Usage: python parser.py file_to_parse")

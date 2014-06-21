@@ -1,5 +1,5 @@
 ﻿##############################################################################
-# Name: domm_peg.py
+# Name: metamodel.py
 # Purpose: Meta model for DOMMLite DSL
 # Author: Daniel Fath <daniel DOT fath7 AT gmail DOT com>
 # Copyright: (c) 2014 Daniel Fath <daniel DOT fath7 AT gmail DOT com>
@@ -40,3 +40,19 @@ class Model(object):
     def first_pass(self, parser, node, children):
         print("First pass node {}".format(node))
         print("First pass children {}".format(children))
+
+class NamedElement(object):
+    """
+    Named element represents short and long description
+    that is encountered accross various DOMMLite constructs
+    """
+    def __init__(self, short_desc=None, long_desc=None):
+        super(NamedElement, self).__init__()
+        self._short_desc = short_desc
+        self._long_desc = long_desc
+
+    """
+    Pretty print named element out
+    """
+    def __repr__(self):
+        return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self._short_desc, self._long_desc)
