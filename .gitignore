@@ -5,3 +5,6 @@
 
 # Output folder
 /build
+
+# Compiled files
+*.pyc
