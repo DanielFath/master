@@ -43,3 +43,11 @@ class StringAction(SemanticAction):
     def first_pass(self, parser, node, children):
         print("Found string {}".format(children[1]))
         return children[1]
+
+class IdAction(SemanticAction):
+    """
+    Represents actions done when identifier is found
+    """
+    def first_pass(self, parser, node, children):
+        print("Found id {}".format(node))
+        return node
