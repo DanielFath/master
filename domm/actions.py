@@ -6,7 +6,15 @@ class ModelAction(SemanticAction):
     Represents semantic action Model in DOMMLite
     """
     def first_pass(self, parser, node, children):
+        name = children[1]
+        short_desc = None
+        long_desc = None
+        if type(children[2]) == NamedElement:
+            short_desc = children[2].short_desc
+            long_desc  = children[2].long_desc
+
         print("DEBUG Model: node  {} \n\n children {}".format(node, children))
+        return Model(name, short_desc, long_desc)
 
 class NamedElementAction(SemanticAction):
     """

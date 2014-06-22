@@ -17,7 +17,7 @@ class Model(object):
     This class represents the meta model for DOMMLite model
     object. DOMMLite model is a container for other objects.
     """
-    def __init__(self, name, short_desc = "", long_desc=""):
+    def __init__(self, name, short_desc = None, long_desc = None):
         super(Model, self).__init__()
         self._name = name
         self._short_desc = short_desc
@@ -46,13 +46,13 @@ class NamedElement(object):
     Named element represents short and long description
     that is encountered accross various DOMMLite constructs
     """
-    def __init__(self, short_desc=None, long_desc=None):
+    def __init__(self, short_desc = None, long_desc = None):
         super(NamedElement, self).__init__()
-        self._short_desc = short_desc
-        self._long_desc = long_desc
+        self.short_desc = short_desc
+        self.long_desc = long_desc
 
     """
     Pretty print named element out
     """
     def __repr__(self):
-        return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self._short_desc, self._long_desc)
+        return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self.short_desc, self.long_desc)
