@@ -1,14 +1,15 @@
-DOMM_PARSER = build/parser.py
-DOMM_FILES = build/*.domm
+BUILD_FOLDER = build
+DOMM_PARSER = ${BUILD_FOLDER}/parser.py
+DOMM_FILES = ${BUILD_FOLDER}/*.domm
 
 build:
-	mkdir build
-	cp -r domm/*.py build
-	cp -r domm/*.domm build
+	mkdir ${BUILD_FOLDER}
+	cp -r domm/domm/*.py ${BUILD_FOLDER}
+	cp -r domm/domm/*.domm ${BUILD_FOLDER}
 
 clean:
-	rm -rf build
+	rm -rf ${BUILD_FOLDER}
 
 check: clean build
 	python ${DOMM_PARSER} ${DOMM_FILES}
-	mv *.dot build
+	mv *.dot ${BUILD_FOLDER}

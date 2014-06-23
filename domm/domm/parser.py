@@ -154,8 +154,8 @@ ident.sem = IdAction()
 
 class DommParser(ParserPython):
     """docstring for DommParser"""
-    def __init__(self, debug = True):
-        super(DommParser, self).__init__(domm, debug)
+    def __init__(self, *args, **kwargs):
+        super(DommParser, self).__init__(domm, None, *args, **kwargs)
 
 
 if __name__ == "__main__":
