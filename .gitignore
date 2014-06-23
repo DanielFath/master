@@ -7,7 +7,7 @@
 /build
 /domm/build
 /domm/dist
-/domm/DOMMLite_parser_and_utilities.egg-info
+/domm/*.egg-info
 
 # Compiled files
 *.pyc
