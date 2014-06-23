@@ -152,12 +152,18 @@ named_elem.sem = NamedElementAction()
 string.sem = StringAction()
 ident.sem = IdAction()
 
+class DommParser(ParserPython):
+    """docstring for DommParser"""
+    def __init__(self, debug = True):
+        super(DommParser, self).__init__(domm, debug)
+
+
 if __name__ == "__main__":
     # First parameter is bibtex file
     # First we will make a parser - an instance of the DOMMLite parser model.
     # Parser model is given in the form of python constructs therefore we
     # are using ParserPython class.
-    parser = ParserPython(domm, debug=True)
+    parser = DommParser()
 
     # Then we export it to a dot file in order to visualise DOMMLite's model.
     # This step is optional but it is handy for debugging purposes.

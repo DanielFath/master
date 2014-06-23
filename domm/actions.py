@@ -9,7 +9,7 @@ class ModelAction(SemanticAction):
         name = children[1]
         short_desc = None
         long_desc = None
-        if type(children[2]) == NamedElement:
+        if len(children) >=3 and type(children[2]) == NamedElement:
             short_desc = children[2].short_desc
             long_desc  = children[2].long_desc
 
