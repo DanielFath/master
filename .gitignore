@@ -5,8 +5,9 @@
 
 # Output folder
 /build
-/DOMMLite_parser_and_utilities.egg-info
-/dist
+/domm/build
+/domm/dist
+/domm/DOMMLite_parser_and_utilities.egg-info
 
 # Compiled files
 *.pyc
