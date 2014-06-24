@@ -56,3 +56,14 @@ class NamedElement(object):
     """
     def __repr__(self):
         return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self.short_desc, self.long_desc)
+
+class Id(object):
+    """
+    Id that represents a name of a type or a parameter
+    """
+    def __init__(self, name):
+        super(Id, self).__init__()
+        self._name = name;
+
+    def __repr__(self):
+        return 'Id("%s")' % (self._name)

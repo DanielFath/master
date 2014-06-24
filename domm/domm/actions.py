@@ -6,15 +6,20 @@ class ModelAction(SemanticAction):
     Represents semantic action Model in DOMMLite
     """
     def first_pass(self, parser, node, children):
-        name = children[1]
+        name = children[1]._name
         short_desc = None
         long_desc = None
+        # ID should been always present
+
         if len(children) >=3 and type(children[2]) == NamedElement:
             short_desc = children[2].short_desc
             long_desc  = children[2].long_desc
 
-        print("DEBUG Model: node  {} \n\n children {}".format(node, children))
-        return Model(name, short_desc, long_desc)
+        model = Model(name, short_desc, long_desc)
+
+        #print("DEBUG Model: node  {} \n\n children {}".format(node, children))
+        print("DEBUG {}".format(model))
+        return model
 
 class NamedElementAction(SemanticAction):
     """
@@ -49,5 +54,5 @@ class IdAction(SemanticAction):
     Represents actions done when identifier is found
     """
     def first_pass(self, parser, node, children):
-        print("Found id {}".format(node))
-        return node
+        #print("Found id {}".format(node.value))
+        return Id(node.value)
