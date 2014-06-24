@@ -151,6 +151,7 @@ model.sem = ModelAction()
 named_elem.sem = NamedElementAction()
 string.sem = StringAction()
 ident.sem = IdAction()
+integer.sem = IntAction()
 
 class DommParser(ParserPython):
     """docstring for DommParser"""

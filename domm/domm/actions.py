@@ -56,3 +56,10 @@ class IdAction(SemanticAction):
     def first_pass(self, parser, node, children):
         #print("Found id {}".format(node.value))
         return Id(node.value)
+
+class IntAction(SemanticAction):
+    """
+    Returns an integer represenetation
+    """
+    def first_pass():
+        return int(node.value)
