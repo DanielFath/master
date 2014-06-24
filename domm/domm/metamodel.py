@@ -37,9 +37,8 @@ class Model(object):
     def set_types(self, packages):
         self._packages = packages
 
-    def first_pass(self, parser, node, children):
-        print("First pass node {}".format(node))
-        print("First pass children {}".format(children))
+    def __repr__(self):
+        return 'Model "%s" (%s %s)' % (self._name, self._short_desc, self._long_desc)
 
 class NamedElement(object):
     """
