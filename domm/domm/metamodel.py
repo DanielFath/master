@@ -12,6 +12,8 @@
 #   Library of Faculty of Engineering,
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
+from error import *
+
 class Model(object):
     """
     This class represents the meta model for DOMMLite model
@@ -57,12 +59,22 @@ class NamedElement(object):
         return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self.short_desc, self.long_desc)
 
 class Id(object):
+
+    all_id = set()
+
     """
     Id that represents a name of a type or a parameter
     """
     def __init__(self, name):
         super(Id, self).__init__()
+        self.checked_add(name)
         self._name = name;
+
+    def checked_add(self, name):
+        if name in Id.all_id:
+            raise IdExistsError(name)
+        else:
+            Id.all_id.add(name)
 
     def __repr__(self):
         return 'Id("%s")' % (self._name)
