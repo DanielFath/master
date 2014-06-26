@@ -14,34 +14,6 @@
 ##############################################################################
 from error import *
 
-class Model(object):
-    """
-    This class represents the meta model for DOMMLite model
-    object. DOMMLite model is a container for other objects.
-    """
-    def __init__(self, name, short_desc = None, long_desc = None):
-        super(Model, self).__init__()
-        self._name = name
-        self._short_desc = short_desc
-        self._long_desc = long_desc
-        self._types = []
-        self._packages = []
-
-    def add_types(self, type_def):
-        self._types.append(type_def)
-
-    def set_types(self, types):
-        self._types = types
-
-    def add_package(self, package):
-        self._packages.append(package)
-
-    def set_types(self, packages):
-        self._packages = packages
-
-    def __repr__(self):
-        return 'Model "%s" (%s %s)' % (self._name, self._short_desc, self._long_desc)
-
 class NamedElement(object):
     """
     Named element represents short and long description
@@ -67,10 +39,10 @@ class Id(object):
     """
     def __init__(self, name):
         super(Id, self).__init__()
-        self.checked_add(name)
+        self._checked_add(name)
         self._name = name;
 
-    def checked_add(self, name):
+    def _checked_add(self, name):
         if name in Id.all_id:
             raise IdExistsError(name)
         else:
@@ -78,3 +50,47 @@ class Id(object):
 
     def __repr__(self):
         return 'Id("%s")' % (self._name)
+
+class Model(NamedElement):
+    """
+    This class represents the meta model for DOMMLite model
+    object. DOMMLite model is a container for other objects.
+    """
+    def __init__(self, name, short_desc = None, long_desc = None):
+        super(Model, self).__init__(short_desc, long_desc)
+        self.name = name
+        self.types = []
+        self.packages = []
+
+    def add_types(self, type_def):
+        self._types.append(type_def)
+
+    def set_types(self, types):
+        self._types = types
+
+    def add_package(self, package):
+        self._packages.append(package)
+
+    def set_types(self, packages):
+        self._packages = packages
+
+    def __repr__(self):
+        return 'Model "%s" (%s %s)' % (self.name, self.short_desc, self.long_desc)
+
+
+class DataType(NamedElement):
+
+    all_types = set()
+
+    def __init__(self, name, short_desc = None, long_desc = None):
+        super(DataType, self).__init__(short_desc, long_desc)
+        self._checked_add(name)
+
+    def _checked_add(self, name):
+        if name in DataType.all_types:
+            raise TypeExistsError(name)
+        else:
+            DataType.all_types.add(name)
+
+    def __repr__(self):
+        return 'dataType "%s" (%s %s)' % (self.name, self.short_desc, self.long_desc)
