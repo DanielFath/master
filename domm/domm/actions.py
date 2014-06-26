@@ -54,12 +54,18 @@ class IdAction(SemanticAction):
     Represents actions done when identifier is found
     """
     def first_pass(self, parser, node, children):
-        #print("Found id {}".format(node.value))
         return Id(node.value)
 
 class IntAction(SemanticAction):
     """
     Returns an integer represenetation
     """
-    def first_pass():
+    def first_pass(self, parser, node, children):
         return int(node.value)
+
+class DataTypeAction(SemanticAction):
+    """
+    Returns evaluated DataType
+    """
+    def first_pass(self, parser, node, children):
+        pass
