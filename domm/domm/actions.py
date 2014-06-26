@@ -68,4 +68,19 @@ class DataTypeAction(SemanticAction):
     Returns evaluated DataType
     """
     def first_pass(self, parser, node, children):
-        pass
+        if children[0] == "buildinDataType":
+            builtin = True
+        elif children[0] == "dataType":
+            builtin = False
+
+        name = children[1]._name
+        short_desc = None
+        long_desc = None
+
+        if len(children)== 3:
+            short_desc = children[2].short_desc
+            long_desc = children[2].long_desc
+
+        data_type = DataType(name, built_in = builtin, short_desc= short_desc, long_desc= long_desc)
+        print("DEBUG dataType: {}".format(data_type))
+        return data_type

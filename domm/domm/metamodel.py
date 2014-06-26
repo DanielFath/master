@@ -82,15 +82,18 @@ class DataType(NamedElement):
 
     all_types = set()
 
-    def __init__(self, name, short_desc = None, long_desc = None):
+    def __init__(self, name, short_desc = None, long_desc = None, built_in = True):
         super(DataType, self).__init__(short_desc, long_desc)
         self._checked_add(name)
+        self.built_in = built_in
 
     def _checked_add(self, name):
         if name in DataType.all_types:
             raise TypeExistsError(name)
         else:
+            self.name = name
             DataType.all_types.add(name)
 
     def __repr__(self):
-        return 'dataType "%s" (%s %s)' % (self.name, self.short_desc, self.long_desc)
+        return 'dataType "%s" built_in(%s) (%s %s)' % (
+            self.name, self.built_in, self.short_desc, self.long_desc)
