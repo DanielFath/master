@@ -152,7 +152,8 @@ named_elem.sem = NamedElementAction()
 string.sem = StringAction()
 ident.sem = IdAction()
 integer.sem = IntAction()
-types.sem = DataTypeAction()
+types.sem = TypesAction()
+enum_literals.sem = EnumLiteralAction()
 
 class DommParser(ParserPython):
     """docstring for DommParser"""

@@ -23,3 +23,11 @@ class TypeExistsError(DommError):
     def __init__(self, name):
         super(TypeExistsError, self).__init__("")
         self.message = ' dataType <"%s"> already declared ' % (name)
+
+class DuplicateLiteralError(DommError):
+    """
+    Error when there are two or more literals in enum with same name
+    """
+    def __init__(self, name):
+        super(TypeExistsError, self).__init__("")
+        self.message = ' Literal with name "%s" already exist! ' % (name)

@@ -37,19 +37,19 @@ class Id(object):
     """
     Id that represents a name of a type or a parameter
     """
-    def __init__(self, name):
+    def __init__(self, id):
         super(Id, self).__init__()
-        self._checked_add(name)
-        self._name = name;
+        self._checked_add(id)
+        self._id = id;
 
-    def _checked_add(self, name):
-        if name in Id.all_id:
-            raise IdExistsError(name)
+    def _checked_add(self, ids):
+        if ids in Id.all_id:
+            raise IdExistsError(ids)
         else:
-            Id.all_id.add(name)
+            Id.all_id.add(ids)
 
     def __repr__(self):
-        return 'Id("%s")' % (self._name)
+        return 'Id("%s")' % (self._id)
 
 class Model(NamedElement):
     """
@@ -97,3 +97,45 @@ class DataType(NamedElement):
     def __repr__(self):
         return 'dataType "%s" built_in(%s) (%s %s)' % (
             self.name, self.built_in, self.short_desc, self.long_desc)
+
+class Enumeration(NamedElement):
+
+    all_enums = set()
+
+    def __init__(self, name, short_desc = None, long_desc = None):
+        super(Enumeration, self).__init__(short_desc, long_desc)
+        self._checked_add(name)
+        self.literals = set()
+
+    def _checked_add(self, name):
+        if name in Enumeration.all_enums:
+            raise TypeExistsError(name)
+        else:
+            self.name = name
+            Enumeration.all_enums.add(name)
+
+    def add_literal(self, literal):
+        if literal in self.literals:
+            raise DuplicateLiteralError(literal.name)
+        else:
+            self.literals.add(literal)
+
+    def __repr__(self):
+        retStr = ' enum %s (%s, %s) {' % (self.name, self.short_desc, self.long_desc)
+        for i in self.literals:
+            retStr += ' %s \n' % (i)
+        retStr += "}"
+        return retStr
+
+
+class EnumLiteral(NamedElement):
+    """
+    Enumeration literal
+    """
+    def __init__(self, value, name, short_desc = None, long_desc = None):
+        super(EnumLiteral, self).__init__(short_desc = None, long_desc = None)
+        self.value = value
+        self.name = name
+
+    def __repr__(self):
+        return ' %s - %s (%s, %s)' % (self.name, self.value, self.short_desc, self.long_desc)

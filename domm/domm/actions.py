@@ -7,14 +7,14 @@ class ModelAction(SemanticAction):
     """
     def first_pass(self, parser, node, children):
         # ID should been always present
-        name = children[1]._name
+        name = children[1]._id
         model = Model(name)
 
         for i in range(1, len(children)):
             if type(children[i]) == NamedElement:
                 model.short_desc = children[i].short_desc
                 model.long_desc = children[i].long_desc
-            elif type(children[i]) == DataType:
+            elif type(children[i]) == DataType or type(children[i]) == Enumeration:
                 model.add_types(children[i])
 
         #print("DEBUG Model: node  {} \n\n children {}".format(node, children))
@@ -62,6 +62,55 @@ class IntAction(SemanticAction):
     def first_pass(self, parser, node, children):
         return int(node.value)
 
+class TypesAction(SemanticAction):
+    """
+    Evaluates value of given type
+    """
+    def first_pass(self, parser, node, children):
+        # First keyword can only be
+        #   enum
+        #   buildinDataType/dataType
+        #   tagType/buildinTagType
+        #   validator/buildinValidator
+        if children[0] == "enum" :
+            return EnumAction().first_pass(parser, node, children)
+        elif children[0] == "buildinDataType" or children[0] == "dataType":
+            return DataTypeAction().first_pass(parser, node, children)
+
+class EnumAction(SemanticAction):
+    """
+    Evaluates value of enumeration
+    """
+    def first_pass(self, parser, node, children):
+        enum = Enumeration(name = children[1]._id)
+
+        for i in range(1, len(children)):
+            if type(children[i]) == NamedElement:
+                enum.short_desc = children[i].short_desc
+                enum.long_desc = children[i].long_desc
+            elif type(children[i]) == EnumLiteral:
+                enum.add_literal(children[i])
+        return enum
+
+class EnumLiteralAction(SemanticAction):
+    """
+    Evaluates value of a part of enumeration
+    """
+    def first_pass(self, parser, node, children):
+        # Name and value are mandatory and will always be present
+        # children[0] is the enumeration literal's value
+        # children[1] is the enumeration literal's value
+        literal =  EnumLiteral(children[0]._id, children[1])
+
+        # Enumeration may have a named element
+        if len(children) == 3:
+            literal.short_desc = children[2].short_desc
+            literal.long_desc = children[2].long_desc
+
+        return literal
+
+
+
 class DataTypeAction(SemanticAction):
     """
     Returns evaluated DataType
@@ -72,7 +121,7 @@ class DataTypeAction(SemanticAction):
         elif children[0] == "dataType":
             builtin = False
 
-        name = children[1]._name
+        name = children[1]._id
         short_desc = None
         long_desc = None
 
