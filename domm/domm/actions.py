@@ -6,16 +6,16 @@ class ModelAction(SemanticAction):
     Represents semantic action Model in DOMMLite
     """
     def first_pass(self, parser, node, children):
-        name = children[1]._name
-        short_desc = None
-        long_desc = None
         # ID should been always present
+        name = children[1]._name
+        model = Model(name)
 
-        if len(children) >=3 and type(children[2]) == NamedElement:
-            short_desc = children[2].short_desc
-            long_desc  = children[2].long_desc
-
-        model = Model(name, short_desc, long_desc)
+        for i in range(1, len(children)):
+            if type(children[i]) == NamedElement:
+                model.short_desc = children[i].short_desc
+                model.long_desc = children[i].long_desc
+            elif type(children[i]) == DataType:
+                model.add_types(children[i])
 
         #print("DEBUG Model: node  {} \n\n children {}".format(node, children))
         print("DEBUG {}".format(model))
@@ -46,7 +46,6 @@ class StringAction(SemanticAction):
     Represents the basic string identified in programm
     """
     def first_pass(self, parser, node, children):
-        print("Found string {}".format(children[1]))
         return children[1]
 
 class IdAction(SemanticAction):
@@ -82,5 +81,4 @@ class DataTypeAction(SemanticAction):
             long_desc = children[2].long_desc
 
         data_type = DataType(name, built_in = builtin, short_desc= short_desc, long_desc= long_desc)
-        print("DEBUG dataType: {}".format(data_type))
         return data_type

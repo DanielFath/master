@@ -59,23 +59,23 @@ class Model(NamedElement):
     def __init__(self, name, short_desc = None, long_desc = None):
         super(Model, self).__init__(short_desc, long_desc)
         self.name = name
-        self.types = []
-        self.packages = []
+        self.types = set()
+        self.packages = set()
 
     def add_types(self, type_def):
-        self._types.append(type_def)
+        self.types.add(type_def)
 
     def set_types(self, types):
-        self._types = types
+        self.types = types
 
     def add_package(self, package):
-        self._packages.append(package)
+        self.packages.add(package)
 
     def set_types(self, packages):
-        self._packages = packages
+        self.packages = packages
 
     def __repr__(self):
-        return 'Model "%s" (%s %s)' % (self.name, self.short_desc, self.long_desc)
+        return 'Model "%s" (%s %s)\ntypes: "%s"' % (self.name, self.short_desc, self.long_desc, self.types)
 
 
 class DataType(NamedElement):
