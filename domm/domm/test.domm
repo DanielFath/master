@@ -1,5 +1,11 @@
-model test_1
-
-model test_2 "short"
-
 model test_3 "short" "long"
+
+dataType student "test"
+buildinDataType builtStudent
+enum Boje "boje" {
+    R "Red"
+    G "Green"
+    B "Blue"
+}
+
+buildinTagType plural (_string) appliesTo _entity _valueObject
