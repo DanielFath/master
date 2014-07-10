@@ -11,14 +11,18 @@ class ModelAction(SemanticAction):
         model = Model(name)
 
         for i in range(1, len(children)):
+
             if type(children[i]) == NamedElement:
                 model.short_desc = children[i].short_desc
                 model.long_desc = children[i].long_desc
             elif type(children[i]) == DataType or type(children[i]) == Enumeration:
-                model.add_types(children[i])
+                model.add_type(children[i])
+            elif type(children[i]) == Constraint:
+                model.add_constraint(children[i])
 
         #print("DEBUG Model: node  {} \n\n children {}".format(node, children))
-        print("DEBUG {}".format(model))
+        print("Debug Model %s" % (model))
+
         return model
 
 class NamedElementAction(SemanticAction):
@@ -76,6 +80,9 @@ class TypesAction(SemanticAction):
             return EnumAction().first_pass(parser, node, children)
         elif children[0] == "buildinDataType" or children[0] == "dataType":
             return DataTypeAction().first_pass(parser, node, children)
+        elif children[0] == "buildinValidatorType" or children[0] == "validatorType" or children [0] == "buildinTagType" or children[0] == "tagType":
+            #print("DEBUG types:  {}".format( children))
+            return ConstraintAction().first_pass(parser, node, children)
 
 class EnumAction(SemanticAction):
     """
@@ -91,6 +98,49 @@ class EnumAction(SemanticAction):
             elif type(children[i]) == EnumLiteral:
                 enum.add_literal(children[i])
         return enum
+
+class CommonTagAction(SemanticAction):
+    """
+    Evaluates value of (buildin)validatorType/tagType
+    """
+    def first_pass(self, parser, node, children):
+        name = children[0]._id
+        short_desc = None
+        long_desc = None
+        constr_def = None
+        apply_def = None
+
+        for ind, value in enumerate(children):
+
+            if type(value) == ConstrDef:
+                constr_def = value
+            elif type(value) == ApplyDef:
+                apply_def = value
+            elif type(value) == NamedElement:
+                long_desc = value.long_desc
+                short_desc = value.short_desc
+
+        tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr = constr_def, applies = apply_def)
+        print("DEBUG CommonTag: {}".format(tag))
+        return tag
+
+class ApplyDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        app_def = ApplyDef()
+
+        for i in range(1, len(children)):
+            app_def.add_apply(children[i])
+
+        return app_def
+
+class ConstrDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        constr_def = ConstrDef()
+
+        for i in range(1, len(children)-1):
+            constr_def.add_constr(children[i])
+
+        return constr_def
 
 class EnumLiteralAction(SemanticAction):
     """
@@ -131,3 +181,28 @@ class DataTypeAction(SemanticAction):
 
         data_type = DataType(name, built_in = builtin, short_desc= short_desc, long_desc= long_desc)
         return data_type
+
+class ConstraintAction(SemanticAction):
+    """
+    Returns evaluated constraint type
+    """
+    def first_pass(self, parser, node, children):
+        builtin = None
+        types = None
+
+        if children[0] == "buildinValidator":
+            builtin = True
+            types = ConstraintType.Validator
+        elif children[0] == "validator":
+            builtin = False
+            types = ConstraintType.Validator
+        elif children[0] == "buildinTagType":
+            builtin = True
+            types = ConstraintType.Tag
+        elif children[0] == "tagType":
+            builtin = False
+            types = ConstraintType.Tag
+
+        constraint = Constraint(tag = children[1], built_in = builtin, constr_type = types)
+        return constraint
+

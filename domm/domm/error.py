@@ -31,3 +31,26 @@ class DuplicateLiteralError(DommError):
     def __init__(self, name):
         super(TypeExistsError, self).__init__("")
         self.message = ' Literal with name "%s" already exist! ' % (name)
+
+class DuplicateApplyError(DommError):
+    """
+    Error when there are two or more same apply definition if apply_def
+    signature
+    """
+    def __init__(self, name):
+        super(TypeExistsError, self).__init__("")
+        self.message = ' The "%s" already used in signature! ' % (name)
+
+class ElipsisMustBeLast(DommError):
+    """
+    Error when `...` isn't last element in syntax
+    """
+    def __init__(self, name):
+        super(ElipsisMustBeLast, self).__init__("")
+        self.message = ' The ... must be last element. ' % (name)
+
+class DuplicateTypeError(object):
+    """docstring for DuplicateTypeError"""
+    def __init__(self, name):
+        super(DuplicateTypeError, self).__init__()
+        self.message = 'A type with name "%s" already exists!' % (name)

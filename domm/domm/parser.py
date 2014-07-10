@@ -154,6 +154,9 @@ ident.sem = IdAction()
 integer.sem = IntAction()
 types.sem = TypesAction()
 enum_literals.sem = EnumLiteralAction()
+common_tag.sem = CommonTagAction()
+constr_def.sem = ConstrDefAction()
+apply_def.sem = ApplyDefAction()
 
 class DommParser(ParserPython):
     """docstring for DommParser"""
