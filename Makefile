@@ -12,4 +12,5 @@ clean:
 
 check: clean build
 	python ${DOMM_PARSER} ${DOMM_FILES}
+	py.test domm/
 	mv *.dot ${BUILD_FOLDER}
