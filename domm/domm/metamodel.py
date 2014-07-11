@@ -235,9 +235,7 @@ class ConstrDef(object):
         self.constraints = set()
 
     def add_constr(self, constr):
-        if constr in self.constraints:
-            raise DuplicateApplyError(constr)
-        elif "..." in self.constraints:
+        if "..." in self.constraints:
             raise ElipsisMustBeLast()
         else:
             self.constraints.add(constr)

@@ -29,17 +29,8 @@ class DuplicateLiteralError(DommError):
     Error when there are two or more literals in enum with same name
     """
     def __init__(self, name):
-        super(TypeExistsError, self).__init__("")
+        super(DuplicateLiteralError, self).__init__("")
         self.message = ' Literal with name "%s" already exist! ' % (name)
-
-class DuplicateApplyError(DommError):
-    """
-    Error when there are two or more same apply definition if apply_def
-    signature
-    """
-    def __init__(self, name):
-        super(TypeExistsError, self).__init__("")
-        self.message = ' The "%s" already used in signature! ' % (name)
 
 class ElipsisMustBeLast(DommError):
     """
