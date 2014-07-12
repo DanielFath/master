@@ -5,6 +5,9 @@ install:
     - cd arpeggio
     - python setup.py install
     - cd ..
+    - cd domm
+    - python setup.py install
+    - cd ..
 script:
     - make check
 
