@@ -24,6 +24,15 @@ class NamedElement(object):
         self.short_desc = short_desc
         self.long_desc = long_desc
 
+    def set_short_desc(self, short_desc):
+        self.short_desc = short_desc
+
+    def set_long_desc(self, long_desc):
+        self.long_desc = long_desc
+
+    def set_desc(self, short_desc, long_desc):
+        self.short_desc = short_desc
+        self.long_desc = long_desc
     """
     Pretty print named element out
     """
