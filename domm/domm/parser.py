@@ -72,7 +72,7 @@ def package():          return Kwd("package"), ident, Optional(named_elem), "{",
 def pack_elem():        return [package,classifier]
 
 # Defines rules for various structure classifications (i.e. package elements)
-def classifier():       return [entity, service, value_object, exception, data_types,constraint_type]
+def classifier():       return [entity, service, value_object, exception, types]
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
 def entity():           return Kwd("entity"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
@@ -123,6 +123,7 @@ def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique
 
 def param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
                             ), type_def, Optional(constr_def), Optional(named_elem)
+
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
 def feature_compart():  return Kwd("compartment"), ident, Optional(named_elem), "{", ZeroOrMore(feature), "}"
@@ -157,9 +158,13 @@ enum_literals.sem = EnumLiteralAction()
 common_tag.sem = CommonTagAction()
 constr_def.sem = ConstrDefAction()
 apply_def.sem = ApplyDefAction()
+pack_elem.sem = PackageElemAction()
+package.sem = PackageAction()
 
 class DommParser(ParserPython):
-    """docstring for DommParser"""
+    """
+    Parser of DOMMLite DSL language
+    """
     def __init__(self, *args, **kwargs):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
 

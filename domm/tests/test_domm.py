@@ -53,3 +53,15 @@ def test_tagType():
         validatorType type3
         buildInValidatorType type4
     """)
+
+def test_package():
+    parser = DommParser()
+    parser.parse(""" model test
+        package test {
+            dataType test
+
+            package inner {
+
+            }
+        }
+        """)

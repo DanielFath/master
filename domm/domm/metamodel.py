@@ -24,12 +24,6 @@ class NamedElement(object):
         self.short_desc = short_desc
         self.long_desc = long_desc
 
-    def set_short_desc(self, short_desc):
-        self.short_desc = short_desc
-
-    def set_long_desc(self, long_desc):
-        self.long_desc = long_desc
-
     def set_desc(self, short_desc, long_desc):
         self.short_desc = short_desc
         self.long_desc = long_desc
@@ -65,7 +59,7 @@ class Model(NamedElement):
     This class represents the meta model for DOMMLite model
     object. DOMMLite model is a container for other objects.
     """
-    def __init__(self, name, short_desc = None, long_desc = None):
+    def __init__(self, name =None, short_desc = None, long_desc = None):
         super(Model, self).__init__(short_desc, long_desc)
         self.name = name
         self.types = set()
@@ -87,12 +81,12 @@ class Model(NamedElement):
     def add_constraint(self, constr):
         self.constrs.add(constr)
 
-    def set_constraint(self, constrs):
-        self.constrs = constrs
+    def set_packages(self, packages):
+        self.packages = packages
 
     def __repr__(self):
-        return 'Model "%s" (%s %s)\ntypes: %s\nconstraint: %s' % (
-            self.name, self.short_desc, self.long_desc, self.types, self.constrs)
+        return 'Model "%s" (%s %s)\ntypes: %s\nconstraint: %s\n%s' % (
+            self.name, self.short_desc, self.long_desc, self.types, self.constrs, self.packages)
 
 class DataType(NamedElement):
 
@@ -255,3 +249,32 @@ class ConstrDef(object):
             retStr += ' %s ' % i
         retStr += ']'
         return retStr
+
+class Package(NamedElement):
+    """
+    Package model that contains other packages or package elements
+    """
+    def __init__(self, name = None, short_desc = None, long_desc = None):
+        super(Package, self).__init__(short_desc=short_desc, long_desc=long_desc)
+        self.name = name
+        self.elems = set()
+
+    def set_name(self, name):
+        self.name = name
+
+    def add_elem(self, element):
+        self.elems.add(element)
+
+    def __repr__(self):
+        retStr = '\n--------------\npackage %s {\n' % self.name
+        for i in self.elems:
+            retStr += ' %s '% i
+        retStr += "}\n--------------\n"
+        return retStr
+
+class ExceptionType(NamedElement):
+    """
+    Exception object describing models
+    """
+    def __init__(self, name = None, short_desc = None, long_desc = None):
+        super(Exception, self).__init__(short_desc = short_desc, long_desc = long_desc)

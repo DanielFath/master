@@ -8,19 +8,20 @@ class ModelAction(SemanticAction):
     def first_pass(self, parser, node, children):
         # ID should been always present
         name = children[1]._id
-        model = Model(name)
+        model = Model()
 
-        for i in range(1, len(children)):
+        for ind, val in enumerate(children):
+            if type(val) == Id:
+                model.name = val._id
+            elif type(val) == NamedElement:
+                model.set_desc(val.short_desc, val.long_desc)
+            elif type(val) == DataType or type(val) == Enumeration:
+                model.add_type(val)
+            elif type(val) == Constraint:
+                model.add_constraint(val)
+            elif type(val) == Package:
+                model.add_package(val)
 
-            if type(children[i]) == NamedElement:
-                model.short_desc = children[i].short_desc
-                model.long_desc = children[i].long_desc
-            elif type(children[i]) == DataType or type(children[i]) == Enumeration:
-                model.add_type(children[i])
-            elif type(children[i]) == Constraint:
-                model.add_constraint(children[i])
-
-        #print("DEBUG Model: node  {} \n\n children {}".format(node, children))
         print("Debug Model %s" % (model))
 
         return model
@@ -205,4 +206,38 @@ class ConstraintAction(SemanticAction):
 
         constraint = Constraint(tag = children[1], built_in = builtin, constr_type = types)
         return constraint
+
+class PackageElemAction(SemanticAction):
+    """
+    Since package element can be multiple elements and the arpeggio
+    parser parses package_elem not as one of matching elements
+    but as package element, this action just recognizes the right
+    element based on keyword and lets the appropriate action take
+    care of it
+    """
+    def first_pass(self, parser, node, children):
+        if children[0] == "buildinDataType" or children[0] == "dataType":
+            return DataTypeAction().first_pass(parser, node, children)
+        elif children[0] == "buildinValidator" or children[0] == "validator" or children[0] == "buildinTagType" or children[0] == "tagType" :
+            return ConstraintAction().first_pass(parser, node, children)
+
+class PackageAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        package = Package()
+
+        for ind, val in enumerate(children):
+            if type(val) == Id:
+                print("Id found: {}".format(val))
+                package.set_name(val._id)
+            elif type(val) == NamedElement:
+                package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
+            elif type(val) == DataType:
+                package.add_elem(val)
+            elif type(val) == Enumeration:
+                package.add_elem(val)
+            elif type(val) == Constraint:
+                package.add_elem(val)
+
+        return package
+
 
