@@ -10,7 +10,7 @@ class DommError(Exception):
 
 class IdExistsError(DommError):
     """
-    Error when id was already declared
+    Error raised when id was already declared
     """
     def __init__(self, name):
         super(IdExistsError, self).__init__("")
@@ -18,7 +18,7 @@ class IdExistsError(DommError):
 
 class TypeExistsError(DommError):
     """
-    Error when dataType with same name was already declared
+    Error raised when dataType with same name was already declared
     """
     def __init__(self, name):
         super(TypeExistsError, self).__init__("")
@@ -26,7 +26,7 @@ class TypeExistsError(DommError):
 
 class DuplicateLiteralError(DommError):
     """
-    Error when there are two or more literals in enum with same name
+    Error raised when there are two or more literals in enum with same name
     """
     def __init__(self, name):
         super(DuplicateLiteralError, self).__init__("")
@@ -34,7 +34,7 @@ class DuplicateLiteralError(DommError):
 
 class ElipsisMustBeLast(DommError):
     """
-    Error when `...` isn't last element in syntax
+    Error raised when `...` isn't last element in syntax
     """
     def __init__(self, name):
         super(ElipsisMustBeLast, self).__init__("")
