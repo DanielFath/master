@@ -240,4 +240,21 @@ class PackageAction(SemanticAction):
 
         return package
 
+class TypeDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        type_def = TypeDef()
+
+        for ind, val in enumerate(children):
+            if type(val) == Id and ind == 0:
+                type_def.set_type(val._id)
+            elif type(val) == Id and ind != 0:
+                type_def.name = val._id
+            elif val == "[":
+                type_def.container = True
+            elif type(val) == int:
+                type_def.set_multi(val)
+
+        print("DEBUG type: {}".format(type_def))
+        return type_def
+
 

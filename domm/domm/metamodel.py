@@ -276,5 +276,54 @@ class ExceptionType(NamedElement):
     """
     Exception object describing models
     """
+class TypeDef(NamedElement):
+    # Contains collection of all elligible types
+    types = dict()
+
+    def __init__(self, name = None, short_desc = None, long_desc = None):
+        super(TypeDef, self).__init__(short_desc = short_desc, long_desc = long_desc)
+        self.name = name
+        self.type = None
+        self.container = False
+        self.multi = None
+
+    def set_multi(self, multi = None):
+        if multi is None:
+            self.container = False
+            self.multi = None
+        elif multi is not None and multi > 0:
+            self.container = True
+            self.multi = multi
+
+    def set_type(self, type_sign):
+        self.type = type_sign
+
+    def __repr__(self):
+        retStr = " %s of type %s" % (self.name, self.type)
+        if self.container:
+            retStr += "["
+            if self.multi is not None:
+                retStr += "%s" % (self.multi)
+            retStr += "]"
+        return retStr
+
+
+class Property(NamedElement):
+    """
+    Models properties of entities and other programming objects
+    """
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(Exception, self).__init__(short_desc = short_desc, long_desc = long_desc)
+        self.name = name
+
+        self.ordered = False
+        self.unique = False
+        self.readonly = False
+        self.required = False
+
+        self.type_def = None
+        self.relationship = None
+        self.constraints = set()
+
+    def add_constraint(self, constraint):
+        pass

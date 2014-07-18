@@ -65,3 +65,13 @@ def test_package():
             }
         }
         """)
+
+def test_exception():
+    parser = DommParser()
+    parser.parse(""" model test
+        package test {
+            exception ResultNotFound "Rezultat nije nadjen." {
+                prop int errorCode
+            }
+        }
+    """)

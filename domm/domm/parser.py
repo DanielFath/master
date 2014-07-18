@@ -160,6 +160,7 @@ constr_def.sem = ConstrDefAction()
 apply_def.sem = ApplyDefAction()
 pack_elem.sem = PackageElemAction()
 package.sem = PackageAction()
+type_def.sem = TypeDefAction()
 
 class DommParser(ParserPython):
     """
