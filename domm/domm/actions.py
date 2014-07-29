@@ -270,4 +270,94 @@ class TypeDefAction(SemanticAction):
         #print("DEBUG type: {}".format(type_def))
         return type_def
 
+class ConstraintSpecAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        spec = ConstraintSpec()
+
+        filter_children = [x for x in children if x != "(" and x != ")"]
+
+        for ind, val in enumerate(filter_children):
+            if type(val) == Id and ind == 0:
+                spec.ident = val
+            elif type(val) == Id and ind != 0:
+                spec.add_param(val)
+            elif type(val) == str :
+                spec.add_param(val)
+            elif type(val) == int:
+                spec.add_param(val)
+
+        #print("DEBUG spec: {}".format(spec))
+        return spec
+
+class SpecsObj(object):
+    """Helper class for ConstrainSpecsAction"""
+    def __init__(self, list):
+        super(SpecsObj, self).__init__()
+        filter_list = [x for x in list if x != "[" and x != "]" and type(x)==ConstrSpec]
+        self.list_specs = filter_list
+
+class ConstraintSpecsAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        return SpecsObj(children)
+
+class RefObj(object):
+    """Helper class for RefAction SemanticAction"""
+    def __init__(self, ident):
+        super(RefObj, self).__init__()
+        self.ident = ident
+
+
+class RefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        for val in children:
+            if type(val) == Id:
+                return RefObj(val)
+
+class PropertyAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        prop = Property()
+
+        for val in children:
+            if val == "unique":
+                prop.unique = True
+
+            elif val == "ordered":
+                prop.ordered = True
+
+            elif val == "readonly":
+                prop.readonly = True
+
+            elif val == "required":
+                prop.required = True
+
+            elif type(val) == TypeDef:
+                prop.type_def = val
+
+            elif val == "+":
+                if prop.relationship is None:
+                    rel = Relationship()
+                    prop.relationship = rel
+
+                prop.relationship.containment = True
+            elif type(val) == RefObj:
+                if prop.relationship is None:
+                    rel = Relationship()
+                    prop.relationship = rel
+
+                prop.relationship.opposite_end = val.ident
+            elif type(val) == SpecsObj:
+                for x in val.list_specs:
+                    prop.add_constraint_spec(x)
+
+            elif type(val) == NamedElement:
+                prop.set_desc(val.short_desc, val.long_desc)
+
+        return prop
+
+    def second_pass(self, parser, node):
+        pass
+
+class ExceptionAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        exception = ExceptionType()
 

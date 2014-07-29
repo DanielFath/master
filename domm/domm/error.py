@@ -41,7 +41,22 @@ class ElipsisMustBeLast(DommError):
         self.message = ' The ... must be last element. ' % (name)
 
 class DuplicateTypeError(object):
-    """docstring for DuplicateTypeError"""
     def __init__(self, name):
         super(DuplicateTypeError, self).__init__()
         self.message = 'A type with name "%s" already exists!' % (name)
+
+class ExceptionExistsError(DommError):
+    """
+    Error raised when dataType with same name was already declared
+    """
+    def __init__(self, name):
+        super(ExceptionExistsError, self).__init__("")
+        self.message = ' exception with name <"%s"> already declared ' % (name)
+
+class DuplicatePropertyError(DommError):
+    """
+    Error raised when two properties in a field have same name
+    """
+    def __init__(self, name):
+        super(DuplicatePropertyError, self).__init__("")
+        self.message = ' Property with name <"%s"> already declared ' % (name)

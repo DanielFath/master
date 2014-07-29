@@ -348,6 +348,13 @@ class ExceptionType(NamedElement):
         else:
             self.props[prop.name] = prop
 
+class Relationship(object):
+    """Describes all properties of a Relationship property"""
+    def __init__(self, containment = False, opposite_end = None):
+        super(Relationship, self).__init__()
+        self.containment = containment
+        self.opposite_end = opposite_end
+
 class TypeDef(NamedElement):
     # Contains collection of all elligible types
     types = dict()
@@ -383,23 +390,66 @@ class TypeDef(NamedElement):
             retStr += "]"
         return retStr
 
+class ConstraintSpec(object):
+    """
+    Constraint specification applies constraint to an bound entity
+    """
+    def __init__(self, ident = None):
+        super(ConstraintSpec, self).__init__()
+        self.ident = ident
+        self.parameters = set()
+        self.bound = None
+
+    # Returns whether the constraint spec matched by id
+    # is compatible with property it is bound to
+    # and the parameters provided
+    def verify(self, constraint):
+        pass
+
+    def add_param(self, param):
+        self.parameters.add(param)
+
+    def __repr__(self):
+        retStr = " [ %s " % self.ident
+        for val in self.parameters:
+            retStr += " `%s` " % val
+        retStr += " ]"
+        return retStr
+
+
 
 class Property(NamedElement):
     """
     Models properties of entities and other programming objects
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(Exception, self).__init__(short_desc = short_desc, long_desc = long_desc)
+        super(Property, self).__init__(short_desc = short_desc, long_desc = long_desc)
         self.name = name
 
         self.ordered = False
         self.unique = False
         self.readonly = False
         self.required = False
+        self.composite = False
 
         self.type_def = None
         self.relationship = None
         self.constraints = set()
 
-    def add_constraint(self, constraint):
-        pass
+    def add_constraint_spec(self, constraint_spec):
+        self.constraints.add(constraint_spec)
+
+    def __repr__(self):
+        retStr = " prop "
+        if self.ordered:
+            retStr += " ordered "
+        if self.unique:
+            retStr += " unique "
+        if self.readonly:
+            retStr += " readonly "
+        if self.required:
+            retStr += " required "
+
+        retStr += " %s  %s " % (self.type_def, self.relationship)
+
+        return retStr

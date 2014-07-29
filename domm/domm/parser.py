@@ -165,6 +165,9 @@ apply_def.sem = ApplyDefAction()
 pack_elem.sem = PackageElemAction()
 package.sem = PackageAction()
 type_def.sem = TypeDefAction()
+constr_spec.sem = ConstraintSpecAction()
+ref.sem = RefAction()
+prop.sem = PropertyAction()
 
 class DommParser(ParserPython):
     """
