@@ -19,6 +19,7 @@ from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
 
 from actions import *
+from metamodel import Id, TypeDef, DataType, Constraint, Enumeration, ExceptionType
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return [(string, string), string]
@@ -171,6 +172,21 @@ class DommParser(ParserPython):
     """
     def __init__(self, *args, **kwargs):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
+
+    def string_into_ast(self, content):
+        self.parse(content)
+        val = self.getASG()
+        print("DEBUG ast: {}".format(val))
+        return val
+
+    @staticmethod
+    def reset_namespace():
+        Id.reset()
+        DataType.reset()
+        TypeDef.reset()
+        Constraint.reset()
+        Enumeration.reset()
+        ExceptionType.reset()
 
 
 if __name__ == "__main__":

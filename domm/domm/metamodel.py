@@ -37,6 +37,10 @@ class Id(object):
 
     all_id = set()
 
+    @staticmethod
+    def reset():
+        Id.all_id = set()
+
     """
     Id that represents a name of a type or a parameter
     """
@@ -53,6 +57,8 @@ class Id(object):
 
     def __repr__(self):
         return 'Id("%s")' % (self._id)
+
+
 
 class Model(NamedElement):
     """
@@ -102,6 +108,10 @@ class DataType(NamedElement):
 
     all_types = set()
 
+    @staticmethod
+    def reset():
+        DataType.all_types = set()
+
     def __init__(self, name, short_desc = None, long_desc = None, built_in = False):
         super(DataType, self).__init__(short_desc, long_desc)
         self._checked_add(name)
@@ -113,6 +123,7 @@ class DataType(NamedElement):
         else:
             self.name = name
             DataType.all_types.add(name)
+            TypeDef.types[name] = self
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
@@ -141,6 +152,10 @@ class Constraint(object):
     """
 
     all_constraints = set()
+
+    @staticmethod
+    def reset():
+        Constraint.all_constraints = set()
 
     def __init__(self, tag = None, built_in = False, constr_type = None):
         super(Constraint, self).__init__()
@@ -179,6 +194,10 @@ class Enumeration(NamedElement):
 
     all_enums = set()
 
+    @staticmethod
+    def reset():
+        Enumeration.all_enums = set()
+
     def __init__(self, name, short_desc = None, long_desc = None):
         super(Enumeration, self).__init__(short_desc, long_desc)
         self._checked_add(name)
@@ -190,6 +209,7 @@ class Enumeration(NamedElement):
         else:
             self.name = name
             Enumeration.all_enums.add(name)
+            TypeDef.types[name] = self
 
     def add_literal(self, literal):
         if literal in self.literals:
@@ -253,6 +273,9 @@ class ConstrDef(object):
         else:
             self.constraints.add(constr)
 
+    def verify(self, field):
+        pass
+
     def __repr__(self):
         retStr = ' constr ['
         for i in self.constraints:
@@ -286,8 +309,10 @@ class ExceptionType(NamedElement):
     """
     Exception object describing models
     """
+
     exceptions = set()
 
+    @staticmethod
     def reset():
         ExceptionType.exceptions = set()
 
@@ -326,6 +351,10 @@ class ExceptionType(NamedElement):
 class TypeDef(NamedElement):
     # Contains collection of all elligible types
     types = dict()
+
+    @staticmethod
+    def reset():
+        TypeDef.types = dict()
 
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(TypeDef, self).__init__(short_desc = short_desc, long_desc = long_desc)
