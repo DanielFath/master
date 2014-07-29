@@ -1,7 +1,7 @@
 import pytest
 from  arpeggio import NoMatch
 from  domm.parser import DommParser
-from  domm.metamodel import Model, Id
+from  domm.metamodel import *
 
 with pytest.raises(NoMatch):
     DommParser().parse("")
@@ -19,23 +19,31 @@ def test_model():
     assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ')["simple"] == simple3
     DommParser.reset_namespace()
 
-def test_entity():
-    parser = DommParser()
-    parser.parse("""model simple
-        dataType Name
-        """)
+def test_dataType():
+    parsed1 = DommParser().string_into_ast("""model simple
+        dataType Name""")["simple"]
+    DommParser.reset_namespace()
 
-    parser.parse("""model simple
-        buildinDataType Name
-        """)
+    expected1 = Model(name = "simple").add_type(DataType(name = "Name"))
+    assert parsed1 == expected1
+    DommParser.reset_namespace()
 
-    parser.parse("""model simple
-        dataType Name "Ime osobe"
-        """)
+    parsed2 = DommParser().string_into_ast("""model simple
+        dataType Name "Ime osobe" """)["simple"]
+    DommParser.reset_namespace()
 
-    parser.parse("""model simple
-        dataType Name "Ime osobe" "Detaljno objasnjenje imena osobe"
-        """)
+    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Ime osobe"))
+    assert parsed2 ==  expected2
+    DommParser.reset_namespace()
+
+    parsed3 = DommParser().string_into_ast("""model simple
+        dataType Name "Ime osobe" "Detaljno objasnjenje imena osobe" """)["simple"]
+    DommParser.reset_namespace()
+
+    expected3 = Model(name = "simple").add_type(
+        DataType(name = "Name", short_desc = "Ime osobe", long_desc="Detaljno objasnjenje imena osobe"))
+    assert parsed3 ==  expected3
+    DommParser.reset_namespace()
 
 def test_enum():
     parser = DommParser()

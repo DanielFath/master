@@ -13,6 +13,58 @@
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
 from error import *
+from parser import DParse as DParse
+
+class NamespaceResolver(object):
+    """
+    A utility class that temporarily stores and resolves
+    namespace problems
+    """
+    def __init__(self):
+        super(NameSpaceResolver, self).__init__()
+        self.all_id = set()
+        self.all_datatypes = set()
+        self.all_constraints = set()
+        self.all_enums = set()
+        self.exceptions = set()
+        self.types = dict()
+
+    def add_id(self, ident):
+        if ident in self.all_id:
+            raise IdExistsError(ident)
+        else:
+            self.all_id.add(ident)
+
+    def add_datatype(self, data_type, name):
+        if name in self.all_datatypes:
+            raise TypeExistsError(name)
+        else:
+            self.all_datatypes.add(name)
+            self.types[name] = data_type
+
+    def add_tag(self, tag):
+        assert tag is not None
+        assert type(tag) == CommonTag
+
+        if tag.name in self.all_constraints:
+            raise DuplicateTypeError(tag.name)
+        else:
+            self.all_constraints.add(tag.name)
+
+    def add_enum(self, enum, enum_name):
+        if enum_name in self.all_enums:
+            raise TypeExistsError(enum_name)
+        else:
+            self.all_enums.add(enum_name)
+            self.types[enum_name] = enum
+
+    def add_exception(self, excp, excp_name):
+        if excp_name in self.exceptions:
+            raise ExceptionExistsError(excp_name)
+        else:
+            self.exceptions.add(excp_name)
+            self.types[excp_name] = excp
+
 
 class NamedElement(object):
     """
@@ -34,26 +86,17 @@ class NamedElement(object):
         return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self.short_desc, self.long_desc)
 
 class Id(object):
-
-    all_id = set()
-
-    @staticmethod
-    def reset():
-        Id.all_id = set()
-
     """
     Id that represents a name of a type or a parameter
     """
-    def __init__(self, id):
+    def __init__(self, ident):
         super(Id, self).__init__()
-        self._checked_add(id)
-        self._id = id;
+        self._checked_add(ident)
+        self._id = ident;
 
-    def _checked_add(self, ids):
-        if ids in Id.all_id:
-            raise IdExistsError(ids)
-        else:
-            Id.all_id.add(ids)
+    def _checked_add(self, ident):
+        if DParse.namespace is not None:
+            DParse.namespace.add_id(ident)
 
     def __repr__(self):
         return 'Id("%s")' % (self._id)
@@ -112,11 +155,6 @@ class Model(NamedElement):
 
 class DataType(NamedElement):
 
-    all_types = set()
-
-    @staticmethod
-    def reset():
-        DataType.all_types = set()
 
     def __init__(self, name, short_desc = None, long_desc = None, built_in = False):
         super(DataType, self).__init__(short_desc, long_desc)
@@ -124,16 +162,26 @@ class DataType(NamedElement):
         self.built_in = built_in
 
     def _checked_add(self, name):
-        if name in DataType.all_types:
-            raise TypeExistsError(name)
-        else:
-            self.name = name
-            DataType.all_types.add(name)
-            TypeDef.types[name] = self
+        if DParse.namespace is not None:
+            DParse.namespace.add_datatype(self, name)
+
+        self.name
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
             self.name, self.built_in, self.short_desc, self.long_desc)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__) and self.name == other.name and self.built_in == other.built_in:
+            return True
+        else:
+            return False
+
+    def __hash__(self):
+        return hash((self.name, self.built_in))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 class CommonTag(NamedElement):
     """
@@ -157,28 +205,19 @@ class Constraint(object):
     both built-in and user defined.
     """
 
-    all_constraints = set()
-
-    @staticmethod
-    def reset():
-        Constraint.all_constraints = set()
-
     def __init__(self, tag = None, built_in = False, constr_type = None):
         super(Constraint, self).__init__()
-        self.tag = None
         self._checked_add(tag)
+        self.tag = tag
         self.built_in = built_in
         self.constr_type = constr_type
 
     def _checked_add(self, tag):
-
-        if tag is None:
-            return
-        elif tag.name in self.all_constraints:
-            raise DuplicateTypeError(tag.name)
-        else:
-            self.tag = tag
-            Constraint.all_constraints.add(tag.name)
+        if DParse.namespace is not None:
+            if tag is not None:
+                DParse.namespace.add_tag(tag)
+            else:
+                return
 
     def __repr__(self):
         retStr = '\n'
@@ -198,24 +237,16 @@ class Constraint(object):
 
 class Enumeration(NamedElement):
 
-    all_enums = set()
-
-    @staticmethod
-    def reset():
-        Enumeration.all_enums = set()
 
     def __init__(self, name, short_desc = None, long_desc = None):
         super(Enumeration, self).__init__(short_desc, long_desc)
         self._checked_add(name)
+        self.name = name
         self.literals = set()
 
     def _checked_add(self, name):
-        if name in Enumeration.all_enums:
-            raise TypeExistsError(name)
-        else:
-            self.name = name
-            Enumeration.all_enums.add(name)
-            TypeDef.types[name] = self
+        if DParse.namespace is not None:
+            DParse.namespace.add_enum(self, name)
 
     def add_literal(self, literal):
         if literal in self.literals:
@@ -316,12 +347,6 @@ class ExceptionType(NamedElement):
     Exception object describing models
     """
 
-    exceptions = set()
-
-    @staticmethod
-    def reset():
-        ExceptionType.exceptions = set()
-
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(ExceptionType, self).__init__(short_desc = short_desc, long_desc = long_desc)
         self._checked_name(name)
@@ -334,12 +359,11 @@ class ExceptionType(NamedElement):
         # exception FileNotFound { ... }
         #
         # Can't exist simultaneously
-        if name in ExceptionType.exceptions:
-            raise ExceptionExistsError(name)
-        else:
-            self.name = name
-            ExceptionType.exceptions.add(name)
-            TypeDef.types[name] = self
+        if DParse.namespace is not None:
+            DParse.namespace.add_exception(self, name)
+
+        self.name = name
+
 
     def add_propr(self, prop):
         # In exception we can't for example have two same named fields
@@ -362,12 +386,6 @@ class Relationship(object):
         self.opposite_end = opposite_end
 
 class TypeDef(NamedElement):
-    # Contains collection of all elligible types
-    types = dict()
-
-    @staticmethod
-    def reset():
-        TypeDef.types = dict()
 
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(TypeDef, self).__init__(short_desc = short_desc, long_desc = long_desc)
