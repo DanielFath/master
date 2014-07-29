@@ -1,15 +1,23 @@
 import pytest
 from  arpeggio import NoMatch
 from  domm.parser import DommParser
+from  domm.metamodel import Model, Id
 
 with pytest.raises(NoMatch):
     DommParser().parse("")
 
+
 def test_model():
-    parser = DommParser()
-    parser.parse("model simple")
-    parser.parse('model simple "short_desc"')
-    parser.parse('model simple "short_desc" "long_desc"')
+    assert DommParser().string_into_ast("model simple")["simple"] == Model(name="simple")
+    DommParser.reset_namespace()
+
+    simple2 = Model(name="simple", short_desc="short_desc")
+    assert DommParser().string_into_ast('model simple "short_desc" ')["simple"] == simple2
+    DommParser.reset_namespace()
+
+    simple3 = Model(name="simple", short_desc="short_desc", long_desc="long_desc")
+    assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ')["simple"] == simple3
+    DommParser.reset_namespace()
 
 def test_entity():
     parser = DommParser()
