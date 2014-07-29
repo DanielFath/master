@@ -99,7 +99,7 @@ def repr_param():       return [string, prop]
 # for instance we can define that some elements are between certain values.
 # For examples grades of a student are between 1 and 5 (or A and F)
 def constr_specs():     return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
-def constr_spec():      return constraint_type, Optional("(", constr_param, ZeroOrMore(",", constr_param), ")"),
+def constr_spec():      return ident, Optional("(", constr_param, ZeroOrMore(",", constr_param), ")"),
 def constr_param():     return [string, ident, integer]
 
 # Feature represents a combinationf of properties and operation which
@@ -111,7 +111,7 @@ def feature():          return [prop, oper]
 # required. Then type and it's cardinality are defined. And lastly the reference to another
 # entity is shown.
 def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),Kwd("unique"), Kwd("readonly"),
-                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_def), Optional(named_elem)
+                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_specs), Optional(named_elem)
 def type_def():         return ident,  Optional("[", Optional(integer),"]"), ident
 def ref():              return "<>", ident
 
@@ -121,10 +121,10 @@ def ref():              return "<>", ident
 def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique"),
                             Kwd("required")]), type_def, "(", Optional(param, ZeroOrMore(",", param)
                             ), ")", Optional("throws", ident,
-                            ZeroOrMore(",", ident) ), Optional(constr_def), Optional(named_elem)
+                            ZeroOrMore(",", ident) ), Optional(constr_specs), Optional(named_elem)
 
 def param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
-                            ), type_def, Optional(constr_def), Optional(named_elem)
+                            ), type_def, Optional(constr_specs), Optional(named_elem)
 
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
