@@ -35,7 +35,7 @@ class ModelAction(SemanticAction):
             elif type(val) == Package:
                 model.add_package(val)
 
-        print("Debug Model %s" % (model))
+        #print("Debug Model %s" % (model))
 
         return model
 
@@ -135,7 +135,7 @@ class CommonTagAction(SemanticAction):
                 short_desc = value.short_desc
 
         tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr = constr_def, applies = apply_def)
-        print("DEBUG CommonTag: {}".format(tag))
+        #print("DEBUG CommonTag: {}".format(tag))
         return tag
 
 class ApplyDefAction(SemanticAction):
@@ -240,7 +240,7 @@ class PackageAction(SemanticAction):
 
         for ind, val in enumerate(children):
             if type(val) == Id:
-                print("Id found: {}".format(val))
+                #print("Id found: {}".format(val))
                 package.set_name(val._id)
             elif type(val) == NamedElement:
                 package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
@@ -267,7 +267,7 @@ class TypeDefAction(SemanticAction):
             elif type(val) == int:
                 type_def.set_multi(val)
 
-        print("DEBUG type: {}".format(type_def))
+        #print("DEBUG type: {}".format(type_def))
         return type_def
 
 
