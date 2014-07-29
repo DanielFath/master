@@ -74,21 +74,27 @@ class Model(NamedElement):
 
     def add_type(self, type_def):
         self.types.add(type_def)
+        return self
 
     def set_types(self, types):
         self.types = types
+        return self
 
     def add_package(self, package):
         self.packages.add(package)
+        return self
 
     def set_types(self, packages):
         self.packages = packages
+        return self
 
     def add_constraint(self, constr):
         self.constrs.add(constr)
+        return self
 
     def set_packages(self, packages):
         self.packages = packages
+        return self
 
     def __repr__(self):
         return 'Model "%s" (%s %s)\ntypes: %s\nconstraint: %s\n%s' % (
