@@ -9,3 +9,9 @@ enum Boje "boje" {
 }
 
 buildinTagType plural (_string) appliesTo _entity _valueObject
+
+package test {
+    exception errorNotFound {
+        prop +string[] poruka <> ref [isGreaterThanOrEqualToInt(bh)]
+    }
+}
