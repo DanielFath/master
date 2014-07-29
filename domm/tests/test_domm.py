@@ -56,8 +56,8 @@ def test_enum():
 def test_tagType():
     parser = DommParser()
     parser.parse("""model test
-        tagType type1
-        buildinTagType type2
+        tagType orderBy (_ref, ...) appliesTo _entity
+        buildinTagType plural (_string) appliesTo _entity _valueObject
         validatorType type3
         buildInValidatorType type4
     """)
