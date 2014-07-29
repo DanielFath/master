@@ -32,9 +32,9 @@ def test_dataType():
     assert parsed1 == expected1
 
     parsed2 = DommParser().string_into_ast("""model simple
-        dataType Name "Ime osobe" """)["simple"]
+        buildinDataType Name "Ime osobe" """)["simple"]
 
-    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Ime osobe"))
+    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Ime osobe", built_in = True))
     assert parsed2 ==  expected2
 
     parsed3 = DommParser().string_into_ast("""model simple
