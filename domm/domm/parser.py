@@ -150,6 +150,7 @@ def domm():             return OneOrMore(model), EndOfFile
 
 # Next block connects semantic actions with
 # Parser rules.
+domm.sem = DommAction()
 model.sem = ModelAction()
 named_elem.sem = NamedElementAction()
 string.sem = StringAction()

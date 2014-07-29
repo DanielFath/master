@@ -1,6 +1,19 @@
 from arpeggio import SemanticAction
 from metamodel import *
 
+class DommAction(SemanticAction):
+    """
+    Simple action that returns a dictionary of models
+    """
+    def first_pass(self, parser, node, children):
+        model_map = dict()
+
+        filter_children = [x for x in children if type(x) != str]
+
+        for x in filter_children:
+            model_map[x.name] = x
+        return model_map
+
 class ModelAction(SemanticAction):
     """
     Represents semantic action Model in DOMMLite
