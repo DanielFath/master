@@ -62,10 +62,12 @@ def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
 def builtin_valid():    return Kwd("buildInValidatorType"), common_tag
 def common_tag():       return ident, Optional(constr_def), Optional(apply_def), Optional(named_elem)
-def constr_def():       return "(", constr_type, ZeroOrMore(",", constr_type) , ")"
+def constr_def():       return [elipsis_def, non_elipsis]
+def elipsis_def():      return "(", [Kwd("..."), (constr_type, ",", "...")]
+def non_elipsis():      return "(", constr_type, ZeroOrMore(",", constr_type) , ")"
 def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"), Kwd("_prop"),
                             Kwd("_param"), Kwd("_op"), Kwd("_service"), Kwd("_valueObject")])
-def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref"), Kwd("...")]
+def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref")]
 
 # Defines package which is a unit of code organization, which may contain other nested packages
 def package():          return Kwd("package"), ident, Optional(named_elem), "{", ZeroOrMore(pack_elem), "}"
