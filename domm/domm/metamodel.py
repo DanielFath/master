@@ -286,6 +286,43 @@ class ExceptionType(NamedElement):
     """
     Exception object describing models
     """
+    exceptions = set()
+
+    def reset():
+        ExceptionType.exceptions = set()
+
+    def __init__(self, name = None, short_desc = None, long_desc = None):
+        super(ExceptionType, self).__init__(short_desc = short_desc, long_desc = long_desc)
+        self._checked_name(name)
+        self.props = dict()
+
+    def _checked_name(self, name):
+        # In package we can't for example have two same named Exceptions
+        #
+        # exception FileNotFound {}
+        # exception FileNotFound { ... }
+        #
+        # Can't exist simultaneously
+        if name in ExceptionType.exceptions:
+            raise ExceptionExistsError(name)
+        else:
+            self.name = name
+            ExceptionType.exceptions.add(name)
+            TypeDef.types[name] = self
+
+    def add_propr(self, prop):
+        # In exception we can't for example have two same named fields
+        #
+        # exception FileNotFound {
+        #    prop int errorCode
+        #    prop char errorCode
+        # }
+        # Can't exist simultaneously
+        if prop.name in self.props.keys:
+            raise DuplicatePropertyerror(prop.name)
+        else:
+            self.props[prop.name] = prop
+
 class TypeDef(NamedElement):
     # Contains collection of all elligible types
     types = dict()
