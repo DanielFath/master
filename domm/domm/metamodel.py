@@ -88,6 +88,16 @@ class Model(NamedElement):
         return 'Model "%s" (%s %s)\ntypes: %s\nconstraint: %s\n%s' % (
             self.name, self.short_desc, self.long_desc, self.types, self.constrs, self.packages)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.name == other.name and self.short_desc == other.short_desc and (
+                self.types == other.types and self.constrs == other.constrs and self.packages == other.packages)
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 class DataType(NamedElement):
 
     all_types = set()
