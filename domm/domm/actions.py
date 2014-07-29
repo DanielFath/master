@@ -71,7 +71,7 @@ class IdAction(SemanticAction):
     Represents actions done when identifier is found
     """
     def first_pass(self, parser, node, children):
-        return Id(node.value)
+        return Id(node.value, namespace = parser.namespace)
 
 class IntAction(SemanticAction):
     """
@@ -103,7 +103,7 @@ class EnumAction(SemanticAction):
     Evaluates value of enumeration
     """
     def first_pass(self, parser, node, children):
-        enum = Enumeration(name = children[1]._id)
+        enum = Enumeration(name = children[1]._id, namespace = parser.namespace)
 
         for i in range(1, len(children)):
             if type(children[i]) == NamedElement:
@@ -151,8 +151,10 @@ class ConstrDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         constr_def = ConstrDef()
 
-        for i in range(1, len(children)-1):
-            constr_def.add_constr(children[i])
+        filter_children = [x for x in children if x != "(" and x != ")"]
+
+        for val in filter_children:
+            constr_def.constraints.add(val)
 
         return constr_def
 
@@ -193,7 +195,8 @@ class DataTypeAction(SemanticAction):
             short_desc = children[2].short_desc
             long_desc = children[2].long_desc
 
-        data_type = DataType(name, built_in = builtin, short_desc= short_desc, long_desc= long_desc)
+        data_type = DataType(name, built_in = builtin, short_desc= short_desc,
+            long_desc= long_desc, namespace= parser.namespace)
         return data_type
 
 class ConstraintAction(SemanticAction):
@@ -217,7 +220,8 @@ class ConstraintAction(SemanticAction):
             builtin = False
             types = ConstraintType.Tag
 
-        constraint = Constraint(tag = children[1], built_in = builtin, constr_type = types)
+        constraint = Constraint(tag = children[1], built_in = builtin, constr_type = types,
+            namespace = parser.namespace)
         return constraint
 
 class PackageElemAction(SemanticAction):

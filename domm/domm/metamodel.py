@@ -13,7 +13,6 @@
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
 from error import *
-from parser import DParse as DParse
 
 class NamespaceResolver(object):
     """
@@ -21,13 +20,28 @@ class NamespaceResolver(object):
     namespace problems
     """
     def __init__(self):
-        super(NameSpaceResolver, self).__init__()
+        super(NamespaceResolver, self).__init__()
         self.all_id = set()
         self.all_datatypes = set()
         self.all_constraints = set()
         self.all_enums = set()
         self.exceptions = set()
         self.types = dict()
+
+    def check(self, obj):
+        if obj is None:
+            return
+
+        if type(obj) == Id:
+            self.add_id(obj)
+        elif type(obj) == DataType:
+            self.add_datatype(obj, obj.name)
+        elif type(obj) == Constraint:
+            self.add_tag(obj)
+        elif type(obj) == Enumeration:
+            self.add_enum(obj, obj.name)
+        elif type(obj) == ExceptionType:
+            self.add_exception(obj)
 
     def add_id(self, ident):
         if ident in self.all_id:
@@ -42,14 +56,11 @@ class NamespaceResolver(object):
             self.all_datatypes.add(name)
             self.types[name] = data_type
 
-    def add_tag(self, tag):
-        assert tag is not None
-        assert type(tag) == CommonTag
-
-        if tag.name in self.all_constraints:
-            raise DuplicateTypeError(tag.name)
+    def add_tag(self, obj):
+        if obj.tag.name in self.all_constraints:
+            raise DuplicateTypeError(obj.tag.name)
         else:
-            self.all_constraints.add(tag.name)
+            self.all_constraints.add(obj.tag.name)
 
     def add_enum(self, enum, enum_name):
         if enum_name in self.all_enums:
@@ -65,38 +76,47 @@ class NamespaceResolver(object):
             self.exceptions.add(excp_name)
             self.types[excp_name] = excp
 
+class NamespacedObject(object):
+    """
+    These are objects that belong to a certain namespace
+    """
+    def __init__(self, namespace):
+        super(NamespacedObject, self).__init__()
+        self.namespace = namespace
+
+    def _check(self):
+        if self.namespace is not None:
+            self.namespace.check(self)
+
 
 class NamedElement(object):
     """
     Named element represents short and long description
     that is encountered accross various DOMMLite constructs
     """
-    def __init__(self, short_desc = None, long_desc = None):
-        super(NamedElement, self).__init__()
+    def __init__(self, name = None, short_desc = None, long_desc = None):
+        self.name = name
         self.short_desc = short_desc
         self.long_desc = long_desc
 
     def set_desc(self, short_desc, long_desc):
         self.short_desc = short_desc
         self.long_desc = long_desc
-    """
-    Pretty print named element out
-    """
+
     def __repr__(self):
+        """
+        Pretty print named element out
+        """
         return 'Named element { short_desc = "%s" long_desc  = "%s" }' % (self.short_desc, self.long_desc)
 
-class Id(object):
+class Id(NamespacedObject):
     """
     Id that represents a name of a type or a parameter
     """
-    def __init__(self, ident):
-        super(Id, self).__init__()
-        self._checked_add(ident)
+    def __init__(self, ident, namespace = None):
+        super(Id, self).__init__(namespace)
         self._id = ident;
-
-    def _checked_add(self, ident):
-        if DParse.namespace is not None:
-            DParse.namespace.add_id(ident)
+        self._check()
 
     def __repr__(self):
         return 'Id("%s")' % (self._id)
@@ -109,8 +129,7 @@ class Model(NamedElement):
     object. DOMMLite model is a container for other objects.
     """
     def __init__(self, name =None, short_desc = None, long_desc = None):
-        super(Model, self).__init__(short_desc, long_desc)
-        self.name = name
+        super(Model, self).__init__(name, short_desc, long_desc)
         self.types = set()
         self.constrs = set()
         self.packages = set()
@@ -153,19 +172,14 @@ class Model(NamedElement):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-class DataType(NamedElement):
+class DataType(NamedElement, NamespacedObject):
 
 
-    def __init__(self, name, short_desc = None, long_desc = None, built_in = False):
-        super(DataType, self).__init__(short_desc, long_desc)
-        self._checked_add(name)
+    def __init__(self, name, short_desc = None, long_desc = None, built_in = False, namespace = None):
+        super(DataType, self).__init__(name, short_desc, long_desc)
+        self.namespace = namespace
         self.built_in = built_in
-
-    def _checked_add(self, name):
-        if DParse.namespace is not None:
-            DParse.namespace.add_datatype(self, name)
-
-        self.name
+        self._check()
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
@@ -188,8 +202,7 @@ class CommonTag(NamedElement):
     Common function signature for Tags/Validators
     """
     def __init__(self, name, short_desc = None, long_desc = None, constr = None, applies = None):
-        super(CommonTag, self).__init__(short_desc, long_desc)
-        self.name = name
+        super(CommonTag, self).__init__(name, short_desc, long_desc)
         self.constr = constr
         self.applies = applies
 
@@ -199,25 +212,18 @@ class CommonTag(NamedElement):
 class ConstraintType(object):
     Tag, Validator = range(2)
 
-class Constraint(object):
+class Constraint(NamespacedObject):
     """
     A unified container for tagTypes and validators,
     both built-in and user defined.
     """
 
-    def __init__(self, tag = None, built_in = False, constr_type = None):
-        super(Constraint, self).__init__()
-        self._checked_add(tag)
+    def __init__(self, tag = None, built_in = False, constr_type = None, namespace = None):
+        super(Constraint, self).__init__(namespace)
         self.tag = tag
         self.built_in = built_in
         self.constr_type = constr_type
-
-    def _checked_add(self, tag):
-        if DParse.namespace is not None:
-            if tag is not None:
-                DParse.namespace.add_tag(tag)
-            else:
-                return
+        self._check()
 
     def __repr__(self):
         retStr = '\n'
@@ -235,18 +241,14 @@ class Constraint(object):
 
         return retStr
 
-class Enumeration(NamedElement):
+class Enumeration(NamedElement, NamespacedObject):
 
 
-    def __init__(self, name, short_desc = None, long_desc = None):
-        super(Enumeration, self).__init__(short_desc, long_desc)
-        self._checked_add(name)
-        self.name = name
+    def __init__(self, name, short_desc = None, long_desc = None, namespace = None):
+        super(Enumeration, self).__init__(name, short_desc, long_desc)
+        self.namespace = namespace
         self.literals = set()
-
-    def _checked_add(self, name):
-        if DParse.namespace is not None:
-            DParse.namespace.add_enum(self, name)
+        self._check()
 
     def add_literal(self, literal):
         if literal in self.literals:
@@ -267,9 +269,8 @@ class EnumLiteral(NamedElement):
     Enumeration literal
     """
     def __init__(self, value, name, short_desc = None, long_desc = None):
-        super(EnumLiteral, self).__init__(short_desc = None, long_desc = None)
+        super(EnumLiteral, self).__init__(name, short_desc, long_desc)
         self.value = value
-        self.name = name
 
     def __repr__(self):
         return ' %s - %s (%s, %s)' % (self.name, self.value, self.short_desc, self.long_desc)
@@ -309,7 +310,6 @@ class ConstrDef(object):
             raise ElipsisMustBeLast()
         else:
             self.constraints.add(constr)
-
     def verify(self, field):
         pass
 
@@ -325,8 +325,7 @@ class Package(NamedElement):
     Package model that contains other packages or package elements
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(Package, self).__init__(short_desc=short_desc, long_desc=long_desc)
-        self.name = name
+        super(Package, self).__init__(name, short_desc, long_desc)
         self.elems = set()
 
     def set_name(self, name):
@@ -342,27 +341,15 @@ class Package(NamedElement):
         retStr += "}\n--------------\n"
         return retStr
 
-class ExceptionType(NamedElement):
+class ExceptionType(NamedElement, NamespacedObject):
     """
     Exception object describing models
     """
 
     def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(ExceptionType, self).__init__(short_desc = short_desc, long_desc = long_desc)
-        self._checked_name(name)
+        super(ExceptionType, self).__init__(name, short_desc, long_desc)
         self.props = dict()
-
-    def _checked_name(self, name):
-        # In package we can't for example have two same named Exceptions
-        #
-        # exception FileNotFound {}
-        # exception FileNotFound { ... }
-        #
-        # Can't exist simultaneously
-        if DParse.namespace is not None:
-            DParse.namespace.add_exception(self, name)
-
-        self.name = name
+        self._check()
 
 
     def add_propr(self, prop):
@@ -388,7 +375,7 @@ class Relationship(object):
 class TypeDef(NamedElement):
 
     def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(TypeDef, self).__init__(short_desc = short_desc, long_desc = long_desc)
+        super(TypeDef, self).__init__(name, short_desc, long_desc)
         self.name = name
         self.type = None
         self.container = False
@@ -447,8 +434,7 @@ class Property(NamedElement):
     Models properties of entities and other programming objects
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(Property, self).__init__(short_desc = short_desc, long_desc = long_desc)
-        self.name = name
+        super(Property, self).__init__(name, short_desc, long_desc)
 
         self.ordered = False
         self.unique = False
