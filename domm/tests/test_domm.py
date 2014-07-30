@@ -32,33 +32,34 @@ def test_dataType():
     assert parsed1 == expected1
 
     parsed2 = DommParser().string_into_ast("""model simple
-        buildinDataType Name "Ime osobe" """)["simple"]
+        buildinDataType Name "Name of person" """)["simple"]
 
-    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Ime osobe", built_in = True))
+    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Name of person", built_in = True))
     assert parsed2 ==  expected2
 
     parsed3 = DommParser().string_into_ast("""model simple
-        dataType Name "Ime osobe" "Detaljno objasnjenje imena osobe" """)["simple"]
+        dataType Name "Name of person" "Detailed description of field" """)["simple"]
 
     expected3 = Model(name = "simple").add_type(
-        DataType(name = "Name", short_desc = "Ime osobe", long_desc="Detaljno objasnjenje imena osobe"))
+        DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field"))
     assert parsed3 ==  expected3
 
 def test_enum():
-    parser = DommParser()
-    parser.parse(""" model enum
-    enum Boje "boje" {
+    parsed1 = DommParser().string_into_ast(""" model enum
+    enum Color "Color desc." {
         R "Red"
         G "Green"
         B "Blue"
-    }""")
+    }""")["enum"]
 
-    parser.parse(""" model enum
-    enum Boje "boje" {
-        R "Red" "Crvena" "Boja Crvena"
-        G "Green" "Zelena" "Boja Zelena"
-        B "Blue" "Plava" "Boja Plava"
-    }""")
+    expected1 = Model(name = "enum").add_type(
+        Enumeration(name = "Color", short_desc = "Color desc." ).add_all_literals([
+            EnumLiteral(value = "R", name = "Red"),
+            EnumLiteral(value = "G", name = "Green"),
+            EnumLiteral(value = "B", name = "Blue")
+            ])
+        )
+    assert parsed1 == expected1
 
 def test_tagType():
     parser = DommParser()

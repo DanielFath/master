@@ -250,11 +250,31 @@ class Enumeration(NamedElement, NamespacedObject):
         self.literals = set()
         self._check()
 
+    def add_all_literals(self, list_literals):
+        assert type(list_literals) == list
+        for i in list_literals:
+            self.add_literal(i)
+
+        return self
+
     def add_literal(self, literal):
         if literal in self.literals:
             raise DuplicateLiteralError(literal.name)
         else:
             self.literals.add(literal)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, hash(frozenset(self.literals)) ))
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            print("self.name == other.name %s" % (self.name == other.name))
+            return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc and self.literals == other.literals
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         retStr = '\nenum %s (%s, %s) {' % (self.name, self.short_desc, self.long_desc)
@@ -271,6 +291,19 @@ class EnumLiteral(NamedElement):
     def __init__(self, value, name, short_desc = None, long_desc = None):
         super(EnumLiteral, self).__init__(name, short_desc, long_desc)
         self.value = value
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.value == other.value  and self.name == other.name and (
+                self.short_desc == other.short_desc and self.long_desc == other.short_desc)
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.value, self.name, self.short_desc, self.long_desc))
 
     def __repr__(self):
         return ' %s - %s (%s, %s)' % (self.name, self.value, self.short_desc, self.long_desc)
