@@ -163,7 +163,7 @@ class Model(NamedElement):
             self.name, self.short_desc, self.long_desc, self.types, self.constrs, self.packages)
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
+        if type(other) is type(self):
             return self.name == other.name and self.short_desc == other.short_desc and (
                 self.types == other.types and self.constrs == other.constrs and self.packages == other.packages)
         else:
@@ -186,8 +186,8 @@ class DataType(NamedElement, NamespacedObject):
             self.name, self.built_in, self.short_desc, self.long_desc)
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__) and self.name == other.name and self.built_in == other.built_in:
-            return True
+        if type(other) is type(self):
+            return self.name == other.name and self.built_in == other.built_in
         else:
             return False
 
@@ -267,8 +267,7 @@ class Enumeration(NamedElement, NamespacedObject):
         return hash((self.name, self.short_desc, self.long_desc, hash(frozenset(self.literals)) ))
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            print("self.name == other.name %s" % (self.name == other.name))
+        if type(other) is type(self):
             return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc and self.literals == other.literals
         else:
             return False
@@ -293,7 +292,7 @@ class EnumLiteral(NamedElement):
         self.value = value
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
+        if type(other) is type(self):
             return self.value == other.value  and self.name == other.name and (
                 self.short_desc == other.short_desc and self.long_desc == other.short_desc)
         else:
