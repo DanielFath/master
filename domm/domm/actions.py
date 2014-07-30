@@ -145,6 +145,7 @@ class ApplyDefAction(SemanticAction):
         for i in range(1, len(children)):
             app_def.add_apply(children[i])
 
+        #print("DEBUG ApplyDef {}".format(app_def))
         return app_def
 
 class ConstrDefAction(SemanticAction):
@@ -230,6 +231,7 @@ class ConstraintAction(SemanticAction):
         constraint = Constraint(tag = tag, built_in = builtin, constr_type = types,
             namespace = parser.namespace)
 
+        #print("DEBUG: constraint {}".format(constraint))
         return constraint
 
 class PackageElemAction(SemanticAction):
