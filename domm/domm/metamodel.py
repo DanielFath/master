@@ -250,7 +250,7 @@ class Constraint(NamespacedObject):
             retStr += 'validator'
 
         if self.tag is not None:
-            retStr += ' %s appliesTo %s %s ' % (self.tag.name, self.tag.applies, self.tag.constr)
+            retStr += ' %s %s %s ' % (self.tag.name, self.tag.applies, self.tag.constr)
 
         return retStr
 
@@ -336,40 +336,42 @@ class ApplyDef(object):
 
     def add_apply(self, appl):
         if appl == "_entity":
-            if self.to_entity == True:
+            if self.to_entity:
                 raise DuplicateApplyError(appl)
             else:
-                self.to_entity == True
+                self.to_entity = True
 
         if appl == "_prop":
-            if self.to_prop == True:
+            if self.to_prop:
                 raise DuplicateApplyError(appl)
             else:
-                self.to_prop == True
+                self.to_prop = True
+
         if appl == "_param":
-            if self.to_param == True:
+            if self.to_param:
                 raise DuplicateApplyError(appl)
             else:
-                self.to_param == True
+                self.to_param = True
 
         if appl == "_service":
-            if self.to_service == True:
+            if self.to_service:
                 raise DuplicateApplyError(appl)
             else:
-                self.to_service == True
+                self.to_service = True
 
         if appl == "_op":
-            if self.to_op == True:
+            if self.to_op:
                 raise DuplicateApplyError(appl)
             else:
-                self.to_op == True
-        if appl == "_value_object":
-            if self.to_value_object == True:
-                raise DuplicateApplyError(appl)
-            else:
-                self.to_value_object == True
+                self.to_op = True
 
-            return self
+        if appl == "_valueObject":
+            if self.to_value_object:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_value_object = True
+
+        return self
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -395,7 +397,7 @@ class ApplyDef(object):
         if self.to_op:
             retStr += "_op "
         if self.to_value_object:
-            retStr += "_value_object "
+            retStr += "_valueObject "
         return retStr
 
 class ConstrDef(object):
