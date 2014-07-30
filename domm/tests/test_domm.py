@@ -62,13 +62,14 @@ def test_enum():
     assert parsed1 == expected1
 
 def test_tagType():
-    parser = DommParser()
-    parser.parse("""model test
+    parsed1 = DommParser().string_into_ast("""model test
         tagType orderBy (_ref, ...) appliesTo _entity
         buildinTagType plural (_string) appliesTo _entity _valueObject
-        validatorType type3
-        buildInValidatorType type4
-    """)
+        validatorType example
+        buildInValidatorType text_example "short desc" "long description"
+    """)["test"]
+
+
 
 def test_package():
     parser = DommParser()

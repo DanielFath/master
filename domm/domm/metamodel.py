@@ -206,6 +206,19 @@ class CommonTag(NamedElement):
         self.constr = constr
         self.applies = applies
 
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc and (
+                self.constr == other.constr and self.applies == other.applies)
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.constr, self.applies))
+
     def __repr__(self):
         return 'common_tag %s %s %s' % (self.name, self.constr, self.applies)
 
@@ -314,19 +327,75 @@ class ApplyDef(object):
     """
     def __init__(self):
         super(ApplyDef, self).__init__()
-        self.applies = set()
+        self.to_entity = False
+        self.to_prop = False
+        self.to_param = False
+        self.to_service = False
+        self.to_op = False
+        self.to_value_object = False
 
     def add_apply(self, appl):
-        if appl in self.applies:
-            raise DuplicateApplyError(appl)
-        else:
-            self.applies.add(appl)
+        if appl == "_entity":
+            if self.to_entity == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_entity == True
+
+        if appl == "_prop":
+            if self.to_prop == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_prop == True
+        if appl == "_param":
+            if self.to_param == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_param == True
+
+        if appl == "_service":
+            if self.to_service == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_service == True
+
+        if appl == "_op":
+            if self.to_op == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_op == True
+        if appl == "_value_object":
+            if self.to_value_object == True:
+                raise DuplicateApplyError(appl)
+            else:
+                self.to_value_object == True
+
+            return self
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.to_entity, self.to_prop, self.to_param, self.to_service, self.to_op, self.to_value_object))
 
     def __repr__(self):
-        retStr = ' applies to ('
-        for i in self.applies:
-            retStr += ' %s ' % i
-        retStr += ')'
+        retStr = ' appliesTo '
+        if self.to_entity:
+            retStr += "_entity "
+        if self.to_prop:
+            retStr += "_prop "
+        if self.to_param:
+            retStr += "_param "
+        if self.to_service:
+            retStr += "_service "
+        if self.to_op:
+            retStr += "_op "
+        if self.to_value_object:
+            retStr += "_value_object "
         return retStr
 
 class ConstrDef(object):

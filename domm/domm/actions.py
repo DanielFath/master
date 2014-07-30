@@ -206,6 +206,7 @@ class ConstraintAction(SemanticAction):
     def first_pass(self, parser, node, children):
         builtin = None
         types = None
+        tag = None
 
         if children[0] == "buildinValidator":
             builtin = True
@@ -220,8 +221,15 @@ class ConstraintAction(SemanticAction):
             builtin = False
             types = ConstraintType.Tag
 
-        constraint = Constraint(tag = children[1], built_in = builtin, constr_type = types,
+        if type(children[1]) == CommonTag:
+            tag = children[1]
+        # If only id is present the arpeggio will first identify id instead of Common tag
+        elif type(children[1]) == Id:
+            tag = CommonTag(name = children[1]._id)
+
+        constraint = Constraint(tag = tag, built_in = builtin, constr_type = types,
             namespace = parser.namespace)
+
         return constraint
 
 class PackageElemAction(SemanticAction):
