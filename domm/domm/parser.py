@@ -173,9 +173,10 @@ class DommParser(ParserPython):
     """
     Parser of DOMMLite DSL language
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, debugDomm = False, *args, **kwargs):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
         self.namespace = NamespaceResolver()
+        self.debugDomm = debugDomm
 
     def string_into_ast(self, content):
         self.parse(content)

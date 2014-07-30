@@ -35,7 +35,8 @@ class ModelAction(SemanticAction):
             elif type(val) == Package:
                 model.add_package(val)
 
-        #print("Debug Model %s" % (model))
+        if parser.debugDomm:
+            print("DEBUG ModelAction returns: ", model)
 
         return model
 
@@ -95,7 +96,8 @@ class TypesAction(SemanticAction):
         elif children[0] == "buildinDataType" or children[0] == "dataType":
             return DataTypeAction().first_pass(parser, node, children)
         elif children[0] == "buildinValidatorType" or children[0] == "validatorType" or children [0] == "buildinTagType" or children[0] == "tagType":
-            #print("DEBUG types:  {}".format( children))
+            if parser.debugDomm:
+                print("DEBUG TypesAction (children):  {}".format( children))
             return ConstraintAction().first_pass(parser, node, children)
 
 class EnumAction(SemanticAction):
@@ -135,7 +137,9 @@ class CommonTagAction(SemanticAction):
                 short_desc = value.short_desc
 
         tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr = constr_def, applies = apply_def)
-        #print("DEBUG CommonTag: {}".format(tag))
+
+        if parser.debugDomm:
+            print("DEBUG CommonTagAction returns: ", tag)
         return tag
 
 class ApplyDefAction(SemanticAction):
@@ -145,7 +149,8 @@ class ApplyDefAction(SemanticAction):
         for i in range(1, len(children)):
             app_def.add_apply(children[i])
 
-        #print("DEBUG ApplyDef {}".format(app_def))
+        if parser.debugDomm:
+            print("DEBUG ApplyDefAction returns: ", app_def)
         return app_def
 
 class ConstrDefAction(SemanticAction):
@@ -231,7 +236,9 @@ class ConstraintAction(SemanticAction):
         constraint = Constraint(tag = tag, built_in = builtin, constr_type = types,
             namespace = parser.namespace)
 
-        #print("DEBUG: constraint {}".format(constraint))
+        if parser.debugDomm:
+            print("DEBUG ConstraintAction returns: ", constraint)
+
         return constraint
 
 class PackageElemAction(SemanticAction):
@@ -281,7 +288,9 @@ class TypeDefAction(SemanticAction):
             elif type(val) == int:
                 type_def.set_multi(val)
 
-        #print("DEBUG type: {}".format(type_def))
+        if parser.debugDomm:
+            print("DEBUG TypeDefAction returns: ", type_def)
+
         return type_def
 
 class ConstraintSpecAction(SemanticAction):
@@ -300,7 +309,9 @@ class ConstraintSpecAction(SemanticAction):
             elif type(val) == int:
                 spec.add_param(val)
 
-        #print("DEBUG spec: {}".format(spec))
+        if parser.debugDomm:
+            print("DEBUG ConstraintSpecAction returns: ", spec)
+
         return spec
 
 class SpecsObj(object):
