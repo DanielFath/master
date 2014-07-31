@@ -21,36 +21,36 @@ buildinTagType greaterThan  appliesTo _param
 buildinTagType lessEqual  appliesTo _param
 buildinTagType lessThan  appliesTo _param
 
-buildInValidatorType isAlphaNumeric appliesTo _prop
-buildInValidatorType isLowerCase appliesTo _prop
-buildInValidatorType isUpperCase appliesTo _prop
-buildInValidatorType isCommaSeparatedIntegerList appliesTo _prop
-buildInValidatorType isCommaSeparatedEmailList appliesTo _prop
-buildInValidatorType isOnlyDigits appliesTo _prop
-buildInValidatorType isNotOnlyDigits appliesTo _prop
-buildInValidatorType isOnlyLetters appliesTo _prop
-buildInValidatorType isValidEmail appliesTo _prop
-buildInValidatorType isValidImage appliesTo _prop
-buildInValidatorType isValidImageURL appliesTo _prop
-buildInValidatorType isValidURL appliesTo _prop
-buildInValidatorType isValidHTML appliesTo _prop
-buildInValidatorType isWellFormedXML appliesTo _prop
-buildInValidatorType isWellFormedXMLFragment appliesTo _prop
-buildInValidatorType isExistingURL appliesTo _prop
-buildInValidatorType isGreaterThanInt (_int) appliesTo _prop
-buildInValidatorType isLessThanInt (_int) appliesTo _prop
-buildInValidatorType isGreaterOrEqualThanInt (_int) appliesTo _prop
-buildInValidatorType isLessOrEqualThanInt (_int) appliesTo _prop
-buildInValidatorType isBetweenIntsInclusive (_int, _int) appliesTo _prop
-buildInValidatorType isBetweenIntsExclusive (_int, _int) appliesTo _prop
-buildInValidatorType isGreaterThanRef (_ref) appliesTo _prop
-buildInValidatorType isLessThanRef (_ref) appliesTo _prop
-buildInValidatorType isGreaterOrEqualThanRef (_ref) appliesTo _prop
-buildInValidatorType isLessOrEqualThanRef (_ref) appliesTo _prop
-buildInValidatorType isBetweenRefsInclusive (_ref, _ref) appliesTo _prop
-buildInValidatorType isBetweenRefsExclusive (_ref, _ref) appliesTo _prop
-buildInValidatorType notEmptyIfRefsNotEmpty (_ref, ...) appliesTo _prop
-buildInValidatorType emptyIfRefsNotEmpty (_ref, ...) appliesTo _prop
-buildInValidatorType notEmptyIfRefsEmpty (_ref, ...) appliesTo _prop
-buildInValidatorType emptyIfRefsEmpty (_ref, ...) appliesTo _prop
-buildInValidatorType matchesRegularExpression (_string) appliesTo _prop
+buildinValidator isAlphaNumeric appliesTo _prop
+buildinValidator isLowerCase appliesTo _prop
+buildinValidator isUpperCase appliesTo _prop
+buildinValidator isCommaSeparatedIntegerList appliesTo _prop
+buildinValidator isCommaSeparatedEmailList appliesTo _prop
+buildinValidator isOnlyDigits appliesTo _prop
+buildinValidator isNotOnlyDigits appliesTo _prop
+buildinValidator isOnlyLetters appliesTo _prop
+buildinValidator isValidEmail appliesTo _prop
+buildinValidator isValidImage appliesTo _prop
+buildinValidator isValidImageURL appliesTo _prop
+buildinValidator isValidURL appliesTo _prop
+buildinValidator isValidHTML appliesTo _prop
+buildinValidator isWellFormedXML appliesTo _prop
+buildinValidator isWellFormedXMLFragment appliesTo _prop
+buildinValidator isExistingURL appliesTo _prop
+buildinValidator isGreaterThanInt (_int) appliesTo _prop
+buildinValidator isLessThanInt (_int) appliesTo _prop
+buildinValidator isGreaterOrEqualThanInt (_int) appliesTo _prop
+buildinValidator isLessOrEqualThanInt (_int) appliesTo _prop
+buildinValidator isBetweenIntsInclusive (_int, _int) appliesTo _prop
+buildinValidator isBetweenIntsExclusive (_int, _int) appliesTo _prop
+buildinValidator isGreaterThanRef (_ref) appliesTo _prop
+buildinValidator isLessThanRef (_ref) appliesTo _prop
+buildinValidator isGreaterOrEqualThanRef (_ref) appliesTo _prop
+buildinValidator isLessOrEqualThanRef (_ref) appliesTo _prop
+buildinValidator isBetweenRefsInclusive (_ref, _ref) appliesTo _prop
+buildinValidator isBetweenRefsExclusive (_ref, _ref) appliesTo _prop
+buildinValidator notEmptyIfRefsNotEmpty (_ref, ...) appliesTo _prop
+buildinValidator emptyIfRefsNotEmpty (_ref, ...) appliesTo _prop
+buildinValidator notEmptyIfRefsEmpty (_ref, ...) appliesTo _prop
+buildinValidator emptyIfRefsEmpty (_ref, ...) appliesTo _prop
+buildinValidator matchesRegularExpression (_string) appliesTo _prop
