@@ -201,15 +201,15 @@ class CommonTag(NamedElement):
     """
     Common function signature for Tags/Validators
     """
-    def __init__(self, name, short_desc = None, long_desc = None, constr = None, applies = None):
+    def __init__(self, name, short_desc = None, long_desc = None, constr_def = None, applies = None):
         super(CommonTag, self).__init__(name, short_desc, long_desc)
-        self.constr = constr
+        self.constr_def = constr_def
         self.applies = applies
 
     def __eq__(self, other):
         if type(other) is type(self):
             return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc and (
-                self.constr == other.constr and self.applies == other.applies)
+                self.constr_def == other.constr_def and self.applies == other.applies)
         else:
             return False
 
@@ -217,10 +217,10 @@ class CommonTag(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, self.constr, self.applies))
+        return hash((self.name, self.short_desc, self.long_desc, self.constr_def, self.applies))
 
     def __repr__(self):
-        return 'common_tag %s %s %s' % (self.name, self.constr, self.applies)
+        return 'common_tag %s %s %s [%s %s]' % (self.name, self.constr_def, self.applies, self.short_desc, self.long_desc)
 
 class ConstraintType(object):
     Tag, Validator = range(2)
@@ -247,12 +247,30 @@ class Constraint(NamespacedObject):
         elif self.built_in == True and self.constr_type == ConstraintType.Validator:
             retStr += 'buildinValidator'
         elif self.built_in == False and self.constr_type == ConstraintType.Validator:
-            retStr += 'validator'
+            retStr += 'validatorType'
 
         if self.tag is not None:
-            retStr += ' %s %s %s ' % (self.tag.name, self.tag.applies, self.tag.constr)
+            retStr += ' %s ' % self.tag.name
+            if self.tag.constr_def is not None:
+                retStr += ' %s ' % self.tag.constr_def
+            if self.tag.applies is not None:
+                retStr += ' %s ' %self.tag.applies
+            retStr += ' "%s" "%s"' % (self.tag.short_desc, self.tag.long_desc)
 
         return retStr
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            # WARNING can't use __dict__ == __dict__ because namespace is transient 
+            return self.built_in == other.built_in and self.tag == other.tag and self.constr_type == other.constr_type
+        else:
+            return False
+
+    def __hash__(self):
+        return hash((self.tag, self.built_in, self.constr_type))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 class Enumeration(NamedElement, NamespacedObject):
 
@@ -325,14 +343,14 @@ class ApplyDef(object):
     Apply def signature. There can't be multiple applies on same type of parameter.
     For example, you can't have a `applyTo _str _str`.
     """
-    def __init__(self):
+    def __init__(self, to_entity = False, to_prop = False, to_param = False, to_service = False, to_op = False, to_value_object = False):
         super(ApplyDef, self).__init__()
-        self.to_entity = False
-        self.to_prop = False
-        self.to_param = False
-        self.to_service = False
-        self.to_op = False
-        self.to_value_object = False
+        self.to_entity = to_entity
+        self.to_prop = to_prop
+        self.to_param = to_param
+        self.to_service = to_service
+        self.to_op = to_op
+        self.to_value_object = to_value_object
 
     def add_apply(self, appl):
         if appl == "_entity":
@@ -404,17 +422,33 @@ class ConstrDef(object):
     """
     Apply constr signature
     """
-    def __init__(self):
+    def __init__(self, constraints = None):
         super(ConstrDef, self).__init__()
-        self.constraints = set()
+        self.constraints = list()
+        if constraints is not None and type(constraints) == list:
+            for i in constraints:
+                self.add_constr(i)
 
     def add_constr(self, constr):
         if "..." in self.constraints:
             raise ElipsisMustBeLast()
         else:
-            self.constraints.add(constr)
+            self.constraints.append(constr)
+        return self
+
     def verify(self, field):
         pass
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__repr__())
 
     def __repr__(self):
         retStr = ' constr ['

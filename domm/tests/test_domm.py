@@ -66,9 +66,21 @@ def test_tagType():
         tagType orderBy (_ref, ...) appliesTo _entity
         buildinTagType plural (_string) appliesTo _entity _valueObject
         validatorType example
-        buildInValidatorType text_example "short desc" "long description"
+        buildinValidator text_example "short desc" "long description"
     """)["test"]
 
+    tag1 = CommonTag(name = "orderBy", constr_def = ConstrDef(["_ref", "..."]), applies = ApplyDef(to_entity = True))
+    tag2 = CommonTag(name = "plural", constr_def = ConstrDef(["_string"]), applies = ApplyDef(to_entity = True, to_value_object = True))
+    tag3 = CommonTag(name = "example")
+    tag4 = CommonTag(name = "text_example", short_desc = "short desc", long_desc = "long description")
+
+    expected1 = Model(name = "test"
+        ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Tag, tag = tag1)
+        ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Tag, tag = tag2)
+        ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Validator, tag = tag3)
+        ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Validator, tag = tag4))
+
+    assert expected1 == parsed1
 
 
 def test_package():

@@ -86,6 +86,9 @@ class TypesAction(SemanticAction):
     Evaluates value of given type
     """
     def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("Entered TypesAction")
+            print("Entered children = ", children)
         # First keyword can only be
         #   enum
         #   buildinDataType/dataType
@@ -95,9 +98,9 @@ class TypesAction(SemanticAction):
             return EnumAction().first_pass(parser, node, children)
         elif children[0] == "buildinDataType" or children[0] == "dataType":
             return DataTypeAction().first_pass(parser, node, children)
-        elif children[0] == "buildinValidatorType" or children[0] == "validatorType" or children [0] == "buildinTagType" or children[0] == "tagType":
+        elif children[0] == "buildinValidator" or children[0] == "validatorType" or children [0] == "buildinTagType" or children[0] == "tagType":
             if parser.debugDomm:
-                print("DEBUG TypesAction (children):  {}".format( children))
+                print("DEBUG validator branch (children): ", children)
             return ConstraintAction().first_pass(parser, node, children)
 
 class EnumAction(SemanticAction):
@@ -126,17 +129,22 @@ class CommonTagAction(SemanticAction):
         constr_def = None
         apply_def = None
 
-        for ind, value in enumerate(children):
+        if parser.debugDomm:
+            print("DEBUG CommonTagAction children: ", children)
+
+        for value in children:
 
             if type(value) == ConstrDef:
                 constr_def = value
             elif type(value) == ApplyDef:
                 apply_def = value
             elif type(value) == NamedElement:
+                if parser.debugDomm:
+                    print("DEBUG CommonTagAction NamedElement: ", value)
                 long_desc = value.long_desc
                 short_desc = value.short_desc
 
-        tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr = constr_def, applies = apply_def)
+        tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr_def = constr_def, applies = apply_def)
 
         if parser.debugDomm:
             print("DEBUG CommonTagAction returns: ", tag)
@@ -157,10 +165,11 @@ class ConstrDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         constr_def = ConstrDef()
 
-        filter_children = [x for x in children if x != "(" and x != ")"]
+        # Filter all irrelevant strings from query
+        filter_children = [x for x in children if x != "(" and x != ")" and x != ',']
 
         for val in filter_children:
-            constr_def.constraints.add(val)
+            constr_def.add_constr(val)
 
         return constr_def
 
@@ -217,7 +226,7 @@ class ConstraintAction(SemanticAction):
         if children[0] == "buildinValidator":
             builtin = True
             types = ConstraintType.Validator
-        elif children[0] == "validator":
+        elif children[0] == "validatorType":
             builtin = False
             types = ConstraintType.Validator
         elif children[0] == "buildinTagType":
@@ -226,6 +235,7 @@ class ConstraintAction(SemanticAction):
         elif children[0] == "tagType":
             builtin = False
             types = ConstraintType.Tag
+
 
         if type(children[1]) == CommonTag:
             tag = children[1]

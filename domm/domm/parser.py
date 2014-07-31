@@ -61,7 +61,7 @@ def builtin_tag():      return Kwd("buildinTagType"), common_tag
 # They determine if a given value is essentially correct.
 def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
-def builtin_valid():    return Kwd("buildInValidatorType"), common_tag
+def builtin_valid():    return Kwd("buildinValidator"), common_tag
 def common_tag():       return ident, Optional(constr_def), Optional(apply_def), Optional(named_elem)
 def constr_def():       return [elipsis_def, non_elipsis]
 def elipsis_def():      return "(", [Kwd("..."), (constr_type, ",", "...")], ")"
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     # First we will make a parser - an instance of the DOMMLite parser model.
     # Parser model is given in the form of python constructs therefore we
     # are using ParserPython class.
-    parser = DommParser()
+    parser = DommParser(debugDomm = True)
 
     # Then we export it to a dot file in order to visualise DOMMLite's model.
     # This step is optional but it is handy for debugging purposes.
