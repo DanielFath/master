@@ -470,6 +470,18 @@ class Package(NamedElement):
 
     def add_elem(self, element):
         self.elems.add(element)
+        return self
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc and self.elems == other.elems
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, hash(frozenset(self.elems)) ))
 
     def __repr__(self):
         retStr = '\n--------------\npackage %s {\n' % self.name

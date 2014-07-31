@@ -264,10 +264,15 @@ class PackageElemAction(SemanticAction):
             return DataTypeAction().first_pass(parser, node, children)
         elif children[0] == "buildinValidator" or children[0] == "validator" or children[0] == "buildinTagType" or children[0] == "tagType" :
             return ConstraintAction().first_pass(parser, node, children)
+        elif children[0] == "package":
+            return PackageAction().first_pass(parser, node, children)
 
 class PackageAction(SemanticAction):
     def first_pass(self, parser, node, children):
         package = Package()
+
+        if parser.debugDomm:
+            print("DEBUG PackageAction (children)", children)
 
         for ind, val in enumerate(children):
             if type(val) == Id:
@@ -280,6 +285,8 @@ class PackageAction(SemanticAction):
             elif type(val) == Enumeration:
                 package.add_elem(val)
             elif type(val) == Constraint:
+                package.add_elem(val)
+            elif type(val) == Package:
                 package.add_elem(val)
 
         return package

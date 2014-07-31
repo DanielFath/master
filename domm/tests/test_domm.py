@@ -80,12 +80,18 @@ def test_tagType():
         ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Validator, tag = tag3)
         ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Validator, tag = tag4))
 
+    unexpected1 = Model(name = "test"
+        ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Tag, tag = tag1)
+        ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Tag, tag = tag3)
+        ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Validator, tag = tag2)
+        ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Validator, tag = tag4))
+
     assert expected1 == parsed1
+    assert !unexpected1 == parsed1
 
 
 def test_package():
-    parser = DommParser()
-    parser.parse(""" model test
+    parsed1 = DommParser().string_into_ast(""" model test
         package test {
             dataType test
 
@@ -93,7 +99,16 @@ def test_package():
 
             }
         }
-        """)
+        """)["test"]
+
+    pack1 = Package(name = "test"
+        ).add_elem(DataType(name = "test")
+        ).add_elem(Package(name="inner"))
+
+    expected1 = Model(name = "test").add_package(pack1)
+    unexpected1 = Model(name = "test").add_package(pack1)
+
+    assert parsed1 == expected1
 
 def test_exception():
     parser = DommParser()
