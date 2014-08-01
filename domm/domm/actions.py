@@ -276,7 +276,6 @@ class PackageAction(SemanticAction):
 
         for ind, val in enumerate(children):
             if type(val) == Id:
-                #print("Id found: {}".format(val))
                 package.set_name(val._id)
             elif type(val) == NamedElement:
                 package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
@@ -377,14 +376,12 @@ class PropertyAction(SemanticAction):
 
             elif val == "+":
                 if prop.relationship is None:
-                    rel = Relationship()
-                    prop.relationship = rel
+                    prop.relationship = Relationship()
 
                 prop.relationship.containment = True
             elif type(val) == RefObj:
                 if prop.relationship is None:
-                    rel = Relationship()
-                    prop.relationship = rel
+                    prop.relationship = Relationship()
 
                 prop.relationship.opposite_end = val.ident
             elif type(val) == SpecsObj:

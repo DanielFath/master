@@ -501,7 +501,7 @@ class ExceptionType(NamedElement, NamespacedObject):
         self._check()
 
 
-    def add_propr(self, prop):
+    def add_prop(self, prop):
         # In exception we can't for example have two same named fields
         #
         # exception FileNotFound {
@@ -509,10 +509,12 @@ class ExceptionType(NamedElement, NamespacedObject):
         #    prop char errorCode
         # }
         # Can't exist simultaneously
-        if prop.name in self.props.keys:
+        if prop.name in self.props:
             raise DuplicatePropertyerror(prop.name)
         else:
             self.props[prop.name] = prop
+
+        return self
 
 class Relationship(object):
     """Describes all properties of a Relationship property"""
