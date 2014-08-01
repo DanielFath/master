@@ -23,6 +23,9 @@ def test_model():
     simple3 = Model(name="simple", short_desc="short_desc", long_desc="long_desc")
     assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ')["simple"] == simple3
 
+    assert DommParser().string_into_ast('model simple1 "short_desc"  "long_desc"' )["simple1"] != simple3
+    assert DommParser().string_into_ast('model simple  "short_desc1" "long_desc"' )["simple"]  != simple3
+    assert DommParser().string_into_ast('model simple  "short_desc"  "long_desc1"')["simple"]  != simple3
 
 def test_dataType():
     parsed1 = DommParser().string_into_ast("""model simple
@@ -59,7 +62,15 @@ def test_enum():
             EnumLiteral(value = "B", name = "Blue")
             ])
         )
+    unexpected1 = Model(name = "enum").add_type(
+        Enumeration(name = "Color", short_desc = "Color desc." ).add_all_literals([
+            EnumLiteral(value = "R", name = "Red"),
+            EnumLiteral(value = "G", name = "Green"),
+            EnumLiteral(value = "B", name = "Blues")
+            ])
+        )
     assert parsed1 == expected1
+    assert parsed1 != unexpected1
 
 def test_tagType():
     parsed1 = DommParser().string_into_ast("""model test
@@ -86,8 +97,8 @@ def test_tagType():
         ).add_constraint(Constraint(built_in = False, constr_type = ConstraintType.Validator, tag = tag2)
         ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Validator, tag = tag4))
 
-    assert expected1 == parsed1
-    assert !unexpected1 == parsed1
+    assert parsed1 == expected1
+    assert not parsed1 == unexpected1
 
 
 def test_package():
@@ -104,11 +115,17 @@ def test_package():
     pack1 = Package(name = "test"
         ).add_elem(DataType(name = "test")
         ).add_elem(Package(name="inner"))
+    pack1alt = Package(name = "test"
+        ).add_elem(DataType(name = "test")
+        ).add_elem(Package(name="inner2"))
+
 
     expected1 = Model(name = "test").add_package(pack1)
-    unexpected1 = Model(name = "test").add_package(pack1)
+    unexpected1 = Model(name = "test").add_package(pack1alt)
 
     assert parsed1 == expected1
+    assert parsed1 != unexpected1
+
 
 def test_exception():
     parser = DommParser()
