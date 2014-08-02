@@ -78,13 +78,14 @@ def pack_elem():        return [package,classifier]
 def classifier():       return [entity, service, value_object, exception, types]
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
-def entity():           return Kwd("entity"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", key, ent_repr, Optional(constr_speclist
+def entity():           return Kwd("entity"), ident, Optional(ext_def), Optional(ext_def), Optional(named_elem), "{", key, ent_repr, Optional(constr_speclist
                              ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
-def service():          return Kwd("service"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", Optional(constr_speclist), ZeroOrMore(oper
+def service():          return Kwd("service"), ident, Optional(ext_def), Optional(dep_def), Optional(named_elem), "{", Optional(constr_speclist), ZeroOrMore(oper
                              ), ZeroOrMore(oper_compart), "}"
+
+def ext_def():          return Kwd("extends"), ident
+def dep_def():          return Kwd("depends"), ident, ZeroOrMore(",", ident)
 
 # An entity contains a key through which it is referenced.
 # This models something analogous to a complex database key.
