@@ -79,7 +79,7 @@ def classifier():       return [entity, service, value_object, exception, types]
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
 def entity():           return Kwd("entity"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", key, repr, Optional(constr_speclist
+                             ZeroOrMore(",", ident)), Optional(named_elem), "{", key, ent_repr, Optional(constr_speclist
                              ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
 def service():          return Kwd("service"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
@@ -93,7 +93,7 @@ def key():              return Kwd("key"), "{", OneOrMore(prop), "}"
 # Representation of given entity in the system. For example
 # a Person can be presented using their name and last name, despite having
 # age, ID number, place of residence, etc.
-def repr():             return Kwd("repr"), repr_param, ZeroOrMore("+", repr_param)
+def ent_repr():         return Kwd("repr"), repr_param, ZeroOrMore("+", repr_param)
 def repr_param():       return [string, prop]
 
 # Constraint definition defines a set of limitations to a type
