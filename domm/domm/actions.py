@@ -326,10 +326,11 @@ class ConstraintSpecAction(SemanticAction):
 
 class SpecsObj(object):
     """Helper class for ConstrainSpecsAction"""
-    def __init__(self, list):
+    def __init__(self, specs = None):
         super(SpecsObj, self).__init__()
-        filter_list = [x for x in list if x != "[" and x != "]" and type(x)==ConstrSpec]
-        self.list_specs = filter_list
+        self.specs = set()
+        if specs:
+            self.specs = specs
 
 class ConstraintSpecsAction(SemanticAction):
     def first_pass(self, parser, node, children):
