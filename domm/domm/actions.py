@@ -24,15 +24,15 @@ class ModelAction(SemanticAction):
         model = Model()
 
         for ind, val in enumerate(children):
-            if type(val) == Id:
+            if type(val) is Id:
                 model.name = val._id
-            elif type(val) == NamedElement:
+            elif type(val) is NamedElement:
                 model.set_desc(val.short_desc, val.long_desc)
-            elif type(val) == DataType or type(val) == Enumeration:
+            elif type(val) is DataType or type(val) is Enumeration:
                 model.add_type(val)
-            elif type(val) == Constraint:
+            elif type(val) is Constraint:
                 model.add_constraint(val)
-            elif type(val) == Package:
+            elif type(val) is Package:
                 model.add_package(val)
 
         if parser.debugDomm:
@@ -111,10 +111,10 @@ class EnumAction(SemanticAction):
         enum = Enumeration(name = children[1]._id, namespace = parser.namespace)
 
         for i in range(1, len(children)):
-            if type(children[i]) == NamedElement:
+            if type(children[i]) is NamedElement:
                 enum.short_desc = children[i].short_desc
                 enum.long_desc = children[i].long_desc
-            elif type(children[i]) == EnumLiteral:
+            elif type(children[i]) is EnumLiteral:
                 enum.add_literal(children[i])
         return enum
 
@@ -134,11 +134,11 @@ class CommonTagAction(SemanticAction):
 
         for value in children:
 
-            if type(value) == ConstrDef:
+            if type(value) is ConstrDef:
                 constr_def = value
-            elif type(value) == ApplyDef:
+            elif type(value) is ApplyDef:
                 apply_def = value
-            elif type(value) == NamedElement:
+            elif type(value) is NamedElement:
                 if parser.debugDomm:
                     print("DEBUG CommonTagAction NamedElement: ", value)
                 long_desc = value.long_desc
@@ -237,10 +237,10 @@ class ConstraintAction(SemanticAction):
             types = ConstraintType.Tag
 
 
-        if type(children[1]) == CommonTag:
+        if type(children[1]) is CommonTag:
             tag = children[1]
         # If only id is present the arpeggio will first identify id instead of Common tag
-        elif type(children[1]) == Id:
+        elif type(children[1]) is Id:
             tag = CommonTag(name = children[1]._id)
 
         constraint = Constraint(tag = tag, built_in = builtin, constr_type = types,
@@ -275,17 +275,11 @@ class PackageAction(SemanticAction):
             print("DEBUG PackageAction (children)", children)
 
         for ind, val in enumerate(children):
-            if type(val) == Id:
+            if type(val) is Id:
                 package.set_name(val._id)
-            elif type(val) == NamedElement:
+            elif type(val) is NamedElement:
                 package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
-            elif type(val) == DataType:
-                package.add_elem(val)
-            elif type(val) == Enumeration:
-                package.add_elem(val)
-            elif type(val) == Constraint:
-                package.add_elem(val)
-            elif type(val) == Package:
+            else:
                 package.add_elem(val)
 
         return package
@@ -295,13 +289,13 @@ class TypeDefAction(SemanticAction):
         type_def = TypeDef()
 
         for ind, val in enumerate(children):
-            if type(val) == Id and ind == 0:
+            if type(val) is Id and ind == 0:
                 type_def.set_type(val._id)
-            elif type(val) == Id and ind != 0:
+            elif type(val) is Id and ind != 0:
                 type_def.name = val._id
             elif val == "[":
                 type_def.container = True
-            elif type(val) == int:
+            elif type(val) is int:
                 type_def.set_multi(val)
 
         if parser.debugDomm:
@@ -316,14 +310,14 @@ class ConstraintSpecAction(SemanticAction):
         filter_children = [x for x in children if x != "(" and x != ")"]
 
         for ind, val in enumerate(filter_children):
-            if type(val) == Id and ind == 0:
-                spec.ident = val
-            elif type(val) == Id and ind != 0:
-                spec.add_param(val)
-            elif type(val) == str :
-                spec.add_param(val)
-            elif type(val) == int:
-                spec.add_param(val)
+            if type(val) is Id and ind == 0:
+                temp_spec.ident = val
+            elif type(val) is Id and ind != 0:
+                temp_spec.add_param(val)
+            elif type(val) is StrObj :
+                temp_spec.add_param(val.content)
+            elif type(val) is int:
+                temp_spec.add_param(val)
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecAction returns: ", spec)
@@ -351,8 +345,8 @@ class RefObj(object):
 class RefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         for val in children:
-            if type(val) == Id:
-                return RefObj(val)
+            if type(val) is Id:
+                retVal = RefObj(val)
 
 class PropertyAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -371,7 +365,7 @@ class PropertyAction(SemanticAction):
             elif val == "required":
                 prop.required = True
 
-            elif type(val) == TypeDef:
+            elif type(val) is TypeDef:
                 prop.type_def = val
 
             elif val == "+":
@@ -379,7 +373,7 @@ class PropertyAction(SemanticAction):
                     prop.relationship = Relationship()
 
                 prop.relationship.containment = True
-            elif type(val) == RefObj:
+            elif type(val) is RefObj:
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 

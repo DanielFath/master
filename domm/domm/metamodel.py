@@ -32,15 +32,15 @@ class NamespaceResolver(object):
         if obj is None:
             return
 
-        if type(obj) == Id:
+        if type(obj) is Id:
             self.add_id(obj)
-        elif type(obj) == DataType:
+        elif type(obj) is DataType:
             self.add_datatype(obj, obj.name)
-        elif type(obj) == Constraint:
+        elif type(obj) is Constraint:
             self.add_tag(obj)
-        elif type(obj) == Enumeration:
+        elif type(obj) is Enumeration:
             self.add_enum(obj, obj.name)
-        elif type(obj) == ExceptionType:
+        elif type(obj) is ExceptionType:
             self.add_exception(obj)
 
     def add_id(self, ident):
@@ -282,7 +282,7 @@ class Enumeration(NamedElement, NamespacedObject):
         self._check()
 
     def add_all_literals(self, list_literals):
-        assert type(list_literals) == list
+        assert type(list_literals) is list
         for i in list_literals:
             self.add_literal(i)
 
@@ -425,7 +425,7 @@ class ConstrDef(object):
     def __init__(self, constraints = None):
         super(ConstrDef, self).__init__()
         self.constraints = list()
-        if constraints is not None and type(constraints) == list:
+        if constraints is not None and type(constraints) is list:
             for i in constraints:
                 self.add_constr(i)
 
