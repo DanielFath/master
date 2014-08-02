@@ -82,12 +82,11 @@ class NamespacedObject(object):
     """
     def __init__(self, namespace):
         super(NamespacedObject, self).__init__()
-        self.namespace = namespace
+        self._namespace = namespace
 
     def _check(self):
-        if self.namespace is not None:
-            self.namespace.check(self)
-
+        if self._namespace is not None:
+            self._namespace.check(self)
 
 class NamedElement(object):
     """
@@ -177,7 +176,7 @@ class DataType(NamedElement, NamespacedObject):
 
     def __init__(self, name, short_desc = None, long_desc = None, built_in = False, namespace = None):
         super(DataType, self).__init__(name, short_desc, long_desc)
-        self.namespace = namespace
+        self._namespace = namespace
         self.built_in = built_in
         self._check()
 
@@ -261,7 +260,7 @@ class Constraint(NamespacedObject):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            # WARNING can't use __dict__ == __dict__ because namespace is transient 
+            # WARNING can't use __dict__ == __dict__ because namespace is transient
             return self.built_in == other.built_in and self.tag == other.tag and self.constr_type == other.constr_type
         else:
             return False
