@@ -79,11 +79,11 @@ def classifier():       return [entity, service, value_object, exception, types]
 
 # Defines an entity in DOMMLite model that often represents actors in the business model
 def entity():           return Kwd("entity"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", key, repr, Optional(constr_specs
+                             ZeroOrMore(",", ident)), Optional(named_elem), "{", key, repr, Optional(constr_speclist
                              ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
 def service():          return Kwd("service"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", Optional(constr_specs), ZeroOrMore(oper
+                             ZeroOrMore(",", ident)), Optional(named_elem), "{", Optional(constr_speclist), ZeroOrMore(oper
                              ), ZeroOrMore(oper_compart), "}"
 
 # An entity contains a key through which it is referenced.
@@ -99,7 +99,7 @@ def repr_param():       return [string, prop]
 # Constraint definition defines a set of limitations to a type
 # for instance we can define that some elements are between certain values.
 # For examples grades of a student are between 1 and 5 (or A and F)
-def constr_specs():     return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
+def constr_speclist():  return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
 def constr_spec():      return ident, Optional("(", constr_param, ZeroOrMore(",", constr_param), ")"),
 def constr_param():     return [string, ident, integer]
 
@@ -112,7 +112,7 @@ def feature():          return [prop, oper]
 # required. Then type and it's cardinality are defined. And lastly the reference to another
 # entity is shown.
 def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),Kwd("unique"), Kwd("readonly"),
-                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_specs), Optional(named_elem)
+                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_speclist), Optional(named_elem)
 def type_def():         return ident,  Optional("[", Optional(integer),"]"), ident
 def ref():              return "<>", ident
 
@@ -122,10 +122,10 @@ def ref():              return "<>", ident
 def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique"),
                             Kwd("required")]), type_def, "(", Optional(param, ZeroOrMore(",", param)
                             ), ")", Optional("throws", ident,
-                            ZeroOrMore(",", ident) ), Optional(constr_specs), Optional(named_elem)
+                            ZeroOrMore(",", ident) ), Optional(constr_speclist), Optional(named_elem)
 
 def param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
-                            ), type_def, Optional(constr_specs), Optional(named_elem)
+                            ), type_def, Optional(constr_speclist), Optional(named_elem)
 
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
@@ -166,6 +166,8 @@ pack_elem.sem = PackageElemAction()
 package.sem = PackageAction()
 type_def.sem = TypeDefAction()
 constr_spec.sem = ConstraintSpecAction()
+constr_speclist.sem = ConstraintSpecListAction()
+constr_param.sem = ConstraintParamAction()
 ref.sem = RefAction()
 prop.sem = PropertyAction()
 

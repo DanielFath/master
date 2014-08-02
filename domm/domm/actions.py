@@ -266,15 +266,22 @@ class PackageElemAction(SemanticAction):
             return ConstraintAction().first_pass(parser, node, children)
         elif children[0] == "package":
             return PackageAction().first_pass(parser, node, children)
+        elif children[0] == "exception":
+            return ExceptionAction().first_pass(parser, node, children)
+
+    def second_pass(self, parser, node):
+        pass
 
 class PackageAction(SemanticAction):
     def first_pass(self, parser, node, children):
         package = Package()
 
-        if parser.debugDomm:
-            print("DEBUG PackageAction (children)", children)
+        filter_children = [x for x in children if type(x) is not str]
 
-        for ind, val in enumerate(children):
+        if parser.debugDomm:
+            print("DEBUG PackageAction (filter_children)", filter_children)
+
+        for val in filter_children:
             if type(val) is Id:
                 package.set_name(val._id)
             elif type(val) is NamedElement:
@@ -305,9 +312,13 @@ class TypeDefAction(SemanticAction):
 
 class ConstraintSpecAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        spec = ConstraintSpec()
+        temp_spec = ConstraintSpec()
 
-        filter_children = [x for x in children if x != "(" and x != ")"]
+        # We filter for strings to remove all `(` `)` `,` strings from children
+        filter_children = [x for x in children if type(x) is not str]
+
+        if parser.debugDomm:
+            print("DEBUG ConstraintSpecAction enter (filter_children): ", filter_children)
 
         for ind, val in enumerate(filter_children):
             if type(val) is Id and ind == 0:
@@ -320,9 +331,36 @@ class ConstraintSpecAction(SemanticAction):
                 temp_spec.add_param(val)
 
         if parser.debugDomm:
-            print("DEBUG ConstraintSpecAction returns: ", spec)
+            print("DEBUG ConstraintSpecAction returns: ", temp_spec)
 
-        return spec
+        return temp_spec
+
+class StrObj(object):
+    """Helper class for string in StrObj"""
+    def __init__(self, content = ""):
+        super(StrObj, self).__init__()
+        self.content = content
+
+    def __repr__(self):
+        return "StrObj[%s]" % self.content
+
+
+class ConstraintParamAction(SemanticAction):
+    """
+    This action is used to get string content of a ConstraintSpec without
+    getting comma or quotation marks.
+    """
+    def first_pass(self, parser, node, children):
+        # Since this only appears when string is involved, we
+        # just assume the second child is the strings content
+        # Parse tree looks a bit like this:
+        #   (") (string) (")
+        string_param = StrObj(children[1])
+
+        if parser.debugDomm:
+            print("DEBUG ConstraintParamAction returns: ", string_param)
+
+        return string_param
 
 class SpecsObj(object):
     """Helper class for ConstrainSpecsAction"""
@@ -332,9 +370,29 @@ class SpecsObj(object):
         if specs:
             self.specs = specs
 
-class ConstraintSpecsAction(SemanticAction):
+    def __repr__(self):
+        return " SpecsObj(%s)" % self.specs
+
+class ConstraintSpecListAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        return SpecsObj(children)
+        list_specs = SpecsObj()
+
+        filter_children = [x for x in children if type(x) is ConstraintSpec or type(x) is Id]
+
+        if parser.debugDomm:
+            print("DEBUG ConstraintSpecListAction enter (filter_children): ", filter_children)
+
+        for val in filter_children:
+            if type(val) is ConstraintSpec:
+                list_specs.specs.add(val)
+            elif type(val) is Id:
+                temp = ConstraintSpec(ident = val)
+                list_specs.specs.add(temp)
+
+        if parser.debugDomm:
+            print("DEBUG ConstraintSpecListAction returns (list_specs): ", list_specs)
+
+        return list_specs
 
 class RefObj(object):
     """Helper class for RefAction SemanticAction"""
@@ -342,16 +400,31 @@ class RefObj(object):
         super(RefObj, self).__init__()
         self.ident = ident
 
+    def __repr__(self):
+        return " RefObj(%s)" % self.ident._id
+
 
 class RefAction(SemanticAction):
     def first_pass(self, parser, node, children):
+        retVal = None
+
         for val in children:
             if type(val) is Id:
                 retVal = RefObj(val)
 
+        if parser.debugDomm:
+            print("DEBUG RefAction returns: ", retVal)
+
+        return retVal
+
+
+
 class PropertyAction(SemanticAction):
     def first_pass(self, parser, node, children):
         prop = Property()
+
+        if parser.debugDomm:
+            print("DEBUG PropertyAction entered (children): {}\n".format(children))
 
         for val in children:
             if val == "unique":
@@ -370,28 +443,65 @@ class PropertyAction(SemanticAction):
                 prop.type_def = val
 
             elif val == "+":
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction  RefObj on enter: {}\n".format(prop.relationship))
+
                 if prop.relationship is None:
                     prop.relationship = Relationship()
+
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction  RefObj (prop): {}\n".format(prop.relationship))
 
                 prop.relationship.containment = True
             elif type(val) is RefObj:
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction  RefObj on enter: {}\n".format(prop.relationship))
+
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction  RefObj (prop): {}\n".format(prop.relationship))
+
                 prop.relationship.opposite_end = val.ident
-            elif type(val) == SpecsObj:
-                for x in val.list_specs:
+
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction After RefObj (prop): {}\n".format(prop.relationship))
+            elif type(val) is SpecsObj:
+                for x in val.specs:
                     prop.add_constraint_spec(x)
 
-            elif type(val) == NamedElement:
-                prop.set_desc(val.short_desc, val.long_desc)
+            elif type(val) is NamedElement:
+                if prop.type_def is None:
+                    prop.type_def = TypeDef()
+
+                prop.type_def.set_desc(val.short_desc, val.long_desc)
+
+        if parser.debugDomm:
+            print("DEBUG PropertyAction returns: ", prop)
+            print("DEBUG PropertyAction returns prop.relationship", prop.relationship)
 
         return prop
 
-    def second_pass(self, parser, node):
-        pass
-
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG Entered ExceptionAction")
+
         exception = ExceptionType()
 
+        # We filter for strings to remove all `{` `}` and keywords strings from children
+        filter_children = [x for x in children if type(x) is not str]
+
+        for val in filter_children:
+            if type(val) is Id:
+                exception.name = val._id
+            elif type(val) is NamedElement:
+                exception.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
+            elif type(val) is Property:
+                exception.add_prop(val)
+
+        if parser.debugDomm:
+            print("DEBUG  ExceptionAction returns ", exception)
+
+        return exception

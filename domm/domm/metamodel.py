@@ -44,10 +44,13 @@ class NamespaceResolver(object):
             self.add_exception(obj)
 
     def add_id(self, ident):
-        if ident in self.all_id:
-            raise IdExistsError(ident)
-        else:
-            self.all_id.add(ident)
+        # We're ignoring double identificator because the subtypes will
+        # handle this for us
+
+        #if ident in self.all_id:
+        #    raise IdExistsError(ident._id)
+        #else:
+        self.all_id.add(ident)
 
     def add_datatype(self, data_type, name):
         if name in self.all_datatypes:
@@ -102,6 +105,11 @@ class NamedElement(object):
         self.short_desc = short_desc
         self.long_desc = long_desc
 
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc
+        return False
+
     def __repr__(self):
         """
         Pretty print named element out
@@ -116,6 +124,17 @@ class Id(NamespacedObject):
         super(Id, self).__init__(namespace)
         self._id = ident;
         self._check()
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self._id == other._id
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self._id)
 
     def __repr__(self):
         return 'Id("%s")' % (self._id)
@@ -163,13 +182,16 @@ class Model(NamedElement):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.name == other.name and self.short_desc == other.short_desc and (
+            return NamedElement.__eq__(self, other) and (
                 self.types == other.types and self.constrs == other.constrs and self.packages == other.packages)
         else:
             return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, frozenset(self.types), frozenset(self.packages), frozenset(self.constrs)))
 
 class DataType(NamedElement, NamespacedObject):
 
@@ -276,7 +298,7 @@ class Enumeration(NamedElement, NamespacedObject):
 
     def __init__(self, name, short_desc = None, long_desc = None, namespace = None):
         super(Enumeration, self).__init__(name, short_desc, long_desc)
-        self.namespace = namespace
+        self._namespace = namespace
         self.literals = set()
         self._check()
 
@@ -489,32 +511,6 @@ class Package(NamedElement):
         retStr += "}\n--------------\n"
         return retStr
 
-class ExceptionType(NamedElement, NamespacedObject):
-    """
-    Exception object describing models
-    """
-
-    def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(ExceptionType, self).__init__(name, short_desc, long_desc)
-        self.props = dict()
-        self._check()
-
-
-    def add_prop(self, prop):
-        # In exception we can't for example have two same named fields
-        #
-        # exception FileNotFound {
-        #    prop int errorCode
-        #    prop char errorCode
-        # }
-        # Can't exist simultaneously
-        if prop.name in self.props:
-            raise DuplicatePropertyerror(prop.name)
-        else:
-            self.props[prop.name] = prop
-
-        return self
-
 class Relationship(object):
     """Describes all properties of a Relationship property"""
     def __init__(self, containment = False, opposite_end = None):
@@ -522,12 +518,31 @@ class Relationship(object):
         self.containment = containment
         self.opposite_end = opposite_end
 
-class TypeDef(NamedElement):
+    def __repr__(self):
+        opposite_end = ""
+        if self.opposite_end:
+            opposite_end = "<> %s" % self.opposite_end
+        return " Relationship:  %s (containtment:%s)" % (opposite_end, self.containment)
 
-    def __init__(self, name = None, short_desc = None, long_desc = None):
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.opposite_end == other.opposite_end and self.containment == other.containment
+        return False
+
+    def __ne__(self, other):
+        return not self.__ne__(other)
+
+    def __hash__(self):
+        return hash((self.containment, self.opposite_end))
+
+
+class TypeDef(NamedElement):
+    """
+    Models the type signature of fields
+    """
+    def __init__(self, name = None, type_of = None, short_desc = None, long_desc = None):
         super(TypeDef, self).__init__(name, short_desc, long_desc)
-        self.name = name
-        self.type = None
+        self.type = type_of
         self.container = False
         self.multi = None
 
@@ -538,12 +553,31 @@ class TypeDef(NamedElement):
         elif multi is not None and multi > 0:
             self.container = True
             self.multi = multi
+        elif multi is not None and multi == 0:
+            self.container = True
+            self.multi = None
+
+        return self
 
     def set_type(self, type_sign):
         self.type = type_sign
+        return self
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return NamedElement.__eq__(self, other) and (
+                self.type == other.type and self.container == other.container and self.multi == other.multi)
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.type, self.container,
+            self.multi))
 
     def __repr__(self):
-        retStr = " %s of type %s" % (self.name, self.type)
+        retStr = " %s %s " % ( self.type, self.name)
         if self.container:
             retStr += "["
             if self.multi is not None:
@@ -554,50 +588,91 @@ class TypeDef(NamedElement):
 class ConstraintSpec(object):
     """
     Constraint specification applies constraint to an bound entity
+        ident is the identifier found in first pass of the parser
+        parameters is a list of parameters supplied to the constraint
+        bound is the definition of constraint which is bound to other (for equality it won't be considered)
     """
-    def __init__(self, ident = None):
+    def __init__(self, ident = None, parameters = None):
         super(ConstraintSpec, self).__init__()
         self.ident = ident
-        self.parameters = set()
+        self.parameters = []
+        if parameters and type(parameters) is list:
+            self.parameters = parameters
         self.bound = None
 
     # Returns whether the constraint spec matched by id
     # is compatible with property it is bound to
     # and the parameters provided
-    def verify(self, constraint):
+    def match_field(self, field):
         pass
 
     def add_param(self, param):
-        self.parameters.add(param)
+        self.parameters.append(param)
+        return self
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.ident == other.ident and self.parameters == other.parameters
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.ident, self.parameters.__repr__()))
 
     def __repr__(self):
-        retStr = " [ %s " % self.ident
+        retStr = "  %s ( " % self.ident
         for val in self.parameters:
             retStr += " `%s` " % val
-        retStr += " ]"
+        retStr += " )"
         return retStr
 
-
-
-class Property(NamedElement):
+class Property(object):
     """
-    Models properties of entities and other programming objects
-    """
-    def __init__(self, name = None, short_desc = None, long_desc = None):
-        super(Property, self).__init__(name, short_desc, long_desc)
+    Models properties of entities and other DOMM Classifiers
 
+    There is a set of attributes of a property (ordered, unique ...) which
+    describes the Property. After it there is the type_def which is the property's type signature.
+    Relationship field determines if the field is a relation and to what.
+    Constraint fields are referenced constraints applied to this property.
+    """
+    def __init__(self, type_def = None, relation = None):
         self.ordered = False
         self.unique = False
         self.readonly = False
         self.required = False
-        self.composite = False
 
-        self.type_def = None
-        self.relationship = None
+        self.type_def = type_def
+        self.relationship = relation
         self.constraints = set()
+
+    def add_relationship(self, rel):
+        self.relationship = rel
+        return self
+
+    def add_type_def(self, type_def):
+        self.type_def = type_def
+        return self
 
     def add_constraint_spec(self, constraint_spec):
         self.constraints.add(constraint_spec)
+        return self
+
+    def __hash__(self):
+        return hash((self.ordered, self.unique, self.readonly,
+            self.type_def, self.relationship, frozenset(self.constraints)
+            ))
+
+    def __eq__(self, other):
+        if type(other) is type(self):
+            return self.ordered == other.ordered and self.unique == other.unique and (
+                self.readonly == other.readonly and self.required == other.required) and (
+                self.type_def == other.type_def and self.relationship == other.relationship and self.constraints == other.constraints)
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         retStr = " prop "
@@ -610,6 +685,81 @@ class Property(NamedElement):
         if self.required:
             retStr += " required "
 
-        retStr += " %s  %s " % (self.type_def, self.relationship)
+        containment = ""
+        if self.relationship:
+            if self.relationship.containment:
+                containment = "+"
 
+        retStr += " %s  %s%s " % (self.type_def.type, containment, self.type_def.name)
+        if self.type_def.container:
+            retStr += "["
+            if self.type_def.multi is not None:
+                retStr += "%s" % (self.type_def.multi)
+            retStr += "]"
+
+        if self.relationship:
+            if self.relationship.opposite_end:
+                retStr += " <> %s " % self.relationship.opposite_end._id
+
+        if self.constraints:
+            retStr += "["
+            for c in self.constraints:
+                if c.ident:
+                    retStr += "%s " % c.ident._id
+                if c.parameters:
+                    retStr += "("
+                    for par in c.parameters:
+                        val = par
+                        if type(par) is Id:
+                            val = par._id
+                        retStr += " %s " % val
+                    retStr += ")"
+
+            retStr += "]"
+
+        retStr += ' "%s" "%s" ' % (self.type_def.short_desc, self.type_def.long_desc)
+        return retStr
+
+class ExceptionType(NamedElement, NamespacedObject):
+    """
+    Exception object describing models
+    """
+
+    def __init__(self, name = None, short_desc = None, long_desc = None, namespace = None):
+        super(ExceptionType, self).__init__(name, short_desc, long_desc)
+        self.props = dict()
+        self._namespace = namespace
+        self._check()
+
+
+    def add_prop(self, prop):
+        # In exception we can't for example have two same named fields
+        #
+        # exception FileNotFound {
+        #    prop int errorCode
+        #    prop char errorCode
+        # }
+        # Can't exist simultaneously
+        if prop.type_def.name in self.props:
+            raise DuplicatePropertyerror(prop.name)
+        else:
+            self.props[prop.type_def.name] = prop
+
+        return self
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__eq__(self, other) and self.props == other.props
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, frozenset(self.props.items())))
+
+    def __repr__(self):
+        retStr = ' exception %s "%s" "%s" {\n' % (self.name, self.short_desc, self.long_desc)
+        for prop in self.props.itervalues():
+            retStr += "    %s\n" % prop
         return retStr

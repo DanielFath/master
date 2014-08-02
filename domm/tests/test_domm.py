@@ -103,18 +103,13 @@ def test_tagType():
 
 def test_package():
     parsed1 = DommParser().string_into_ast(""" model test
-        package test {
-            dataType test
-
-            package inner {
-
-            }
+        package example {
         }
         """)["test"]
 
-    pack1 = Package(name = "test"
-        ).add_elem(DataType(name = "test")
-        ).add_elem(Package(name="inner"))
+    pack1 = Package(name = "example"
+        )
+
     pack1alt = Package(name = "test"
         ).add_elem(DataType(name = "test")
         ).add_elem(Package(name="inner2"))
@@ -123,16 +118,49 @@ def test_package():
     expected1 = Model(name = "test").add_package(pack1)
     unexpected1 = Model(name = "test").add_package(pack1alt)
 
+    print("parsed1 ", parsed1)
+    print("expected1 ", expected1)
+
     assert parsed1 == expected1
     assert parsed1 != unexpected1
 
-
 def test_exception():
-    parser = DommParser()
-    parser.parse(""" model test
-        package test {
-            exception ResultNotFound "Rezultat nije nadjen." {
-                prop int errorCode
+    parsed1 = DommParser().string_into_ast(""" model test
+        package exception_example {
+            exception ResultNotFound "Result has not been found" {
+                prop int errCode
+                prop +string[2] message <> testing [isValidErrCode(2, "string", X), finder]  "error message" "message"
             }
         }
-    """)
+    """)["test"]
+
+    #exception ResultNotFound "Result has not been found" {
+    #    prop +string[2] message <> testing [isValidErrCode(2, "string", X)] "error message" "message"
+    #}
+
+    type_def1 = TypeDef(name = "message", type_of = "string", short_desc = "error message" , long_desc = "message")
+    type_def1.set_multi(2)
+
+    rel1 = Relationship(containment = True, opposite_end = Id("testing"))
+
+    prop2 = Property(type_def = type_def1, relation = rel1
+        ).add_constraint_spec(ConstraintSpec(ident = Id("isValidErrCode"), parameters = [2, "string", Id("X")])
+        ).add_constraint_spec(ConstraintSpec(ident = Id("finder")))
+
+    prop1 = Property(type_def = TypeDef(name = "errCode", type_of = "int"))
+
+    exec1 = ExceptionType(name = "ResultNotFound", short_desc = "Result has not been found"
+       ).add_prop(prop1
+       ).add_prop(prop2)
+
+    expected1 = Model(name = "test").add_package(Package(name = "exception_example"
+            ).add_elem(exec1))
+
+    print("parsed1 ", parsed1)
+    print("expected1 ", expected1)
+    print("parsed1   hash", hash(parsed1))
+    print("expected1 hash", hash(expected1))
+
+    assert parsed1 == expected1
+
+
