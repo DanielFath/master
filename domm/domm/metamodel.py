@@ -47,7 +47,7 @@ class NamespaceResolver(object):
             self.add_service(obj)
 
     def add_id(self, ident):
-        # We're ignoring double identificator because the subtypes will
+        # We're ignoring double identificatiors because the subtypes will
         # handle this for us
 
         #if ident in self.all_id:
@@ -101,7 +101,7 @@ class NamespacedObject(object):
 class NamedElement(object):
     """
     Named element represents short and long description
-    that is encountered accross various DOMMLite constructs
+    that is encountered across various DOMMLite constructs
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
         self.name = name
@@ -369,7 +369,8 @@ class EnumLiteral(NamedElement):
 class ApplyDef(object):
     """
     Apply def signature. There can't be multiple applies on same type of parameter.
-    For example, you can't have a `applyTo _str _str`.
+    For example, you can't have a `applyTo _entity _entity` because applyTo definition
+    only work on a type of object which is unique.
     """
     def __init__(self, to_entity = False, to_prop = False, to_param = False, to_service = False, to_op = False, to_value_object = False):
         super(ApplyDef, self).__init__()
@@ -448,7 +449,9 @@ class ApplyDef(object):
 
 class ConstrDef(object):
     """
-    Apply constr signature
+    AppliesTo constraint signature meta-model, that denotes what
+    object can a constraint apply to. Some constrain are limited to only
+    operations (_op) or entities (_entity).
     """
     def __init__(self, constraints = None):
         super(ConstrDef, self).__init__()
@@ -529,7 +532,7 @@ class Relationship(object):
         opposite_end = ""
         if self.opposite_end:
             opposite_end = "<> %s" % self.opposite_end
-        return " Relationship:  %s (containtment:%s)" % (opposite_end, self.containment)
+        return " Relationship:  %s (containment:%s)" % (opposite_end, self.containment)
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -780,7 +783,7 @@ class ClassType:
 
 class ClassifierBound(object):
     """
-    Tracks a relation used to refer to other classifer.
+    Tracks a relation used to refer to other classifier.
     For example an Entity may depend on a service or extend another Entity.
 
     This class models said behavior
@@ -808,7 +811,9 @@ class ClassifierBound(object):
         return hash((self.ref, self.type_of))
 
 class Service(NamedElement, NamespacedObject):
-    """docstring for Service"""
+    """
+    Service classifier meta-model.
+    """
     def __init__(self, name = None, short_desc = None, long_desc = None, extends = None, depends = None, namespace = None):
         super(Service, self).__init__(name, short_desc, long_desc)
         self.extends = extends
