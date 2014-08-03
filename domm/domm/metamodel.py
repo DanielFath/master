@@ -25,7 +25,7 @@ class NamespaceResolver(object):
         self.all_datatypes = set()
         self.all_constraints = set()
         self.all_enums = set()
-        self.exceptions = set()
+        self.exceptions = dict()
         self.types = dict()
 
     def check(self, obj):
@@ -72,12 +72,16 @@ class NamespaceResolver(object):
             self.all_enums.add(enum_name)
             self.types[enum_name] = enum
 
-    def add_exception(self, excp, excp_name):
-        if excp_name in self.exceptions:
+    def add_exception(self, excp):
+        if excp.name in self.exceptions:
             raise ExceptionExistsError(excp_name)
         else:
             self.exceptions.add(excp_name)
             self.types[excp_name] = excp
+
+    def add_service(self, serv):
+        # TODO IMPLEMENT
+        assert False
 
 class NamespacedObject(object):
     """
