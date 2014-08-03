@@ -806,6 +806,7 @@ class ClassifierBound(object):
 
     def __hash__(self):
         return hash((self.ref, self.type_of))
+
 class Service(NamedElement, NamespacedObject):
     """docstring for Service"""
     def __init__(self, name = None, short_desc = None, long_desc = None, extends = None, depends = None, namespace = None):
@@ -831,3 +832,24 @@ class Service(NamedElement, NamespacedObject):
     def add_op_compartment(self, compartment):
         self.op_compartments.add(compartment)
         return self
+
+    def __repr__(self):
+        retStr += " service %s (%s %s)" % (self.name, self.short_desc, self.long_desc)
+        if self.extends:
+             retStr += " extends %s " % self.extends
+        retStr += " {\n"
+        for op in self.operations:
+            retStr += "    %s" % op
+        retStr += "}"
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__init__(self, other) and self.extends == other.extends and self.depends == other.depends and(
+                self.constraints == other.constraints and self.operations == other.operations and self.op_compartments == other.op_compartments)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self, other):
+        return hash((self.name, self.short_desc, self.long_desc, self.extends, self.depends, self.constraints,
+            frozenset(self.operations), frozenset(self.op_compartments)))
