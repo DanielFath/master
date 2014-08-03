@@ -515,7 +515,18 @@ class ServiceAction(SemanticAction):
         filter_children = [x for x in children if type(x) is not str]
 
         if parser.debugDomm:
-            print("DEBUG Entered ServiceAction (children)", children)
+            print("DEBUG Entered ServiceAction (filter_children)", filter_children)
+
+        service = Service()
+
+        for val in filter_children:
+            if type(val) == Id:
+                service.name = val._id
+
+        if parser.debugDomm:
+            print("DEBUG Entered ServiceAction returns ", service)
+
+        return service
 
 
 class ExtObj:
