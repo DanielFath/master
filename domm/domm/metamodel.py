@@ -770,6 +770,42 @@ class ExceptionType(NamedElement, NamespacedObject):
         for prop in self.props.itervalues():
             retStr += "    %s\n" % prop
         return retStr
+
+class ClassType:
+    """
+    Represents possible classifier type amongst the one of specified
+    """
+    Entity, Service, ValueObject, ExceptType, DataType, Constraint  = range(6)
+
+
+class ClassifierBound(object):
+    """
+    Tracks a relation used to refer to other classifer.
+    For example an Entity may depend on a service or extend another Entity.
+
+    This class models said behavior
+    """
+    def __init__(self, ref = None, type_of = None):
+        super(Depend, self).__init__()
+        assert type(ref) is Id
+        assert type(type_of) is ClassType
+        self.ref = ref
+        self.type_of = type_of
+        self.bound = None
+
+    def __repr__(self):
+        return self.ref._id
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.ref == other.ref and self.type_of == other.type_of
+        return False
+
+    def __ne__(self, other):
+        return not self.__init__(other)
+
+    def __hash__(self):
+        return hash((self.ref, self.type_of))
 class Service(NamedElement, NamespacedObject):
     """docstring for Service"""
     def __init__(self, name = None, short_desc = None, long_desc = None, extends = None, depends = None, namespace = None):
