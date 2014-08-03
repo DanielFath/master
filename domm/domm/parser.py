@@ -135,8 +135,7 @@ def feature_compart():  return Kwd("compartment"), ident, Optional(named_elem), 
 def oper_compart():     return Kwd("compartment"), ident, Optional(named_elem), "{", ZeroOrMore(oper), "}"
 
 # Value objects are objects that have no operations, only properties
-def value_object():     return Kwd("valueObject"), ident, Optional(Kwd("extends"), ident), Optional(Kwd("depends"), ident,
-                             ZeroOrMore(",", ident)), Optional(named_elem), "{", Optional(constr_def), ZeroOrMore(prop), "}"
+def value_object():     return Kwd("valueObject"), ident, Optional(ext_def), Optional(dep_def), Optional(named_elem), "{", Optional(constr_def), ZeroOrMore(prop), "}"
 
 # Defines exceptions in DOMMLite, which are entities that are used for
 # reporting errors.
