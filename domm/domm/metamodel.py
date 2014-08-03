@@ -14,6 +14,18 @@
 ##############################################################################
 from error import *
 
+def fnvhash(a):
+    """
+    Fowler, Noll, Vo Hash function.
+    Copied from this site: http://www.gossamer-threads.com/lists/python/python/679002#679002
+    """
+    h = 2166136261
+    for i in a:
+        t = (h * 16777619) & 0xffffffffL
+        h = t ^ i.__hash__()
+
+    return h
+
 class NamespaceResolver(object):
     """
     A utility class that temporarily stores and resolves
@@ -855,6 +867,6 @@ class Service(NamedElement, NamespacedObject):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __hash__(self, other):
-        return hash((self.name, self.short_desc, self.long_desc, self.extends, self.depends, self.constraints,
-            frozenset(self.operations), frozenset(self.op_compartments)))
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.extends, fnvhash(self.dependencies), fnvhash(self.constraints),
+            fnvhash(self.operations), fnvhash(self.op_compartments)))
