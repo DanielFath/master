@@ -268,6 +268,8 @@ class PackageElemAction(SemanticAction):
             return PackageAction().first_pass(parser, node, children)
         elif children[0] == "exception":
             return ExceptionAction().first_pass(parser, node, children)
+        elif children[0] == "service":
+            return ServiceAction().first_pass(parser, node, children)
 
     def second_pass(self, parser, node):
         pass
@@ -505,3 +507,14 @@ class ExceptionAction(SemanticAction):
             print("DEBUG  ExceptionAction returns ", exception)
 
         return exception
+
+class ServiceAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+
+        # We filter for strings to remove all `{` `}` and keywords strings from children
+        filter_children = [x for x in children if type(x) is not str]
+
+        if parser.debugDomm:
+            print("DEBUG Entered ServiceAction (children)", children)
+
+
