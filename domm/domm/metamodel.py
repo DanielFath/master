@@ -27,6 +27,7 @@ class NamespaceResolver(object):
         self.all_enums = set()
         self.exceptions = dict()
         self.types = dict()
+        self.services = dict()
 
     def check(self, obj):
         if obj is None:
@@ -42,6 +43,8 @@ class NamespaceResolver(object):
             self.add_enum(obj, obj.name)
         elif type(obj) is ExceptionType:
             self.add_exception(obj)
+        elif type(obj) is Service:
+            self.add_service(obj)
 
     def add_id(self, ident):
         # We're ignoring double identificator because the subtypes will
@@ -767,3 +770,28 @@ class ExceptionType(NamedElement, NamespacedObject):
         for prop in self.props.itervalues():
             retStr += "    %s\n" % prop
         return retStr
+class Service(NamedElement, NamespacedObject):
+    """docstring for Service"""
+    def __init__(self, name = None, short_desc = None, long_desc = None, extends = None, depends = None, namespace = None):
+        super(Service, self).__init__(name, short_desc, long_desc)
+        self.extends = extends
+        self.dependencies = []
+        if depends:
+            self.dependencies = depends
+        self.constraints = set()
+        self.operations = set()
+        self.op_compartments = set()
+        self._namespace = namespace
+        self._check()
+
+    def add_dependency(self, dep):
+        self.dependencies.append(dep)
+        return self
+
+    def add_operation(self, oper):
+        self.operations.add(oper)
+        return self
+
+    def add_op_compartment(self, compartment):
+        self.op_compartments.add(compartment)
+        return self
