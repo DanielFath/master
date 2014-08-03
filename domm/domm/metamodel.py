@@ -776,7 +776,7 @@ class Service(NamedElement, NamespacedObject):
         super(Service, self).__init__(name, short_desc, long_desc)
         self.extends = extends
         self.dependencies = []
-        if depends:
+        if depends and type(depends) is list:
             self.dependencies = depends
         self.constraints = set()
         self.operations = set()
