@@ -170,6 +170,7 @@ constr_speclist.sem = ConstraintSpecListAction()
 constr_param.sem = ConstraintParamAction()
 ref.sem = RefAction()
 prop.sem = PropertyAction()
+ext_def.sem = ExtDefAction()
 
 class DommParser(ParserPython):
     """

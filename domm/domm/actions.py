@@ -518,3 +518,21 @@ class ServiceAction(SemanticAction):
             print("DEBUG Entered ServiceAction (children)", children)
 
 
+class ExtObj:
+    """Helper object that carries a single reference"""
+    def __init__(self, ref):
+        self.ref = ref
+
+    def __repr__(self):
+        return " ExtObj (%s)" % self.ref
+
+
+class ExtDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        # there are only two elements keyword and identifer
+        retVal = ExtObj(ref = ClassifierBound(ref = children[1], type_of = ClassType.Entity))
+
+        if parser.debugDomm:
+            print("DEBUG ExtDefAction returned ", retVal)
+
+        return retVal
