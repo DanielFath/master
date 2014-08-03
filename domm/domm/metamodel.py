@@ -801,15 +801,16 @@ class ClassifierBound(object):
     This class models said behavior
     """
     def __init__(self, ref = None, type_of = None):
-        super(Depend, self).__init__()
+        super(ClassifierBound, self).__init__()
         assert type(ref) is Id
-        assert type(type_of) is ClassType
+        if type_of:
+            assert type(type_of) is ClassType
         self.ref = ref
         self.type_of = type_of
         self.bound = None
 
     def __repr__(self):
-        return self.ref._id
+        return "%s (of type %s)" % (self.ref._id, self.type_of)
 
     def __eq__(self, other):
         if type(self) is type(other):
@@ -851,17 +852,21 @@ class Service(NamedElement, NamespacedObject):
         return self
 
     def __repr__(self):
-        retStr += " service %s (%s %s)" % (self.name, self.short_desc, self.long_desc)
+        retStr = " service %s (%s %s)" % (self.name, self.short_desc, self.long_desc)
+
         if self.extends:
              retStr += " extends %s " % self.extends
+
         retStr += " {\n"
         for op in self.operations:
             retStr += "    %s" % op
         retStr += "}"
 
+        return retStr
+
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__init__(self, other) and self.extends == other.extends and self.depends == other.depends and(
+            return NamedElement.__init__(self, other) and self.extends == other.extends and self.dependencies == other.dependencies and(
                 self.constraints == other.constraints and self.operations == other.operations and self.op_compartments == other.op_compartments)
 
     def __ne__(self, other):
