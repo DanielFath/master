@@ -839,6 +839,12 @@ class Service(NamedElement, NamespacedObject):
         self._namespace = namespace
         self._check()
 
+    def set_extends(self, extends):
+        assert type(extends) is ClassifierBound
+        self.extends = extends
+        self.extends.type_of = ClassType.Service
+        return self
+
     def add_dependency(self, dep):
         self.dependencies.append(dep)
         return self
