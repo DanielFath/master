@@ -26,12 +26,11 @@ def fnvhash(a):
 
     return h
 
-def print_constraints(list_constraints):
-    assert type(list_constraints) is list
+def print_constraints(constraints):
     retStr = ""
-    if list_constraints and len(list_constraints) > 0:
+    if constraints and len(constraints) > 0:
         retStr += "["
-        for c in list_constraints:
+        for c in constraints:
             if c.ident:
                 retStr += "%s " % c.ident._id
             if c.parameters:
