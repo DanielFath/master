@@ -520,8 +520,17 @@ class ServiceAction(SemanticAction):
         service = Service()
 
         for val in filter_children:
-            if type(val) == Id:
+            if parser.debugDomm:
+                    print("DEBUG Entered ServiceAction type of child ", type(val))
+            if type(val) is Id:
                 service.name = val._id
+            elif type(val) is NamedElement:
+                service.set_desc(val.short_desc, val.long_desc)
+            elif type(val) is ExtObj:
+                if parser.debugDomm:
+                    print("DEBUG Entered ServiceAction extends ", service)
+                service.set_extends(val.ref)
+
 
         if parser.debugDomm:
             print("DEBUG Entered ServiceAction returns ", service)
