@@ -508,6 +508,40 @@ class ExceptionAction(SemanticAction):
 
         return exception
 
+class ExtObj(object):
+    """Helper object that carries a single reference"""
+    def __init__(self, ref):
+        super(ExtObj, self).__init__()
+        self.ref = ref
+
+    def __repr__(self):
+        return " ExtObj (%s)" % self.ref
+
+
+class ExtDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        # there are only two elements keyword and identifer
+        retVal = ExtObj(ref = ClassifierBound(ref = children[1], type_of = ClassType.Entity))
+
+        if parser.debugDomm:
+            print("DEBUG ExtDefAction returned ", retVal)
+
+        return retVal
+
+class DepObj(object):
+    """Helper object that carries list of dependecies"""
+    def __init__(self, rels):
+        super(DepObj, self).__init__()
+        assert type(rels) is list
+        self.rels = rels
+
+    def __repr__(self):
+        retStr =  " DepObj ( "
+        for val in self.rels:
+            retStr += " %s " % val
+        retStr += ")"
+        return retStr
+
 class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):
 
@@ -530,6 +564,8 @@ class ServiceAction(SemanticAction):
                 if parser.debugDomm:
                     print("DEBUG Entered ServiceAction extends ", service)
                 service.set_extends(val.ref)
+            elif type(val) is DepObj:
+                service.set_dependencies(val.rels)
 
 
         if parser.debugDomm:
@@ -537,37 +573,4 @@ class ServiceAction(SemanticAction):
 
         return service
 
-
-class ExtObj(object):
-    """Helper object that carries a single reference"""
-    def __init__(self, ref):
-        super(ExtObj, self).__init__()
-        self.ref = ref
-
-    def __repr__(self):
-        return " ExtObj (%s)" % self.ref
-
-
-class ExtDefAction(SemanticAction):
-    def first_pass(self, parser, node, children):
-        # there are only two elements keyword and identifer
-        retVal = ExtObj(ref = ClassifierBound(ref = children[1], type_of = ClassType.Entity))
-
-        if parser.debugDomm:
-            print("DEBUG ExtDefAction returned ", retVal)
-
-        return retVal
-class DepObj(object):
-    """Helper object that carries list of dependecies"""
-    def __init__(self, rels):
-        super(DepObj, self).__init__()
-        assert type(rels) is list
-        self.rels = rels
-
-    def __repr__(self):
-        retStr =  " DepObj ( "
-        for val in self.rels:
-            retStr += " %s " % val
-        retStr += ")"
-        return retStr
 
