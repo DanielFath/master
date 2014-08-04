@@ -848,6 +848,7 @@ class Service(NamedElement, NamespacedObject):
     def set_dependencies(self, deps):
         assert type(deps) is list
         for val in deps:
+            val.type_of = ClassType.Service
             self.dependencies.append(val)
         return self
 
