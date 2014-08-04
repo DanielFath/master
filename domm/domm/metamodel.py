@@ -26,6 +26,26 @@ def fnvhash(a):
 
     return h
 
+def print_constraints(list_constraints):
+    assert type(list_constraints) is list
+    retStr = ""
+    if list_constraints and len(list_constraints) > 0:
+        retStr += "["
+        for c in list_constraints:
+            if c.ident:
+                retStr += "%s " % c.ident._id
+            if c.parameters:
+                retStr += "("
+                for par in c.parameters:
+                    val = par
+                    if type(par) is Id:
+                        val = par._id
+                    retStr += " %s " % val
+                retStr += ")"
+
+        retStr += "]"
+    return retStr
+
 class NamespaceResolver(object):
     """
     A utility class that temporarily stores and resolves
@@ -723,21 +743,7 @@ class Property(object):
             if self.relationship.opposite_end:
                 retStr += " <> %s " % self.relationship.opposite_end._id
 
-        if self.constraints:
-            retStr += "["
-            for c in self.constraints:
-                if c.ident:
-                    retStr += "%s " % c.ident._id
-                if c.parameters:
-                    retStr += "("
-                    for par in c.parameters:
-                        val = par
-                        if type(par) is Id:
-                            val = par._id
-                        retStr += " %s " % val
-                    retStr += ")"
-
-            retStr += "]"
+        retStr += print_constraints(self.constraints)
 
         retStr += ' "%s" "%s" ' % (self.type_def.short_desc, self.type_def.long_desc)
         return retStr
@@ -870,6 +876,9 @@ class Service(NamedElement, NamespacedObject):
             retStr += " depends "
             for val in self.dependencies:
                 retStr += " %s " % val
+
+        if self.constraints and len(self.constraints) > 0:
+            retStr += print_constraints(self.constraints)
 
         retStr += " {\n"
         for op in self.operations:
