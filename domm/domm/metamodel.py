@@ -845,8 +845,10 @@ class Service(NamedElement, NamespacedObject):
         self.extends.type_of = ClassType.Service
         return self
 
-    def add_dependency(self, dep):
-        self.dependencies.append(dep)
+    def set_dependencies(self, deps):
+        assert type(deps) is list
+        for val in deps:
+            self.dependencies.append(val)
         return self
 
     def add_operation(self, oper):
