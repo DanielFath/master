@@ -865,6 +865,11 @@ class Service(NamedElement, NamespacedObject):
         if self.extends:
              retStr += " extends %s " % self.extends
 
+        if self.dependencies and len(self.dependencies) > 0:
+            retStr += " depends "
+            for val in self.dependencies:
+                retStr += " %s " % val
+
         retStr += " {\n"
         for op in self.operations:
             retStr += "    %s" % op
