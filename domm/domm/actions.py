@@ -542,6 +542,25 @@ class DepObj(object):
         retStr += ")"
         return retStr
 
+class DepDefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        list_dependencies = []
+
+        if parser.debugDomm:
+            print("DEBUG Entered DepDefAction (children)", children)
+
+        for val in children:
+            if type(val) is Id:
+                list_dependencies.append(ClassifierBound(ref = val))
+
+        retVal = DepObj(rels = list_dependencies)
+
+        if parser.debugDomm:
+            print("DEBUG Entered DepDefAction returns ", retVal)
+
+        return retVal
+
+
 class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):
 

@@ -171,6 +171,7 @@ constr_param.sem = ConstraintParamAction()
 ref.sem = RefAction()
 prop.sem = PropertyAction()
 ext_def.sem = ExtDefAction()
+dep_def.sem = DepDefAction()
 
 class DommParser(ParserPython):
     """
