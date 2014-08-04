@@ -529,9 +529,10 @@ class ServiceAction(SemanticAction):
         return service
 
 
-class ExtObj:
+class ExtObj(object):
     """Helper object that carries a single reference"""
     def __init__(self, ref):
+        super(ExtObj, self).__init__()
         self.ref = ref
 
     def __repr__(self):

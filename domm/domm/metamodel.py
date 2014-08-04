@@ -786,7 +786,7 @@ class ExceptionType(NamedElement, NamespacedObject):
             retStr += "    %s\n" % prop
         return retStr
 
-class ClassType:
+class ClassType(object):
     """
     Represents possible classifier type amongst the one of specified
     """
