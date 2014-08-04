@@ -119,7 +119,10 @@ class NamespaceResolver(object):
 
 class NamespacedObject(object):
     """
-    These are objects that belong to a certain namespace
+    These are objects that belong to a certain namespace.
+
+    They carry a link to their namespace and can be checked to
+    see if they are valid in given namespace
     """
     def __init__(self, namespace):
         super(NamespacedObject, self).__init__()
