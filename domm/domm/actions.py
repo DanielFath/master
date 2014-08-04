@@ -557,3 +557,17 @@ class ExtDefAction(SemanticAction):
             print("DEBUG ExtDefAction returned ", retVal)
 
         return retVal
+class DepObj(object):
+    """Helper object that carries list of dependecies"""
+    def __init__(self, rels):
+        super(DepObj, self).__init__()
+        assert type(rels) is list
+        self.rels = rels
+
+    def __repr__(self):
+        retStr =  " DepObj ( "
+        for val in self.rels:
+            retStr += " %s " % val
+        retStr += ")"
+        return retStr
+
