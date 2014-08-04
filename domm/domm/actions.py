@@ -517,7 +517,6 @@ class ExtObj(object):
     def __repr__(self):
         return " ExtObj (%s)" % self.ref
 
-
 class ExtDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         # there are only two elements keyword and identifer
@@ -585,7 +584,9 @@ class ServiceAction(SemanticAction):
                 service.set_extends(val.ref)
             elif type(val) is DepObj:
                 service.set_dependencies(val.rels)
-
+            elif type(val) is SpecsObj:
+                for x in val.specs:
+                    service.add_constraint_spec(x)
 
         if parser.debugDomm:
             print("DEBUG Entered ServiceAction returns ", service)

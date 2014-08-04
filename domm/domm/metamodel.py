@@ -857,6 +857,11 @@ class Service(NamedElement, NamespacedObject):
             self.dependencies.append(val)
         return self
 
+    def add_constraint_spec(self, constr):
+        assert type(constr) is ConstraintSpec
+        self.constraints.add(constr)
+        return self
+
     def add_operation(self, oper):
         self.operations.add(oper)
         return self
