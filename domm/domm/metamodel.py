@@ -800,7 +800,6 @@ class ClassType(object):
     """
     Entity, Service, ValueObject, ExceptType, DataType, Constraint  = range(6)
 
-
 class ClassifierBound(object):
     """
     Tracks a relation used to refer to other classifier.
@@ -830,6 +829,56 @@ class ClassifierBound(object):
 
     def __hash__(self):
         return hash((self.ref, self.type_of))
+
+class Operation(object):
+    """
+    This class models the Operation classifier in DOMMLite.
+
+    It represents a method that is often used in various DOMMLite objects
+    like ValueObject, Entity or Services. It has name, short and long description
+    and has list of parameters it requires.
+
+
+    Example:
+        service ExampleService {
+            ...
+            unique op string getName()
+            ...
+        }
+    """
+    def __init__(self, type_def = None, params = None):
+        super(Operation, self).__init__()
+        self.ordered = False
+        self.unique = False
+        self.required = False
+
+        self.type_def = type_def
+
+        self.params = []
+
+        if params:
+            assert type(params) is list
+            self.params = params
+
+        self.throws = []
+        self.constraints = set()
+
+    def add_param(self, param):
+        assert type(param) is OpParam
+        self.params.append(param)
+        return self
+
+    def add_constraint_spec(self, constraint):
+        assert type(constraint) is ConstraintSpec
+        self.constraints.add(constraints)
+        return self
+
+    def add_throws_exception(self, exception):
+        assert type(exception) is ClassifierBound
+        assert exception.type_of == ClassType.ExceptType
+        self.throws.append(exception)
+        return self
+
 
 class Service(NamedElement, NamespacedObject):
     """
