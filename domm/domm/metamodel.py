@@ -830,6 +830,21 @@ class ClassifierBound(object):
     def __hash__(self):
         return hash((self.ref, self.type_of))
 
+class OpParam(NamedElement):
+    """docstring for OpParam"""
+    def __init__(self, type_def = None, short_desc = None, long_desc = None):
+        super(OpParam, self).__init__()
+        self.ordered = False
+        self.unique = False
+        self.required = False
+        self.name = None
+
+        self.short_desc = short_desc
+        self.long_desc = long_desc
+
+        self.type_def = type_def
+        self.constraints = set()
+
 class Operation(object):
     """
     This class models the Operation classifier in DOMMLite.
