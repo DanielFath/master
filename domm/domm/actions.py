@@ -119,28 +119,21 @@ class CommonTagAction(SemanticAction):
     Evaluates value of (buildin)validatorType/tagType
     """
     def first_pass(self, parser, node, children):
-        name = children[0]._id
-        short_desc = None
-        long_desc = None
-        constr_def = None
-        apply_def = None
+        tag = CommonTag()
 
         if parser.debugDomm:
             print("DEBUG CommonTagAction children: ", children)
 
         for value in children:
-
-            if type(value) is ConstrDef:
-                constr_def = value
+            if type(value) is Id:
+                tag.name = value._id
+            elif type(value) is ConstrDef:
+                tag.constr_def = value
             elif type(value) is ApplyDef:
-                apply_def = value
+                tag.applies = value
             elif type(value) is NamedElement:
-                if parser.debugDomm:
-                    print("DEBUG CommonTagAction NamedElement: ", value)
-                long_desc = value.long_desc
-                short_desc = value.short_desc
+               tag.set_from_named(value)
 
-        tag = CommonTag(name, short_desc = short_desc, long_desc = long_desc, constr_def = constr_def, applies = apply_def)
 
         if parser.debugDomm:
             print("DEBUG CommonTagAction returns: ", tag)
@@ -150,8 +143,13 @@ class ApplyDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         app_def = ApplyDef()
 
-        for i in range(1, len(children)):
-            app_def.add_apply(children[i])
+        if parser.debugDomm:
+            print("DEBUG ApplyDefAction children: ", children)
+
+        filter_children = (x for x in children if x != "appliesTo")
+
+        for val in children:
+            app_def.add_apply(val)
 
         if parser.debugDomm:
             print("DEBUG ApplyDefAction returns: ", app_def)
@@ -160,6 +158,9 @@ class ApplyDefAction(SemanticAction):
 class ConstrDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         constr_def = ConstrDef()
+
+        if parser.debugDomm:
+            print("DEBUG ConstrDefAction children: ", children)
 
         # Filter all irrelevant strings from query
         filter_children = [x for x in children if x != "(" and x != ")" and x != ',']
@@ -216,37 +217,37 @@ class DataTypeAction(SemanticAction):
 
         return data_type
 
+
+class ElipsisAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG ElipsisAction called")
+        return "..."
+
 class ConstraintAction(SemanticAction):
     """
     Returns evaluated constraint type
     """
+    def __init__(self, built_in = False, is_tag = False):
+        self.built_in = built_in
+        if is_tag:
+            self.constr_type = ConstraintType.Tag
+        else:
+            self.constr_type = ConstraintType.Validator
+
     def first_pass(self, parser, node, children):
-        builtin = None
-        types = None
-        tag = None
+        constraint = Constraint(built_in = self.built_in, constr_type = self.constr_type)
 
-        if children[0] == "buildinValidator":
-            builtin = True
-            types = ConstraintType.Validator
-        elif children[0] == "validatorType":
-            builtin = False
-            types = ConstraintType.Validator
-        elif children[0] == "buildinTagType":
-            builtin = True
-            types = ConstraintType.Tag
-        elif children[0] == "tagType":
-            builtin = False
-            types = ConstraintType.Tag
+        if parser.debugDomm:
+            print("DEBUG ConstraintAction entered children: ", children)
 
+        for i in children:
+            if type(i) is CommonTag:
+                constraint.tag = i
+            elif type(i) is Id:
+                constraint.name = i._id
 
-        if type(children[1]) is CommonTag:
-            tag = children[1]
-        # If only id is present the arpeggio will first identify id instead of Common tag
-        elif type(children[1]) is Id:
-            tag = CommonTag(name = children[1]._id)
-
-        constraint = Constraint(tag = tag, built_in = builtin, constr_type = types,
-            namespace = parser.namespace)
+        constraint.set_namespace(parser.namespace)
 
         if parser.debugDomm:
             print("DEBUG ConstraintAction returns: ", constraint)
@@ -359,7 +360,10 @@ class ConstraintParamAction(SemanticAction):
         # just assume the second child is the strings content
         # Parse tree looks a bit like this:
         #   (") (string) (")
-        string_param = StrObj(children[1])
+        string_param = ""
+        for x in children:
+            if x != '"':
+                string_param = StrObj(x)
 
         if parser.debugDomm:
             print("DEBUG ConstraintParamAction returns: ", string_param)
@@ -521,13 +525,17 @@ class ExtObj(object):
 
 class ExtDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        # there are only two elements keyword and identifer
-        retVal = ExtObj(ref = ClassifierBound(ref = children[1], type_of = ClassType.Entity))
-
         if parser.debugDomm:
-            print("DEBUG ExtDefAction returned ", retVal)
+            print("DEBUG ExtDefAction enter (children) ", children)
+        # there are only two elements keyword and identifer
+        for val in children:
+            if type(val) is Id:
+                retVal = ExtObj(ref = ClassifierBound(ref = val, type_of = ClassType.Entity))
 
-        return retVal
+                if parser.debugDomm:
+                    print("DEBUG ExtDefAction returned ", retVal)
+
+                return retVal
 
 class DepObj(object):
     """Helper object that carries list of dependecies"""

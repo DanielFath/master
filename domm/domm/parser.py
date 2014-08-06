@@ -63,12 +63,11 @@ def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
 def builtin_valid():    return Kwd("buildinValidator"), common_tag
 def common_tag():       return ident, Optional(constr_def), Optional(apply_def), Optional(named_elem)
-def constr_def():       return [elipsis_def, non_elipsis]
-def elipsis_def():      return "(", [Kwd("..."), (constr_type, ",", "...")], ")"
-def non_elipsis():      return "(", constr_type, ZeroOrMore(",", constr_type) , ")"
+def constr_def():       return [("(", [elipsis, (constr_type, ",", elipsis)], ")"), ("(", constr_type, ZeroOrMore(",", constr_type) , ")")]
 def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"), Kwd("_prop"),
                             Kwd("_param"), Kwd("_op"), Kwd("_service"), Kwd("_valueObject")])
 def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref")]
+def elipsis():          return Kwd("...")
 
 # Defines package which is a unit of code organization, which may contain other nested packages
 def package():          return Kwd("package"), ident, Optional(named_elem), "{", ZeroOrMore(pack_elem), "}"
@@ -164,9 +163,20 @@ integer.sem = IntAction()
 named_elem.sem = NamedElementAction()
 user_type.sem = DataTypeAction(built_in = False)
 built_type.sem = DataTypeAction(built_in = True)
+# Semantic actions for enumerations
+enum.sem = EnumAction()
 enum_literals.sem = EnumLiteralAction()
-common_tag.sem = CommonTagAction()
+# Semantic actions for Validators/TagTypes
+elipsis.sem = ElipsisAction()
 constr_def.sem = ConstrDefAction()
+apply_def.sem = ApplyDefAction()
+common_tag.sem = CommonTagAction()
+user_validator.sem = ConstraintAction(built_in = False, is_tag = False)
+builtin_valid.sem = ConstraintAction(built_in = True, is_tag = False)
+user_tag.sem = ConstraintAction(built_in = False, is_tag = True)
+builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
+
+
 apply_def.sem = ApplyDefAction()
 pack_elem.sem = PackageElemAction()
 package.sem = PackageAction()
