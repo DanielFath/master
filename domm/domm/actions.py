@@ -20,7 +20,6 @@ class ModelAction(SemanticAction):
     """
     def first_pass(self, parser, node, children):
         # ID should been always present
-        name = children[1]._id
         model = Model()
 
         for ind, val in enumerate(children):
@@ -47,17 +46,29 @@ class NamedElementAction(SemanticAction):
     and short descriptions
     """
     def first_pass(self, parser, node, children):
-        # If we encounter two child nodes it means there are exactly two strings
-        # of which first is the short and second is long description.
-        if len(children) == 2:
-            return NamedElement(short_desc=children[0], long_desc=children[1])
-        # If we encounter three child nodes it means there is exaclty one string
-        # i.e. only short description, becauser there will be following nodes
-        #   "(0)  text(1) "(2)
-        # We obviously only want the second node that contains text
-        # TODO See why this happens
-        elif len(children) == 3:
-            return NamedElement(short_desc=children[1])
+        retVal = None
+
+        # Remove all `"`from characters from list of children in case it isn't
+        # omitted by the parser
+        filter_children = (x for x in children if x != '"' )
+
+        if parser.debugDomm:
+            print("Debug NamedElementAction (children)", children)
+
+        for ind, val in enumerate(filter_children):
+            if val is not None:
+                if not retVal:
+                    retVal = NamedElement()
+
+                if ind == 0:
+                    retVal.short_desc = val
+                else:
+                    retVal.long_desc = val
+        if parser.debugDomm:
+            print("Debug NamedElementAction returns ", retVal)
+
+        return retVal
+
 
 
 class StringAction(SemanticAction):
@@ -65,7 +76,10 @@ class StringAction(SemanticAction):
     Represents the basic string identified in programm
     """
     def first_pass(self, parser, node, children):
-        return children[1]
+        if parser.debugDomm:
+            print("Debug StringAction (children)", children)
+
+        return children[0]
 
 class IdAction(SemanticAction):
     """
@@ -81,41 +95,23 @@ class IntAction(SemanticAction):
     def first_pass(self, parser, node, children):
         return int(node.value)
 
-class TypesAction(SemanticAction):
-    """
-    Evaluates value of given type
-    """
-    def first_pass(self, parser, node, children):
-        if parser.debugDomm:
-            print("Entered TypesAction")
-            print("Entered children = ", children)
-        # First keyword can only be
-        #   enum
-        #   buildinDataType/dataType
-        #   tagType/buildinTagType
-        #   validator/buildinValidator
-        if children[0] == "enum" :
-            return EnumAction().first_pass(parser, node, children)
-        elif children[0] == "buildinDataType" or children[0] == "dataType":
-            return DataTypeAction().first_pass(parser, node, children)
-        elif children[0] == "buildinValidator" or children[0] == "validatorType" or children [0] == "buildinTagType" or children[0] == "tagType":
-            if parser.debugDomm:
-                print("DEBUG validator branch (children): ", children)
-            return ConstraintAction().first_pass(parser, node, children)
-
 class EnumAction(SemanticAction):
     """
     Evaluates value of enumeration
     """
     def first_pass(self, parser, node, children):
-        enum = Enumeration(name = children[1]._id, namespace = parser.namespace)
+        enum = Enumeration()
 
-        for i in range(1, len(children)):
-            if type(children[i]) is NamedElement:
-                enum.short_desc = children[i].short_desc
-                enum.long_desc = children[i].long_desc
-            elif type(children[i]) is EnumLiteral:
-                enum.add_literal(children[i])
+        for val in children:
+            if type(val) is Id:
+                enum.name = val._id
+            elif type(val) is NamedElement:
+                enum.set_from_named(val)
+            elif type(val) is EnumLiteral:
+                enum.add_literal(val)
+
+        enum.set_namespace(parser.namespace)
+
         return enum
 
 class CommonTagAction(SemanticAction):
@@ -196,22 +192,28 @@ class DataTypeAction(SemanticAction):
     """
     Returns evaluated DataType
     """
+    def __init__(self, built_in = False):
+        self.built_in = built_in
+
     def first_pass(self, parser, node, children):
-        if children[0] == "buildinDataType":
-            builtin = True
-        elif children[0] == "dataType":
-            builtin = False
+        data_type = DataType(built_in = self.built_in)
 
-        name = children[1]._id
-        short_desc = None
-        long_desc = None
+        if parser.debugDomm:
+            print("DEBUG DataTypeAction entered (children): ", children)
 
-        if len(children)== 3:
-            short_desc = children[2].short_desc
-            long_desc = children[2].long_desc
+        for val in children:
+            if type(val) is NamedElement:
+                if parser.debugDomm:
+                    print("DEBUG DataTypeAction entered (val): ", val)
+                data_type.set_from_named(val)
+            elif type(val) is Id:
+                data_type.name = val._id
 
-        data_type = DataType(name, built_in = builtin, short_desc= short_desc,
-            long_desc= long_desc, namespace= parser.namespace)
+        if parser.debugDomm:
+            print("DEBUG DataTypeAction returns: ", data_type)
+
+        data_type.set_namespace(parser.namespace)
+
         return data_type
 
 class ConstraintAction(SemanticAction):

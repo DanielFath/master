@@ -151,13 +151,19 @@ def domm():             return OneOrMore(model), EOF
 
 # Next block connects semantic actions with
 # Parser rules.
+
+# Root rules
 domm.sem = DommAction()
 model.sem = ModelAction()
-named_elem.sem = NamedElementAction()
+# Basic types
 string.sem = StringAction()
 ident.sem = IdAction()
 integer.sem = IntAction()
-types.sem = TypesAction()
+
+# Named element and dataTypes
+named_elem.sem = NamedElementAction()
+user_type.sem = DataTypeAction(built_in = False)
+built_type.sem = DataTypeAction(built_in = True)
 enum_literals.sem = EnumLiteralAction()
 common_tag.sem = CommonTagAction()
 constr_def.sem = ConstrDefAction()
