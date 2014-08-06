@@ -146,6 +146,12 @@ class NamedElement(object):
         self.short_desc = short_desc
         self.long_desc = long_desc
 
+    def set_from_named(self, named_el):
+        assert type(named_el) is NamedElement
+        assert named_el is not None
+        self.short_desc = named_el.short_desc
+        self.long_desc = named_el.long_desc
+
     def __eq__(self, other):
         if type(other) is type(self):
             return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc
