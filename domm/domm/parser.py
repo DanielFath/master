@@ -166,7 +166,7 @@ built_type.sem = DataTypeAction(built_in = True)
 # Semantic actions for enumerations
 enum.sem = EnumAction()
 enum_literals.sem = EnumLiteralAction()
-# Semantic actions for Validators/TagTypes
+# Semantic actions for Validators/TagTypes and related constucts
 elipsis.sem = ElipsisAction()
 constr_def.sem = ConstrDefAction()
 apply_def.sem = ApplyDefAction()
@@ -179,12 +179,14 @@ builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
 package.sem = PackageAction()
 # Semantic action for Exceptions
 exception.sem = ExceptionAction()
+# Sematnic actions for prop and related constructs
 type_def.sem = TypeDefAction()
 constr_spec.sem = ConstraintSpecAction()
 constr_speclist.sem = ConstraintSpecListAction()
 constr_param.sem = ConstraintParamAction()
 ref.sem = RefAction()
 prop.sem = PropertyAction()
+# Semantic actions for operations and related constructs
 ext_def.sem = ExtDefAction()
 dep_def.sem = DepDefAction()
 
