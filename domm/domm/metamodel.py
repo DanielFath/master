@@ -132,6 +132,11 @@ class NamespacedObject(object):
         if self._namespace is not None:
             self._namespace.check(self)
 
+    def set_namespace(self, namespace):
+        if namespace is not None:
+            self._namespace = namespace
+            self._check()
+
 class NamedElement(object):
     """
     Named element represents short and long description
