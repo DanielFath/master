@@ -243,11 +243,12 @@ class Model(NamedElement):
 class DataType(NamedElement, NamespacedObject):
 
 
-    def __init__(self, name, short_desc = None, long_desc = None, built_in = False, namespace = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None, built_in = False, namespace = None):
         super(DataType, self).__init__(name, short_desc, long_desc)
         self._namespace = namespace
         self.built_in = built_in
         self._check()
+
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
@@ -269,7 +270,7 @@ class CommonTag(NamedElement):
     """
     Common function signature for Tags/Validators
     """
-    def __init__(self, name, short_desc = None, long_desc = None, constr_def = None, applies = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None, constr_def = None, applies = None):
         super(CommonTag, self).__init__(name, short_desc, long_desc)
         self.constr_def = constr_def
         self.applies = applies
@@ -343,7 +344,7 @@ class Constraint(NamespacedObject):
 class Enumeration(NamedElement, NamespacedObject):
 
 
-    def __init__(self, name, short_desc = None, long_desc = None, namespace = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None, namespace = None):
         super(Enumeration, self).__init__(name, short_desc, long_desc)
         self._namespace = namespace
         self.literals = set()
