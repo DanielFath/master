@@ -175,11 +175,10 @@ user_validator.sem = ConstraintAction(built_in = False, is_tag = False)
 builtin_valid.sem = ConstraintAction(built_in = True, is_tag = False)
 user_tag.sem = ConstraintAction(built_in = False, is_tag = True)
 builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
-
-
-apply_def.sem = ApplyDefAction()
-pack_elem.sem = PackageElemAction()
+# Semantic action for package
 package.sem = PackageAction()
+# Semantic action for Exceptions
+exception.sem = ExceptionAction()
 type_def.sem = TypeDefAction()
 constr_spec.sem = ConstraintSpecAction()
 constr_speclist.sem = ConstraintSpecListAction()

@@ -254,29 +254,6 @@ class ConstraintAction(SemanticAction):
 
         return constraint
 
-class PackageElemAction(SemanticAction):
-    """
-    Since package element can be multiple elements and the arpeggio
-    parser parses package_elem not as one of matching elements
-    but as package element, this action just recognizes the right
-    element based on keyword and lets the appropriate action take
-    care of it
-    """
-    def first_pass(self, parser, node, children):
-        if children[0] == "buildinDataType" or children[0] == "dataType":
-            return DataTypeAction().first_pass(parser, node, children)
-        elif children[0] == "buildinValidator" or children[0] == "validator" or children[0] == "buildinTagType" or children[0] == "tagType" :
-            return ConstraintAction().first_pass(parser, node, children)
-        elif children[0] == "package":
-            return PackageAction().first_pass(parser, node, children)
-        elif children[0] == "exception":
-            return ExceptionAction().first_pass(parser, node, children)
-        elif children[0] == "service":
-            return ServiceAction().first_pass(parser, node, children)
-
-    def second_pass(self, parser, node):
-        pass
-
 class PackageAction(SemanticAction):
     def first_pass(self, parser, node, children):
         package = Package()
