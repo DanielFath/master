@@ -8,7 +8,7 @@ class DommAction(SemanticAction):
     def first_pass(self, parser, node, children):
         model_map = dict()
 
-        filter_children = [x for x in children if type(x) != str]
+        filter_children = (x for x in children if type(x) != str)
 
         for x in filter_children:
             model_map[x.name] = x
@@ -163,7 +163,7 @@ class ConstrDefAction(SemanticAction):
             print("DEBUG ConstrDefAction children: ", children)
 
         # Filter all irrelevant strings from query
-        filter_children = [x for x in children if x != "(" and x != ")" and x != ',']
+        filter_children = (x for x in children if x != "(" and x != ")" and x != ',')
 
         for val in filter_children:
             constr_def.add_constr(val)
@@ -258,7 +258,7 @@ class PackageAction(SemanticAction):
     def first_pass(self, parser, node, children):
         package = Package()
 
-        filter_children = [x for x in children if type(x) is not str]
+        filter_children = (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
             print("DEBUG PackageAction (filter_children)", filter_children)
@@ -297,7 +297,7 @@ class ConstraintSpecAction(SemanticAction):
         temp_spec = ConstraintSpec()
 
         # We filter for strings to remove all `(` `)` `,` strings from children
-        filter_children = [x for x in children if type(x) is not str]
+        filter_children = (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecAction enter (filter_children): ", filter_children)
@@ -362,7 +362,7 @@ class ConstraintSpecListAction(SemanticAction):
     def first_pass(self, parser, node, children):
         list_specs = SpecsObj()
 
-        filter_children = [x for x in children if type(x) is ConstraintSpec or type(x) is Id]
+        filter_children = (x for x in children if type(x) is ConstraintSpec or type(x) is Id)
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecListAction enter (filter_children): ", filter_children)
@@ -476,7 +476,7 @@ class ExceptionAction(SemanticAction):
         exception = ExceptionType()
 
         # We filter for strings to remove all `{` `}` and keywords strings from children
-        filter_children = [x for x in children if type(x) is not str]
+        filter_children =  (x for x in children if type(x) is not str)
 
         for val in filter_children:
             if type(val) is Id:
@@ -551,7 +551,7 @@ class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):
 
         # We filter for strings to remove all `{` `}` and keywords strings from children
-        filter_children = [x for x in children if type(x) is not str]
+        filter_children =  (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
             print("DEBUG Entered ServiceAction (filter_children)", filter_children)
