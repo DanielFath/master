@@ -243,7 +243,7 @@ class Model(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, frozenset(self.types), frozenset(self.packages), frozenset(self.constrs)))
+        return hash((self.name, self.short_desc, self.long_desc, fnvhash(self.types), fnvhash(self.packages), fnvhash(self.constrs)))
 
 class DataType(NamedElement, NamespacedObject):
 
@@ -369,7 +369,7 @@ class Enumeration(NamedElement, NamespacedObject):
             self.literals.add(literal)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, hash(frozenset(self.literals)) ))
+        return hash((self.name, self.short_desc, self.long_desc, fnvhash(self.literals) ))
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -558,7 +558,7 @@ class Package(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, hash(frozenset(self.elems)) ))
+        return hash((self.name, self.short_desc, self.long_desc, fnvhash(self.elems) ))
 
     def __repr__(self):
         retStr = '\n--------------\npackage %s {\n' % self.name
@@ -717,7 +717,7 @@ class Property(object):
 
     def __hash__(self):
         return hash((self.ordered, self.unique, self.readonly,
-            self.type_def, self.relationship, frozenset(self.constraints)
+            self.type_def, self.relationship, fnvhash(self.constraints)
             ))
 
     def __eq__(self, other):
@@ -798,7 +798,7 @@ class ExceptionType(NamedElement, NamespacedObject):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, frozenset(self.props.items())))
+        return hash((self.name, self.short_desc, self.long_desc, fnvhash(self.props.items())))
 
     def __repr__(self):
         retStr = ' exception %s "%s" "%s" {\n' % (self.name, self.short_desc, self.long_desc)
