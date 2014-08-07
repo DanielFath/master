@@ -261,7 +261,7 @@ class PackageAction(SemanticAction):
         filter_children = (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
-            print("DEBUG PackageAction (filter_children)", filter_children)
+            print("DEBUG PackageAction (children)", children)
 
         for val in filter_children:
             if type(val) is Id:
@@ -300,7 +300,7 @@ class ConstraintSpecAction(SemanticAction):
         filter_children = (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
-            print("DEBUG ConstraintSpecAction enter (filter_children): ", filter_children)
+            print("DEBUG ConstraintSpecAction enter (children): ", children)
 
         for ind, val in enumerate(filter_children):
             if type(val) is Id and ind == 0:
@@ -365,7 +365,7 @@ class ConstraintSpecListAction(SemanticAction):
         filter_children = (x for x in children if type(x) is ConstraintSpec or type(x) is Id)
 
         if parser.debugDomm:
-            print("DEBUG ConstraintSpecListAction enter (filter_children): ", filter_children)
+            print("DEBUG ConstraintSpecListAction enter (children): ", children)
 
         for val in filter_children:
             if type(val) is ConstraintSpec:
@@ -554,7 +554,7 @@ class ServiceAction(SemanticAction):
         filter_children =  (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
-            print("DEBUG Entered ServiceAction (filter_children)", filter_children)
+            print("DEBUG Entered ServiceAction (children)", children)
 
         service = Service()
 
