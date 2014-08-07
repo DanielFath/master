@@ -13,6 +13,7 @@
 #   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
 from error import *
+from enum import Enum
 
 def fnvhash(a):
     """
@@ -296,8 +297,9 @@ class CommonTag(NamedElement):
     def __repr__(self):
         return 'common_tag %s %s %s [%s %s]' % (self.name, self.constr_def, self.applies, self.short_desc, self.long_desc)
 
-class ConstraintType(object):
-    Tag, Validator = range(2)
+class ConstraintType(Enum):
+    Tag = 1,
+    Validator = 2
 
 class Constraint(NamespacedObject):
     """
@@ -806,11 +808,16 @@ class ExceptionType(NamedElement, NamespacedObject):
             retStr += "    %s\n" % prop
         return retStr
 
-class ClassType(object):
+class ClassType(Enum):
     """
     Represents possible classifier type amongst the one of specified
     """
-    Entity, Service, ValueObject, ExceptType, DataType, Constraint  = range(6)
+    Entity = 1,
+    Service = 2,
+    ValueObject = 3,
+    ExceptType = 4,
+    DataType = 5,
+    Constraint = 6
 
 class ClassifierBound(object):
     """

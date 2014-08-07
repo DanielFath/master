@@ -8,6 +8,7 @@ install:
     - cd domm
     - python setup.py install
     - cd ..
+    - pip install enum34
 script:
     - make check
 
