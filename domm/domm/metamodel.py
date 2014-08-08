@@ -1020,6 +1020,7 @@ class Service(NamedElement, NamespacedObject):
         return self
 
     def add_operation(self, oper):
+        assert type(oper) is Operation
         self.operations.add(oper)
         return self
 
