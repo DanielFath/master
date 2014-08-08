@@ -864,6 +864,32 @@ class OpParam(NamedElement):
         self.type_def = type_def
         self.constraints = set()
 
+    def __repr__(self):
+        retStr = ""
+        if self.ordered:
+            retStr += " ordered "
+        if self.unique:
+            retStr += " unique "
+        if self.required:
+            retStr += " required "
+        if self.constraints:
+            retStr += " constraints(%s)" % self.constraints
+        retStr += " %s (%s %s) " % (self.type_def, self.short_desc, self.long_desc)
+        return retStr
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__eq__(self, other) and self.ordered == other.ordered \
+            and self.unique == other.unique and self.required == other.required\
+            and self.type_def == other.type_def and self.constraints == other.constraints
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self, other):
+        return hash(self.name, self.short_desc, self.long_desc, self.type_def,
+            self.unique, self.required, self.ordered, fnvhash(self.constraints))
+
 class Operation(object):
     """
     This class models the Operation classifier in DOMMLite.
