@@ -46,6 +46,13 @@ def print_constraints(constraints):
         retStr += "]"
     return retStr
 
+def print_partial_map(print_map, partial):
+    assert type(print_map) is dict
+    retStr = ""
+    for part in partial:
+        retStr += "\n%s" % print_map[part]
+    return retStr
+
 class NamespaceResolver(object):
     """
     A utility class that temporarily stores and resolves
