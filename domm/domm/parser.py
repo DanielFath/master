@@ -120,11 +120,11 @@ def ref():              return "<>", ident
 # Operations have parameters they take in, exceptions their throw, like
 # any standard method in a general purpose language
 def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique"),
-                            Kwd("required")]), type_def, "(", Optional(param, ZeroOrMore(",", param)
+                            Kwd("required")]), type_def, "(", Optional(op_param, ZeroOrMore(",", op_param)
                             ), ")", Optional("throws", ident,
                             ZeroOrMore(",", ident) ), Optional(constr_speclist), Optional(named_elem)
 
-def param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
+def op_param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
                             ), type_def, Optional(constr_speclist), Optional(named_elem)
 
 # Feature and operation compartments, group a set of feature
