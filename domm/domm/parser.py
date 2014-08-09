@@ -142,7 +142,7 @@ def exception():        return Kwd("exception"), ident, Optional(named_elem), "{
 
 # Defines the model rule of DOMMLite
 # which is a container for one or more types or packages
-def model() :           return Kwd("model"), ident, Optional(named_elem), ZeroOrMore(types), ZeroOrMore(package)
+def model() :           return Kwd("model"), ident, Optional(named_elem), ZeroOrMore([user_type, constraint_type]), ZeroOrMore(package)
 
 
 # The basic root rule of grammar defintion

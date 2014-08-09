@@ -34,12 +34,6 @@ def test_dataType():
     expected1 = Model(name = "simple").add_type(DataType(name = "Name"))
     assert parsed1 == expected1
 
-    parsed2 = DommParser().string_into_ast("""model simple
-        buildinDataType Name "Name of person" """)["simple"]
-
-    expected2 = Model(name = "simple").add_type(DataType(name = "Name", short_desc = "Name of person", built_in = True))
-    assert parsed2 ==  expected2
-
     parsed3 = DommParser().string_into_ast("""model simple
         dataType Name "Name of person" "Detailed description of field" """)["simple"]
 
@@ -48,27 +42,30 @@ def test_dataType():
     assert parsed3 ==  expected3
 
 def test_enum():
-    parsed1 = DommParser().string_into_ast(""" model enum
+    parsed1 = DommParser().string_into_ast(""" model enum package test {
     enum Color "Color desc." {
         R "Red"
         G "Green"
         B "Blue"
-    }""")["enum"]
+    }}""")["enum"]
 
-    expected1 = Model(name = "enum").add_type(
-        Enumeration(name = "Color", short_desc = "Color desc." ).add_all_literals([
+    package1 = Package(name = "test").add_elem(Enumeration(name = "Color", short_desc = "Color desc."
+        ).add_all_literals([
             EnumLiteral(value = "R", name = "Red"),
             EnumLiteral(value = "G", name = "Green"),
             EnumLiteral(value = "B", name = "Blue")
-            ])
-        )
-    unexpected1 = Model(name = "enum").add_type(
-        Enumeration(name = "Color", short_desc = "Color desc." ).add_all_literals([
+            ]))
+    expected1 = Model(name = "enum").add_package(package1)
+
+    package1alt = Package(name = "test").add_elem(Enumeration(name = "Color", short_desc = "Color desc."
+        ).add_all_literals([
             EnumLiteral(value = "R", name = "Red"),
             EnumLiteral(value = "G", name = "Green"),
             EnumLiteral(value = "B", name = "Blues")
-            ])
-        )
+            ]))
+
+    unexpected1 = Model(name = "enum").add_package(package1alt)
+
     assert parsed1 == expected1
     assert parsed1 != unexpected1
 
