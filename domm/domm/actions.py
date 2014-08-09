@@ -661,6 +661,8 @@ class ServiceAction(SemanticAction):
                     service.add_constraint_spec(x)
             elif type(val) is Operation:
                 service.add_operation(val)
+            elif type(val) is Compartment:
+                service.add_op_compartment(val)
 
         if parser.debugDomm:
             print("DEBUG Entered ServiceAction returns ", service)
