@@ -207,15 +207,18 @@ class Model(NamedElement):
         self.packages = set()
 
     def add_type(self, type_def):
+        assert type(type_def) is DataType
         self.types.add(type_def)
         return self
 
     def add_package(self, package):
+        assert type(package) is Package
         self.packages.add(package)
         return self
 
 
     def add_constraint(self, constr):
+        assert type(constr) is Constraint
         self.constrs.add(constr)
         return self
 
