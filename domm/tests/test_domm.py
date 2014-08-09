@@ -46,24 +46,21 @@ def test_enum():
         R "Red"
         G "Green"
         B "Blue"
-    }}""")["enum"]
+    }}""")["enum"]["test"]["Color"]
 
-    package1 = Package(name = "test").add_elem(Enumeration(name = "Color", short_desc = "Color desc."
+    expected1 = Enumeration(name = "Color", short_desc = "Color desc."
         ).add_all_literals([
             EnumLiteral(value = "R", name = "Red"),
             EnumLiteral(value = "G", name = "Green"),
             EnumLiteral(value = "B", name = "Blue")
-            ]))
-    expected1 = Model(name = "enum").add_package(package1)
+            ])
 
-    package1alt = Package(name = "test").add_elem(Enumeration(name = "Color", short_desc = "Color desc."
+    unexpected1 = Enumeration(name = "Color", short_desc = "Color desc."
         ).add_all_literals([
             EnumLiteral(value = "R", name = "Red"),
             EnumLiteral(value = "G", name = "Green"),
             EnumLiteral(value = "B", name = "Blues")
-            ]))
-
-    unexpected1 = Model(name = "enum").add_package(package1alt)
+            ])
 
     assert parsed1 == expected1
     assert parsed1 != unexpected1

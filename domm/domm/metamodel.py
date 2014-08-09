@@ -571,13 +571,14 @@ class Package(NamedElement):
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(Package, self).__init__(name, short_desc, long_desc)
-        self.elems = set()
+        self.elems = dict()
 
     def set_name(self, name):
         self.name = name
 
     def add_elem(self, element):
-        self.elems.add(element)
+        if element and element.name:
+            self.elems[element.name] = element
         return self
 
     def __eq__(self, other):
@@ -601,6 +602,9 @@ class Package(NamedElement):
             retStr += ' %s '% i
         retStr += "}\n--------------\n"
         return retStr
+
+    def __getitem__(self, key):
+        return self.elems[key]
 
 class Relationship(object):
     """Describes all properties of a Relationship property"""
