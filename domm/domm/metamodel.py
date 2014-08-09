@@ -1082,10 +1082,16 @@ class Service(NamedElement, NamespacedObject):
             for val in self.dependencies:
                 retStr += " %s " % val
 
+        retStr += "{\n"
+
         if self.constraints and len(self.constraints) > 0:
             retStr += print_constraints(self.constraints)
 
-        retStr += " {\n"
+        if self.op_compartments:
+            for compartment in self.op_compartments:
+                retStr += "\n%s\n" % compartment
+
+
         for op in self.operations:
             retStr += "    %s" % op
         retStr += "}"
