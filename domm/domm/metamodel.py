@@ -929,10 +929,10 @@ class OpParam(NamedElement):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __hash__(self, other):
-        return hash(self.name, self.short_desc, self.long_desc,
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc,
             self.type_def, self.unique, self.required, self.ordered,
-            fnvhash(self.constraints))
+            fnvhash(self.constraints)))
 
 class Operation(object):
     """
