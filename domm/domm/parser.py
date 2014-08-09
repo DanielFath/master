@@ -192,6 +192,7 @@ dep_def.sem = DepDefAction()
 service.sem = ServiceAction()
 oper.sem = OperationAction()
 op_param.sem = OpParamAction()
+oper_compart.sem = CompartmentAction(is_op = True)
 
 class DommParser(ParserPython):
     """

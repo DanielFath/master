@@ -572,6 +572,7 @@ class OpParamAction(SemanticAction):
             print("DEBUG Entered OpParamAction returns ", param)
 
         return param
+
 class OperationAction(SemanticAction):
     def first_pass(self, parser, node, children):
         filter_children = (x for x in children if x != "(" and x != ")" and x != "{" and x != "}")
@@ -606,6 +607,32 @@ class OperationAction(SemanticAction):
             print("DEBUG OperationAction returns", oper)
         return oper
 
+class CompartmentAction(SemanticAction):
+
+    def __init__(self, is_op = True):
+        self.is_op = is_op
+
+    def first_pass(self, parser, node, children):
+        comp = Compartment(is_op = self.is_op)
+
+        filter_children = (x for x in children if type(x) is not str)
+
+        if parser.debugDomm:
+            print("DEBUG Entered CompartmentAction (children)", children)
+
+        for val in filter_children:
+            if type(val) is Id:
+                val.name = val._id
+            elif type(val) is NamedElement:
+                comp.set_from_named(val)
+            elif type(val) is Operation and self.is_op:
+                comp.add_elem(val)
+            elif type(val) is Property and not self.is_op:
+                comp.add_elem(val)
+
+        if parser.debugDomm:
+            print("DEBUG CompartmentAction returns", comp)
+        return comp
 
 class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):

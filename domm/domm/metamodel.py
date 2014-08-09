@@ -1025,6 +1025,34 @@ class Operation(NamedElement):
         retStr += " (%s %s) " % (self.short_desc, self.long_desc)
         return retStr
 
+class Compartment(NamedElement):
+    """
+    Class that denotes a named group of either operations or properties.
+    Generally used to respresent things like logical/visual grouping of
+    elements, for example tabs.
+    """
+    def __init__(self, name = None, short_desc = None, long_desc = None, \
+        is_op = True):
+        super(Compartment, self).__init__(name, short_desc, long_desc)
+        self.elements = set()
+        self.is_op = is_op
+
+    def add_elem(self, elem):
+        if self.is_op:
+            assert type(elem) is Operation
+        else:
+            assert type(elem) is Property
+        self.elements.add(elem)
+        return self
+
+    def __repr__(self):
+        retStr = "comparement %s (%s %s) {\n" % \
+            (self.name, self.short_desc, self.long_desc)
+        if self.elements:
+            for x in self.elements:
+                retStr += '%s\n' % x
+        retStr += "}"
+        return retStr
 
 class Service(NamedElement, NamespacedObject):
     """
