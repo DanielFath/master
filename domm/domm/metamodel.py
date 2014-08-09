@@ -934,7 +934,7 @@ class OpParam(NamedElement):
             self.type_def, self.unique, self.required, self.ordered,
             fnvhash(self.constraints)))
 
-class Operation(object):
+class Operation(NamedElement):
     """
     This class models the Operation classifier in DOMMLite.
 
@@ -950,8 +950,13 @@ class Operation(object):
             ...
         }
     """
-    def __init__(self, type_def = None, params = None):
+    def __init__(self, short_desc = None, long_desc = None, \
+        type_def = None, params = None):
         super(Operation, self).__init__()
+        self.name = None
+        self.short_desc = short_desc
+        self.long_desc = long_desc
+
         self.ordered = False
         self.unique = False
         self.required = False
@@ -974,7 +979,7 @@ class Operation(object):
 
     def add_constraint_spec(self, constraint):
         assert type(constraint) is ConstraintSpec
-        self.constraints.add(constraints)
+        self.constraints.add(constraint)
         return self
 
     def add_throws_exception(self, exception):
@@ -982,6 +987,43 @@ class Operation(object):
         assert exception.type_of == ClassType.ExceptType
         self.throws.append(exception)
         return self
+
+    def __eq__(self, other):
+        return NamedElement.__eq__(self,other) \
+            and self.ordered == other.ordered and self.unique == other.unique\
+            and self.required == other.required \
+            and self.constraints == other.constraints \
+            and self.type_def == other.type_def \
+            and self.params == other.params and self.throws == other.throws \
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.ordered,\
+            self.unique, self.required, self.type_def, fnvhash(self.params), \
+            fnvhash(self.constraints), fnvhash(self.throws)))
+
+    def __repr__(self):
+        retStr = " op "
+        if self.ordered:
+            retStr += " ordered "
+        if self.unique:
+            retStr += " unique "
+        if self.required:
+            retStr += " required "
+        retStr += '%s(' % self.type_def
+        if self.params:
+            for x in self.params:
+                retStr += " %s " % x
+        retStr += ") "
+        if self.throws:
+            retStr += " throws "
+            for x in self.throws:
+                retStr += " %s " % x.ref._id
+        retStr += print_constraints(self.constraints)
+        retStr += " (%s %s) " % (self.short_desc, self.long_desc)
+        return retStr
 
 
 class Service(NamedElement, NamespacedObject):

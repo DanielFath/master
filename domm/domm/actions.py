@@ -546,6 +546,66 @@ class DepDefAction(SemanticAction):
 
         return retVal
 
+class OpParamAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG Entered OpParamAction (children)", children)
+
+        param = OpParam()
+
+        for val in children:
+            if type(val) is TypeDef:
+                param.type_def = val
+            elif type(val) is NamedElement:
+                param.set_from_named(val)
+            elif type(val) is SpecsObj:
+                for x in val:
+                    param.constraints.add(x)
+            elif val == "ordered":
+                param.ordered = True
+            elif val == "required":
+                param.required = True
+            elif val == "unique":
+                param.unique = True
+
+        if parser.debugDomm:
+            print("DEBUG Entered OpParamAction returns ", param)
+
+        return param
+class OperationAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        filter_children = (x for x in children if x != "(" and x != ")" and x != "{" and x != "}")
+
+        if parser.debugDomm:
+            print("DEBUG Entered OperationAction (children)", children)
+
+        oper = Operation()
+        for val in filter_children:
+            if parser.debugDomm:
+                print("DEBUG OperationAction loop val: ", val)
+            if type(val) is TypeDef:
+                oper.type_def = val
+            elif type(val) is NamedElement:
+                oper.set_from_named(val)
+            elif val == "ordered":
+                oper.ordered = True
+            elif val == "unique":
+                oper.unique = True
+            elif val == "required":
+                oper.required = True
+            elif type(val) is OpParam:
+                oper.add_param(val)
+            elif type(val) is SpecsObj:
+                for x in val.specs:
+                    oper.add_constraint_spec(x)
+            elif type(val) is Id:
+                exc = ClassifierBound(ref = val, type_of = ClassType.ExceptType)
+                oper.add_throws_exception(exc)
+
+        if parser.debugDomm:
+            print("DEBUG OperationAction returns", oper)
+        return oper
+
 
 class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -559,8 +619,6 @@ class ServiceAction(SemanticAction):
         service = Service()
 
         for val in filter_children:
-            if parser.debugDomm:
-                    print("DEBUG Entered ServiceAction type of child ", type(val))
             if type(val) is Id:
                 service.name = val._id
             elif type(val) is NamedElement:
@@ -574,6 +632,8 @@ class ServiceAction(SemanticAction):
             elif type(val) is SpecsObj:
                 for x in val.specs:
                     service.add_constraint_spec(x)
+            elif type(val) is Operation:
+                service.add_operation(val)
 
         if parser.debugDomm:
             print("DEBUG Entered ServiceAction returns ", service)

@@ -186,9 +186,12 @@ constr_speclist.sem = ConstraintSpecListAction()
 constr_param.sem = ConstraintParamAction()
 ref.sem = RefAction()
 prop.sem = PropertyAction()
-# Semantic actions for operations and related constructs
+# Semantic actions for Service and related constructs
 ext_def.sem = ExtDefAction()
 dep_def.sem = DepDefAction()
+service.sem = ServiceAction()
+oper.sem = OperationAction()
+op_param.sem = OpParamAction()
 
 class DommParser(ParserPython):
     """
