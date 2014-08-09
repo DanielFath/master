@@ -209,37 +209,42 @@ class Model(NamedElement):
     """
     def __init__(self, name =None, short_desc = None, long_desc = None):
         super(Model, self).__init__(name, short_desc, long_desc)
+        self.all = dict()
         self.types = set()
         self.constrs = set()
         self.packages = set()
 
     def add_type(self, type_def):
         assert type(type_def) is DataType
-        self.types.add(type_def)
+        if type_def and type_def.name:
+            self.all[type_def.name] = type_def
+            self.types.add(type_def.name)
         return self
 
     def add_package(self, package):
         assert type(package) is Package
-        self.packages.add(package)
+        if package and package.name:
+            self.all[package.name] = package
+            self.types.add(package.name)
         return self
 
 
     def add_constraint(self, constr):
         assert type(constr) is Constraint
-        self.constrs.add(constr)
+        if constr and constr.tag and constr.tag.name:
+            self.all[constr.tag.name] = constr
+            self.constrs.add(constr.tag.name)
         return self
 
 
     def __repr__(self):
-        return 'Model "%s" (%s %s)\ntypes: %s\nconstraint: %s\n%s' % \
-        (self.name, self.short_desc, self.long_desc, self.types, self.constrs,\
-         self.packages)
+        return 'Model "%s" (%s %s)\nall: %s\n' % \
+        (self.name, self.short_desc, self.long_desc, self.all)
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return NamedElement.__eq__(self, other) and \
-            self.types == other.types and self.constrs == other.constrs \
-            and self.packages == other.packages
+            return NamedElement.__eq__(self, other) \
+                and self.all == other.all
         else:
             return False
 
@@ -248,7 +253,10 @@ class Model(NamedElement):
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, \
-        fnvhash(self.types), fnvhash(self.packages), fnvhash(self.constrs)))
+        fnvhash(self.all)))
+
+    def __getitem__(self, key):
+        return self.all[key]
 
 class DataType(NamedElement, NamespacedObject):
 

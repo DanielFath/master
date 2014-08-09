@@ -29,16 +29,15 @@ def test_model():
 
 def test_dataType():
     parsed1 = DommParser().string_into_ast("""model simple
-        dataType Name""")["simple"]
+        dataType Name""")["simple"]["Name"]
 
-    expected1 = Model(name = "simple").add_type(DataType(name = "Name"))
+    expected1 = DataType(name = "Name")
     assert parsed1 == expected1
 
     parsed3 = DommParser().string_into_ast("""model simple
-        dataType Name "Name of person" "Detailed description of field" """)["simple"]
+        dataType Name "Name of person" "Detailed description of field" """)["simple"]["Name"]
 
-    expected3 = Model(name = "simple").add_type(
-        DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field"))
+    expected3 = DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field")
     assert parsed3 ==  expected3
 
 def test_enum():
