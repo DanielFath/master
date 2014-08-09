@@ -155,5 +155,6 @@ def test_exception():
     print("expected1 hash", hash(expected1))
 
     assert parsed1 == expected1
+    assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
 
 

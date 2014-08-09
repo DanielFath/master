@@ -859,6 +859,9 @@ class ExceptionType(NamedElement, NamespacedObject):
             retStr += "    %s\n" % prop
         return retStr
 
+    def __getitem__(self, key):
+        return self.props[key]
+
 class ClassType(Enum):
     """
     Represents possible classifier type amongst the one of specified
