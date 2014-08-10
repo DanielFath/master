@@ -268,6 +268,8 @@ class PackageAction(SemanticAction):
                 package.set_name(val._id)
             elif type(val) is NamedElement:
                 package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
+            elif type(val) is Constraint:
+                package.add_constraint(val)
             else:
                 package.add_elem(val)
 

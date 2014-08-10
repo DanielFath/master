@@ -581,6 +581,11 @@ class Package(NamedElement):
             self.elems[element.name] = element
         return self
 
+    def add_constraint(self, constraint):
+        assert type(constraint) is Constraint
+        self.elems[constraint.tag.name] = constraint
+        return self
+
     def __eq__(self, other):
         if type(other) is type(self):
             return self.name == other.name  \
