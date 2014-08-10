@@ -1143,12 +1143,13 @@ class Service(NamedElement, NamespacedObject):
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__init__(self, other) \
+            return NamedElement.__eq__(self, other) \
             and self.extends == other.extends \
             and self.dependencies == other.dependencies \
             and self.constraints == other.constraints \
             and self.operations == other.operations \
             and self.op_compartments == other.op_compartments
+        return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
