@@ -598,7 +598,7 @@ class Package(NamedElement):
 
     def __repr__(self):
         retStr = '\n--------------\npackage %s {\n' % self.name
-        for i in self.elems:
+        for i in self.elems.itervalues():
             retStr += ' %s '% i
         retStr += "}\n--------------\n"
         return retStr
