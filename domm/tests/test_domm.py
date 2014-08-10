@@ -127,10 +127,6 @@ def test_exception():
         }
     """)["test"]
 
-    #exception ResultNotFound "Result has not been found" {
-    #    prop +string[2] message <> testing [isValidErrCode(2, "string", X)] "error message" "message"
-    #}
-
     type_def1 = TypeDef(name = "message", type_of = "string", short_desc = "error message" , long_desc = "message")
     type_def1.set_multi(2)
 
@@ -157,4 +153,36 @@ def test_exception():
     assert parsed1 == expected1
     assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
 
+def test_service():
+    parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
+        package exception_example {
+            service StudentService {
 
+            }
+        }
+    """)["test"]
+
+    ext = ClassifierBound(ref = Id("Ext"), type_of = ClassType.Service)
+    dep = ClassifierBound(ref = Id("Dep1"), type_of = ClassType.Service)
+    service1 = Service(name = "StudentService"#, \
+        #short_desc = "Student service", \
+        #long_desc = "Gives services to students", \
+        #extends = ext, depends = [dep]
+        )
+    expected1 = Model(name = "test").add_package(Package(name = "exception_example"
+        ).add_elem(service1))
+
+    #print("parsed1 ", parsed1)
+    #print("expected1 ", expected1)
+
+    expected1 == parsed1
+
+    print("expected1 == parserd", expected1.all["exception_example"] == parsed1.all["exception_example"])
+    print("expected1.all", parsed1.all["exception_example"]["StudentService"])
+    print("parsed1.all", expected1.all["exception_example"]["StudentService"])
+    print("parsed1   hash", hash(parsed1))
+    print("expected1 hash", hash(expected1))
+
+
+
+    assert parsed1 == expected1
