@@ -1,3 +1,5 @@
+# Ignore IDEA output
+.idea
 # Ignore scratchpad files
 /domm/domm/dummy.py
 /domm/domm/test.domm
