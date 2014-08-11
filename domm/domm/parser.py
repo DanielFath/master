@@ -210,29 +210,30 @@ user_validator.sem = ConstraintAction(built_in = False, is_tag = False)
 builtin_valid.sem = ConstraintAction(built_in = True, is_tag = False)
 user_tag.sem = ConstraintAction(built_in = False, is_tag = True)
 builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
-
-# Semantic action for package
-package.sem = PackageAction()
-
-# Semantic action for Exceptions
-exception.sem = ExceptionAction()
-
-# Sematnic actions for prop and related constructs
 type_def.sem = TypeDefAction()
 constr_spec.sem = ConstraintSpecAction()
 constr_speclist.sem = ConstraintSpecListAction()
 constr_param.sem = ConstraintParamAction()
+
+# Semantic action for package
+package.sem = PackageAction()
+
+# Semantic actions for prop and related constructs
 ref.sem = RefAction()
 prop.sem = PropertyAction()
 
-# Semantic actions for Service and related constructs
+# Semantic actions for classifiers that extend/depend
 ext_def.sem = ExtDefAction()
 dep_def.sem = DepDefAction()
-service.sem = ServiceAction()
+
+# Semantic actions for operation
 oper.sem = OperationAction()
 op_param.sem = OpParamAction()
 oper_compart.sem = CompartmentAction(is_op = True)
 
+# Semantic action for classifiers
+exception.sem = ExceptionAction()
+service.sem = ServiceAction()
 class DommParser(ParserPython):
     """
     Parser of DOMMLite DSL language
