@@ -211,6 +211,17 @@ class Qid(object):
         if path and len(path) > 0:
             self.path = path
 
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.path == other.path
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return fnvhash(self.path)
+
     def __repr__(self):
         retStr = "Qid("
         for i, part in enumerate(path):
