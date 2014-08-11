@@ -200,6 +200,26 @@ class Id(NamespacedObject):
     def __repr__(self):
         return 'Id("%s")' % (self._id)
 
+class Qid(object):
+    """
+    Qualified ID
+    """
+    def __init__(self, path):
+        super(Qid, self).__init__()
+        assert type(path) is list
+        self.path = []
+        if path and len(path) > 0:
+            self.path = path
+
+    def __repr__(self):
+        retStr = "Qid("
+        for i, part in enumerate(path):
+            if i > 0:
+                retStr += "."
+            retStr += i
+        retStr += ")"
+        return retStr
+
 
 
 class Model(NamedElement):
