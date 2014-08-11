@@ -173,7 +173,7 @@ def test_exception():
 def test_service():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
         package exception_example {
-            service StudentService {
+            service StudentService extends Ext depends Dep1 "Student service" "Gives services to students" {
 
             }
         }
@@ -181,16 +181,14 @@ def test_service():
 
     ext = ClassifierBound(ref = Id("Ext"), type_of = ClassType.Service)
     dep = ClassifierBound(ref = Id("Dep1"), type_of = ClassType.Service)
-    service1 = Service(name = "StudentService"#, \
-        #short_desc = "Student service", \
-        #long_desc = "Gives services to students", \
-        #extends = ext, depends = [dep]
+    service1 = Service(name = "StudentService", \
+        short_desc = "Student service", \
+        long_desc = "Gives services to students", \
+        extends = ext, depends = [dep]
         )
     expected1 = Model(name = "test").add_package(Package(name = "exception_example"
         ).add_elem(service1))
 
-    #print("parsed1 ", parsed1)
-    #print("expected1 ", expected1)
 
     expected1 == parsed1
 
@@ -199,7 +197,5 @@ def test_service():
     print("parsed1.all", expected1.all["exception_example"]["StudentService"])
     print("parsed1   hash", hash(parsed1))
     print("expected1 hash", hash(expected1))
-
-
 
     assert parsed1 == expected1
