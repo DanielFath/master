@@ -147,7 +147,7 @@ def model() :           return Kwd("model"), ident, Optional(named_elem), ZeroOr
 
 
 # The basic root rule of grammar defintion
-def domm():             return OneOrMore(model), EOF
+def domm():             return model, EOF
 
 # Next block connects semantic actions with
 # Parser rules.
