@@ -189,6 +189,7 @@ model.sem = ModelAction()
 # Basic types
 string.sem = StringAction()
 ident.sem = IdAction()
+qual_ident.sem = QidAction()
 integer.sem = IntAction()
 
 # Named element and dataTypes

@@ -88,6 +88,14 @@ class IdAction(SemanticAction):
     def first_pass(self, parser, node, children):
         return Id(node.value, namespace = parser.namespace)
 
+class QidAction(SemanticAction):
+    """
+    Represents actions done when identifier is found
+    """
+    def first_pass(self, parser, node, children):
+        path_list =  node.value.split(".")
+        return Qid(path_list)
+
 class IntAction(SemanticAction):
     """
     Returns an integer represenetation
