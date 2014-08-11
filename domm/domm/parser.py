@@ -234,6 +234,8 @@ oper_compart.sem = CompartmentAction(is_op = True)
 # Semantic action for classifiers
 exception.sem = ExceptionAction()
 service.sem = ServiceAction()
+value_object.sem = ValueObjectAction()
+
 class DommParser(ParserPython):
     """
     Parser of DOMMLite DSL language

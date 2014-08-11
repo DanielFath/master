@@ -1207,3 +1207,82 @@ class Service(NamedElement, NamespacedObject):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
             fnvhash(self.operations), fnvhash(self.op_compartments)))
+
+class ValueObject(NamedElement, NamespacedObject):
+    """
+    """
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
+        extends = None, depends = None, namespace = None):
+        super(ValueObject, self).__init__(name, short_desc, long_desc)
+        self.extends = extends
+        self.dependencies = []
+        if depends and type(depends) is list:
+            self.dependencies = depends
+        self.constraints = set()
+        self.props = set()
+        self._namespace = namespace
+        self._check()
+
+    def set_extends(self, extends):
+        assert type(extends) is ClassifierBound
+        self.extends = extends
+        self.extends.type_of = ClassType.ValueObject
+        return self
+
+    def set_dependencies(self, deps):
+        assert type(deps) is list
+        for val in deps:
+            val.type_of = ClassType.Entity
+            self.dependencies.append(val)
+        return self
+
+    def add_constraint_spec(self, constr):
+        assert type(constr) is ConstraintSpec
+        self.constraints.add(constr)
+        return self
+
+    def add_prop(self, prop):
+        assert type(prop) is Property
+        self.props.add(prop)
+        return self
+
+    def __repr__(self):
+        retStr = " ValueObject %s (%s %s)" %\
+            (self.name, self.short_desc, self.long_desc)
+
+        if self.extends:
+             retStr += " extends %s " % self.extends
+
+        if self.dependencies and len(self.dependencies) > 0:
+            retStr += " depends "
+            for val in self.dependencies:
+                retStr += " %s " % val
+
+        retStr += "{\n"
+
+        if self.constraints and len(self.constraints) > 0:
+            retStr += print_constraints(self.constraints)
+
+
+        for op in self.props:
+            retStr += "    %s" % op
+        retStr += "}"
+
+        return retStr
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__eq__(self, other)\
+            and self.extends == other.extends\
+            and self.dependencies == other.dependencies\
+            and self.constraints == other.constraints\
+            and self.props == other.props
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.extends,
+            fnvhash(self.dependencies), fnvhash(self.constraints),
+            fnvhash(self.props)))

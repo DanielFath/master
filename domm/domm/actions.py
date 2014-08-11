@@ -697,4 +697,31 @@ class ServiceAction(SemanticAction):
 
         return service
 
+class ValueObjectAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG Entered ServiceAction (children)", children)
 
+        filter_children = (x for x in children if type(x) is not str)
+
+        val_obj = ValueObject()
+
+        for val in filter_children:
+            if type(val) is Id:
+                val_obj.name = val._id
+            elif type(val) is NamedElement:
+                val_obj.set_from_named(val)
+            elif type(val) is ExtObj:
+                val_obj.set_extends(val.ref)
+            elif type(val) is DepObj:
+                val_obj.set_dependencies(val.rels)
+            elif type(val) is SpecsObj:
+                for x in val.specs:
+                    val_obj.add_constraint_spec(x)
+            elif type(val) is Property:
+                val_obj.add_prop(val)
+
+        if parser.debugDomm:
+            print("DEBUG ServiceAction returns ", val_obj)
+
+        return val_obj
