@@ -174,7 +174,7 @@ class NamedElement(object):
         """
         Pretty print named element out
         """
-        return 'Named element { short_desc = "%s" long_desc  = "%s" }' % \
+        return 'Named element { short_desc = "%s" long_desc  = "%s" }' %\
         (self.short_desc, self.long_desc)
 
 class Id(NamespacedObject):
@@ -258,12 +258,12 @@ class Model(NamedElement):
 
 
     def __repr__(self):
-        return 'Model "%s" (%s %s)\nall: %s\n' % \
+        return 'Model "%s" (%s %s)\nall: %s\n' %\
         (self.name, self.short_desc, self.long_desc, self.all)
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return NamedElement.__eq__(self, other) \
+            return NamedElement.__eq__(self, other)\
                 and self.all == other.all
         else:
             return False
@@ -272,7 +272,7 @@ class Model(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, \
+        return hash((self.name, self.short_desc, self.long_desc,\
         fnvhash(self.all.items())))
 
     def __getitem__(self, key):
@@ -315,10 +315,10 @@ class CommonTag(NamedElement):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.name == other.name and \
-            self.short_desc == other.short_desc and \
-            self.long_desc == other.long_desc and \
-            self.constr_def == other.constr_def and \
+            return self.name == other.name and\
+            self.short_desc == other.short_desc and\
+            self.long_desc == other.long_desc and\
+            self.constr_def == other.constr_def and\
             self.applies == other.applies
         else:
             return False
@@ -356,7 +356,7 @@ class Constraint(NamespacedObject):
             retStr += 'buildinTagType'
         elif self.built_in == False and self.constr_type == ConstraintType.Tag:
             retStr += 'tagType'
-        elif self.built_in == True \
+        elif self.built_in == True\
          and self.constr_type == ConstraintType.Validator:
             retStr += 'buildinValidator'
         elif self.built_in == False and self.constr_type == ConstraintType.Validator:
@@ -389,7 +389,7 @@ class Constraint(NamespacedObject):
 class Enumeration(NamedElement, NamespacedObject):
 
 
-    def __init__(self, name = None, short_desc = None, \
+    def __init__(self, name = None, short_desc = None,\
         long_desc = None, namespace = None):
         super(Enumeration, self).__init__(name, short_desc, long_desc)
         self._namespace = namespace
@@ -410,14 +410,14 @@ class Enumeration(NamedElement, NamespacedObject):
             self.literals.add(literal)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, \
+        return hash((self.name, self.short_desc, self.long_desc,\
             fnvhash(self.literals) ))
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.name == other.name and \
-            self.short_desc == other.short_desc and \
-            self.long_desc == other.long_desc and \
+            return self.name == other.name and\
+            self.short_desc == other.short_desc and\
+            self.long_desc == other.long_desc and\
             self.literals == other.literals
         else:
             return False
@@ -426,10 +426,10 @@ class Enumeration(NamedElement, NamespacedObject):
         return not self.__eq__(other)
 
     def __repr__(self):
-        retStr = '\nenum %s (%s, %s) {' % \
+        retStr = '\nenum %s (%s, %s) {' %\
           (self.name, self.short_desc, self.long_desc)
         for i in self.literals:
-            retStr += ' %s \n' % (i)
+            retStr += ' %s\n' % (i)
         retStr += "}"
         return retStr
 
@@ -444,8 +444,8 @@ class EnumLiteral(NamedElement):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.value == other.value  and self.name == other.name \
-                and self.short_desc == other.short_desc \
+            return self.value == other.value  and self.name == other.name\
+                and self.short_desc == other.short_desc\
                 and self.long_desc == other.short_desc
         else:
             return False
@@ -457,7 +457,7 @@ class EnumLiteral(NamedElement):
         return hash((self.value, self.name, self.short_desc, self.long_desc))
 
     def __repr__(self):
-        return ' %s - %s (%s, %s)' % (self.name, self.value, self.short_desc, \
+        return ' %s - %s (%s, %s)' % (self.name, self.value, self.short_desc,\
             self.long_desc)
 
 class ApplyDef(object):
@@ -525,7 +525,7 @@ class ApplyDef(object):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.to_entity, self.to_prop, self.to_param, \
+        return hash((self.to_entity, self.to_prop, self.to_param,\
             self.to_service, self.to_op, self.to_value_object))
 
     def __repr__(self):
@@ -608,9 +608,9 @@ class Package(NamedElement):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.name == other.name  \
-             and self.short_desc == other.short_desc \
-             and self.long_desc == other.long_desc \
+            return self.name == other.name \
+             and self.short_desc == other.short_desc\
+             and self.long_desc == other.long_desc\
              and self.elems == other.elems
         return False
 
@@ -618,7 +618,7 @@ class Package(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, \
+        return hash((self.name, self.short_desc, self.long_desc,\
             fnvhash(self.elems.items()) ))
 
     def __repr__(self):
@@ -646,7 +646,7 @@ class Relationship(object):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.opposite_end == other.opposite_end \
+            return self.opposite_end == other.opposite_end\
                 and self.containment == other.containment
         return False
 
@@ -686,9 +686,9 @@ class TypeDef(NamedElement):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return NamedElement.__eq__(self, other) \
-                and self.type == other.type \
-                and self.container == other.container \
+            return NamedElement.__eq__(self, other)\
+                and self.type == other.type\
+                and self.container == other.container\
                 and self.multi == other.multi
         return False
 
@@ -735,7 +735,7 @@ class ConstraintSpec(object):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.ident == other.ident \
+            return self.ident == other.ident\
             and self.parameters == other.parameters
         return False
 
@@ -790,12 +790,12 @@ class Property(object):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.ordered == other.ordered \
-                and self.unique == other.unique \
-                and self.readonly == other.readonly \
-                and self.required == other.required \
-                and self.type_def == other.type_def \
-                and self.relationship == other.relationship \
+            return self.ordered == other.ordered\
+                and self.unique == other.unique\
+                and self.readonly == other.readonly\
+                and self.required == other.required\
+                and self.type_def == other.type_def\
+                and self.relationship == other.relationship\
                 and self.constraints == other.constraints
         return False
 
@@ -818,7 +818,7 @@ class Property(object):
             if self.relationship.containment:
                 containment = "+"
 
-        retStr += " %s  %s%s " % \
+        retStr += " %s  %s%s " %\
             (self.type_def.type, containment, self.type_def.name)
         if self.type_def.container:
             retStr += "["
@@ -832,7 +832,7 @@ class Property(object):
 
         retStr += print_constraints(self.constraints)
 
-        retStr += ' "%s" "%s" ' % \
+        retStr += ' "%s" "%s" ' %\
             (self.type_def.short_desc, self.type_def.long_desc)
         return retStr
 
@@ -841,7 +841,7 @@ class ExceptionType(NamedElement, NamespacedObject):
     Exception object describing models
     """
 
-    def __init__(self, name = None, short_desc = None, long_desc = None, \
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
         namespace = None):
         super(ExceptionType, self).__init__(name, short_desc, long_desc)
         self.props = dict()
@@ -866,7 +866,7 @@ class ExceptionType(NamedElement, NamespacedObject):
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__eq__(self, other) \
+            return NamedElement.__eq__(self, other)\
                 and self.props == other.props
         return False
 
@@ -874,11 +874,11 @@ class ExceptionType(NamedElement, NamespacedObject):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, \
+        return hash((self.name, self.short_desc, self.long_desc,\
             fnvhash(self.props.items())))
 
     def __repr__(self):
-        retStr = ' exception %s "%s" "%s" {\n' % \
+        retStr = ' exception %s "%s" "%s" {\n' %\
                 (self.name, self.short_desc, self.long_desc)
         for prop in self.props.itervalues():
             retStr += "    %s\n" % prop
@@ -953,17 +953,17 @@ class OpParam(NamedElement):
             retStr += " required "
         if self.constraints:
             retStr += " constraints(%s)" % self.constraints
-        retStr += " %s (%s %s) " % (self.type_def, self.short_desc, \
+        retStr += " %s (%s %s) " % (self.type_def, self.short_desc,\
             self.long_desc)
         return retStr
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__eq__(self, other) \
-            and self.ordered == other.ordered \
-            and self.unique == other.unique \
-            and self.required == other.required \
-            and self.type_def == other.type_def \
+            return NamedElement.__eq__(self, other)\
+            and self.ordered == other.ordered\
+            and self.unique == other.unique\
+            and self.required == other.required\
+            and self.type_def == other.type_def\
             and self.constraints == other.constraints
 
     def __ne__(self, other):
@@ -990,7 +990,7 @@ class Operation(NamedElement):
             ...
         }
     """
-    def __init__(self, short_desc = None, long_desc = None, \
+    def __init__(self, short_desc = None, long_desc = None,\
         type_def = None, params = None):
         super(Operation, self).__init__()
         self.name = None
@@ -1029,19 +1029,19 @@ class Operation(NamedElement):
         return self
 
     def __eq__(self, other):
-        return NamedElement.__eq__(self,other) \
+        return NamedElement.__eq__(self,other)\
             and self.ordered == other.ordered and self.unique == other.unique\
-            and self.required == other.required \
-            and self.constraints == other.constraints \
-            and self.type_def == other.type_def \
-            and self.params == other.params and self.throws == other.throws \
+            and self.required == other.required\
+            and self.constraints == other.constraints\
+            and self.type_def == other.type_def\
+            and self.params == other.params and self.throws == other.throws\
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.ordered,\
-            self.unique, self.required, self.type_def, fnvhash(self.params), \
+            self.unique, self.required, self.type_def, fnvhash(self.params),\
             fnvhash(self.constraints), fnvhash(self.throws)))
 
     def __repr__(self):
@@ -1071,7 +1071,7 @@ class Compartment(NamedElement):
     Generally used to respresent things like logical/visual grouping of
     elements, for example tabs.
     """
-    def __init__(self, name = None, short_desc = None, long_desc = None, \
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
         is_op = True):
         super(Compartment, self).__init__(name, short_desc, long_desc)
         self.elements = set()
@@ -1087,7 +1087,7 @@ class Compartment(NamedElement):
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__eq__(self, other) \
+            return NamedElement.__eq__(self, other)\
             and self.elements == other.elements
         return False
 
@@ -1095,11 +1095,11 @@ class Compartment(NamedElement):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.name, self.short_desc, self.long_desc, \
+        return hash((self.name, self.short_desc, self.long_desc,\
                     fnvhash(self.elements)))
 
     def __repr__(self):
-        retStr = "comparement %s (%s %s) {\n" % \
+        retStr = "comparement %s (%s %s) {\n" %\
             (self.name, self.short_desc, self.long_desc)
         if self.elements:
             for x in self.elements:
@@ -1111,7 +1111,7 @@ class Service(NamedElement, NamespacedObject):
     """
     Service classifier meta-model.
     """
-    def __init__(self, name = None, short_desc = None, long_desc = None, \
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
         extends = None, depends = None, namespace = None):
         super(Service, self).__init__(name, short_desc, long_desc)
         self.extends = extends
@@ -1152,7 +1152,7 @@ class Service(NamedElement, NamespacedObject):
         return self
 
     def __repr__(self):
-        retStr = " service %s (%s %s)" % \
+        retStr = " service %s (%s %s)" %\
             (self.name, self.short_desc, self.long_desc)
 
         if self.extends:
@@ -1181,11 +1181,11 @@ class Service(NamedElement, NamespacedObject):
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return NamedElement.__eq__(self, other) \
-            and self.extends == other.extends \
-            and self.dependencies == other.dependencies \
-            and self.constraints == other.constraints \
-            and self.operations == other.operations \
+            return NamedElement.__eq__(self, other)\
+            and self.extends == other.extends\
+            and self.dependencies == other.dependencies\
+            and self.constraints == other.constraints\
+            and self.operations == other.operations\
             and self.op_compartments == other.op_compartments
         return False
 

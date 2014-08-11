@@ -42,7 +42,8 @@ def user_type():        return Kwd("dataType"), ident, Optional(named_elem)
 def built_type():       return Kwd("buildinDataType"), ident, Optional(named_elem)
 
 # Defines the rules for enumeration literals
-def enum():             return Kwd("enum"), ident, Optional(named_elem), "{", OneOrMore(enum_literals), "}"
+def enum():             return Kwd("enum"), ident, Optional(named_elem),\
+                                "{", OneOrMore(enum_literals), "}"
 def enum_literals():    return ident, string, Optional(named_elem)
 
 # Defines rules for constraint types
@@ -65,26 +66,38 @@ def builtin_tag():      return Kwd("buildinTagType"), common_tag
 def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
 def builtin_valid():    return Kwd("buildinValidator"), common_tag
-def common_tag():       return ident, Optional(constr_def), Optional(apply_def), Optional(named_elem)
-def constr_def():       return [("(", [elipsis, (constr_type, ",", elipsis)], ")"), ("(", constr_type, ZeroOrMore(",", constr_type) , ")")]
-def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"), Kwd("_prop"),
-                            Kwd("_param"), Kwd("_op"), Kwd("_service"), Kwd("_valueObject")])
+def common_tag():       return ident, Optional(constr_def),\
+                                Optional(apply_def), Optional(named_elem)
+def constr_def():       return [("(", [elipsis, (constr_type, ",", elipsis)],\
+                                ")"), ("(", constr_type, ZeroOrMore(",",\
+                                    constr_type) , ")")]
+def apply_def():        return Kwd("appliesTo"), ZeroOrMore([Kwd("_entity"),\
+                                Kwd("_prop"), Kwd("_param"), Kwd("_op"),\
+                                Kwd("_service"), Kwd("_valueObject")])
 def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref")]
 def elipsis():          return Kwd("...")
 
 # Defines package which is a unit of code organization, which may contain other nested packages
-def package():          return Kwd("package"), ident, Optional(named_elem), "{", ZeroOrMore(pack_elem), "}"
+def package():          return Kwd("package"), ident, Optional(named_elem),\
+                                "{", ZeroOrMore(pack_elem), "}"
 def pack_elem():        return [package,classifier]
 
 # Defines rules for various structure classifications (i.e. package elements)
-def classifier():       return [entity, service, value_object, exception, types]
+def classifier():       return [entity, service, value_object, exception,\
+                                types]
 
-# Defines an entity in DOMMLite model that often represents actors in the business model
-def entity():           return Kwd("entity"), ident, Optional(ext_def), Optional(ext_def), Optional(named_elem), "{", key, ent_repr, Optional(constr_speclist
-                             ), ZeroOrMore(feature), ZeroOrMore(feature_compart), "}"
+# Defines an entity in DOMMLite model that often represents actors
+# in the business model
+def entity():           return Kwd("entity"), ident, Optional(ext_def),\
+                            Optional(oper), Optional(named_elem),\
+                            "{", key, ent_repr, \
+                            Optional(constr_speclist), ZeroOrMore(feature),\
+                            ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
-def service():          return Kwd("service"), ident, Optional(ext_def), Optional(dep_def), Optional(named_elem), "{", Optional(constr_speclist), ZeroOrMore(oper
-                             ), ZeroOrMore(oper_compart), "}"
+def service():          return Kwd("service"), ident, Optional(ext_def),\
+                            Optional(dep_def), Optional(named_elem),\
+                            "{", Optional(constr_speclist),\
+                            ZeroOrMore(oper), ZeroOrMore(oper_compart), "}"
 
 def ext_def():          return Kwd("extends"), ident
 def dep_def():          return Kwd("depends"), ident, ZeroOrMore(",", ident)
@@ -96,14 +109,17 @@ def key():              return Kwd("key"), "{", OneOrMore(prop), "}"
 # Representation of given entity in the system. For example
 # a Person can be presented using their name and last name, despite having
 # age, ID number, place of residence, etc.
-def ent_repr():         return Kwd("repr"), repr_param, ZeroOrMore("+", repr_param)
+def ent_repr():         return Kwd("repr"), repr_param, \
+                            ZeroOrMore("+", repr_param)
 def repr_param():       return [string, prop]
 
 # Constraint definition defines a set of limitations to a type
 # for instance we can define that some elements are between certain values.
 # For examples grades of a student are between 1 and 5 (or A and F)
-def constr_speclist():  return "[", constr_spec, ZeroOrMore(",", constr_spec), "]"
-def constr_spec():      return ident, Optional("(", constr_param, ZeroOrMore(",", constr_param), ")"),
+def constr_speclist():  return "[", constr_spec, ZeroOrMore(",", constr_spec),\
+                            "]"
+def constr_spec():      return ident, Optional("(", constr_param, \
+                            ZeroOrMore(",", constr_param), ")"),
 def constr_param():     return [string, ident, integer]
 
 # Feature represents a combinationf of properties and operation which
@@ -114,38 +130,51 @@ def feature():          return [prop, oper]
 # You first the define basic constraints like ordered, unique, readonly and
 # required. Then type and it's cardinality are defined. And lastly the reference to another
 # entity is shown.
-def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),Kwd("unique"), Kwd("readonly"),
-                            Kwd("required")]), Optional("+"), type_def, Optional(ref), Optional(constr_speclist), Optional(named_elem)
-def type_def():         return ident,  Optional("[", Optional(integer),"]"), ident
+def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),\
+                            Kwd("unique"), Kwd("readonly"), Kwd("required")]),\
+                            Optional("+"), type_def, Optional(ref), \
+                            Optional(constr_speclist), Optional(named_elem)
+def type_def():         return ident,  Optional("[", Optional(integer),"]"),\
+                            ident
 def ref():              return "<>", ident
 
 # Defines set of operations you can perform on an entity.
 # Operations have parameters they take in, exceptions their throw, like
 # any standard method in a general purpose language
-def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),Kwd("unique"),
-                            Kwd("required")]), type_def, "(", Optional(op_param, ZeroOrMore(",", op_param)
-                            ), ")", Optional("throws", ident,
-                            ZeroOrMore(",", ident) ), Optional(constr_speclist), Optional(named_elem)
+def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),\
+                            Kwd("unique"), Kwd("required")]), type_def,"(", \
+                            Optional(op_param, ZeroOrMore(",", op_param)),\
+                            ")", Optional("throws", ident, ZeroOrMore(",", \
+                            ident) ), Optional(constr_speclist), \
+                            Optional(named_elem)
 
-def op_param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"), Kwd("required")]
-                            ), type_def, Optional(constr_speclist), Optional(named_elem)
+def op_param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"),\
+                            Kwd("required")]), type_def,\
+                            Optional(constr_speclist), Optional(named_elem)
 
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
-def feature_compart():  return Kwd("compartment"), ident, Optional(named_elem), "{", ZeroOrMore(feature), "}"
+def feature_compart():  return Kwd("compartment"), ident, Optional(named_elem)\
+                            , "{", ZeroOrMore(feature), "}"
 
-def oper_compart():     return Kwd("compartment"), ident, Optional(named_elem), "{", ZeroOrMore(oper), "}"
+def oper_compart():     return Kwd("compartment"), ident, Optional(named_elem)\
+                            , "{", ZeroOrMore(oper), "}"
 
 # Value objects are objects that have no operations, only properties
-def value_object():     return Kwd("valueObject"), ident, Optional(ext_def), Optional(dep_def), Optional(named_elem), "{", Optional(constr_def), ZeroOrMore(prop), "}"
+def value_object():     return Kwd("valueObject"), ident, Optional(ext_def),\
+                            Optional(dep_def), Optional(named_elem), \
+                            "{",Optional(constr_def), ZeroOrMore(prop), "}"
 
 # Defines exceptions in DOMMLite, which are entities that are used for
 # reporting errors.
-def exception():        return Kwd("exception"), ident, Optional(named_elem), "{", ZeroOrMore(prop), "}"
+def exception():        return Kwd("exception"), ident, Optional(named_elem),\
+                            "{", ZeroOrMore(prop), "}"
 
 # Defines the model rule of DOMMLite
 # which is a container for one or more types or packages
-def model() :           return Kwd("model"), ident, Optional(named_elem), ZeroOrMore([user_type, constraint_type]), ZeroOrMore(package)
+def model() :           return Kwd("model"), ident, Optional(named_elem),\
+                            ZeroOrMore([user_type, constraint_type]),\
+                            ZeroOrMore(package)
 
 
 # The basic root rule of grammar defintion
@@ -235,7 +264,8 @@ if __name__ == "__main__":
     # This step is optional but it is handy for debugging purposes.
     # We can make a png out of it using dot (part of graphviz) like this
     # dot -O -Tpng domm_parse_tree_model.dot
-    PMDOTExporter().exportFile(parser.parser_model, "domm_parse_tree_model.dot")
+    PMDOTExporter().exportFile(parser.parser_model,\
+                    "domm_parse_tree_model.dot")
 
     # We only parse if there is an input
     if len(sys.argv) > 1:

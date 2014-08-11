@@ -236,8 +236,8 @@ class ConstraintAction(SemanticAction):
             self.constr_type = ConstraintType.Validator
 
     def first_pass(self, parser, node, children):
-        constraint = Constraint(built_in = self.built_in, constr_type = self.constr_type)
-
+        constraint = Constraint(built_in = self.built_in, \
+                                constr_type = self.constr_type)
         if parser.debugDomm:
             print("DEBUG ConstraintAction entered children: ", children)
 
@@ -267,7 +267,8 @@ class PackageAction(SemanticAction):
             if type(val) is Id:
                 package.set_name(val._id)
             elif type(val) is NamedElement:
-                package.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
+                package.set_desc(short_desc = val.short_desc,\
+                                 long_desc = val.long_desc)
             elif type(val) is Constraint:
                 package.add_constraint(val)
             else:
@@ -364,10 +365,12 @@ class ConstraintSpecListAction(SemanticAction):
     def first_pass(self, parser, node, children):
         list_specs = SpecsObj()
 
-        filter_children = (x for x in children if type(x) is ConstraintSpec or type(x) is Id)
+        filter_children = (x for x in children \
+                            if type(x) is ConstraintSpec or type(x) is Id)
 
         if parser.debugDomm:
-            print("DEBUG ConstraintSpecListAction enter (children): ", children)
+            print("DEBUG ConstraintSpecListAction enter (children): ",\
+                    children)
 
         for val in filter_children:
             if type(val) is ConstraintSpec:
@@ -377,7 +380,8 @@ class ConstraintSpecListAction(SemanticAction):
                 list_specs.specs.add(temp)
 
         if parser.debugDomm:
-            print("DEBUG ConstraintSpecListAction returns (list_specs): ", list_specs)
+            print("DEBUG ConstraintSpecListAction returns (list_specs): ",\
+                    list_specs)
 
         return list_specs
 
@@ -411,7 +415,8 @@ class PropertyAction(SemanticAction):
         prop = Property()
 
         if parser.debugDomm:
-            print("DEBUG PropertyAction entered (children): {}\n".format(children))
+            print("DEBUG PropertyAction entered (children): {}\n"\
+                    .format(children))
 
         for val in children:
             if val == "unique":
@@ -431,29 +436,34 @@ class PropertyAction(SemanticAction):
 
             elif val == "+":
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj on enter: {}\n".format(prop.relationship))
+                    print("DEBUG PropertyAction  RefObj on enter: {}\n"\
+                            .format(prop.relationship))
 
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj (prop): {}\n".format(prop.relationship))
+                    print("DEBUG PropertyAction  RefObj (prop): {}\n"\
+                            .format(prop.relationship))
 
                 prop.relationship.containment = True
             elif type(val) is RefObj:
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj on enter: {}\n".format(prop.relationship))
+                    print("DEBUG PropertyAction  RefObj on enter: {}\n"\
+                            .format(prop.relationship))
 
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj (prop): {}\n".format(prop.relationship))
+                    print("DEBUG PropertyAction  RefObj (prop): {}\n"\
+                            .format(prop.relationship))
 
                 prop.relationship.opposite_end = val.ident
 
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction After RefObj (prop): {}\n".format(prop.relationship))
+                    print("DEBUG PropertyAction After RefObj (prop): {}\n"\
+                            .format(prop.relationship))
             elif type(val) is SpecsObj:
                 for x in val.specs:
                     prop.add_constraint_spec(x)
@@ -466,7 +476,8 @@ class PropertyAction(SemanticAction):
 
         if parser.debugDomm:
             print("DEBUG PropertyAction returns: ", prop)
-            print("DEBUG PropertyAction returns prop.relationship", prop.relationship)
+            print("DEBUG PropertyAction returns prop.relationship", \
+                    prop.relationship)
 
         return prop
 
@@ -477,14 +488,16 @@ class ExceptionAction(SemanticAction):
 
         exception = ExceptionType()
 
-        # We filter for strings to remove all `{` `}` and keywords strings from children
+        # We filter for strings to remove all `{` `}`
+        # and keywords strings from children
         filter_children =  (x for x in children if type(x) is not str)
 
         for val in filter_children:
             if type(val) is Id:
                 exception.name = val._id
             elif type(val) is NamedElement:
-                exception.set_desc(short_desc = val.short_desc, long_desc = val.long_desc)
+                exception.set_desc(short_desc = val.short_desc,\
+                                    long_desc = val.long_desc)
             elif type(val) is Property:
                 exception.add_prop(val)
 
@@ -509,7 +522,9 @@ class ExtDefAction(SemanticAction):
         # there are only two elements keyword and identifer
         for val in children:
             if type(val) is Id:
-                retVal = ExtObj(ref = ClassifierBound(ref = val, type_of = ClassType.Entity))
+                retVal = ExtObj(ref = ClassifierBound(\
+                                        ref = val,
+                                        type_of = ClassType.Entity))
 
                 if parser.debugDomm:
                     print("DEBUG ExtDefAction returned ", retVal)
@@ -577,7 +592,8 @@ class OpParamAction(SemanticAction):
 
 class OperationAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        filter_children = (x for x in children if x != "(" and x != ")" and x != "{" and x != "}")
+        filter_children = (x for x in children \
+                            if x != "(" and x != ")" and x != "{" and x != "}")
 
         if parser.debugDomm:
             print("DEBUG Entered OperationAction (children)", children)
@@ -602,7 +618,8 @@ class OperationAction(SemanticAction):
                 for x in val.specs:
                     oper.add_constraint_spec(x)
             elif type(val) is Id:
-                exc = ClassifierBound(ref = val, type_of = ClassType.ExceptType)
+                exc = ClassifierBound(ref = val, \
+                                      type_of = ClassType.ExceptType)
                 oper.add_throws_exception(exc)
 
         if parser.debugDomm:
@@ -639,7 +656,8 @@ class CompartmentAction(SemanticAction):
 class ServiceAction(SemanticAction):
     def first_pass(self, parser, node, children):
 
-        # We filter for strings to remove all `{` `}` and keywords strings from children
+        # We filter for strings to remove all `{` `}`
+        # and keywords strings from children
         filter_children =  (x for x in children if type(x) is not str)
 
         if parser.debugDomm:
