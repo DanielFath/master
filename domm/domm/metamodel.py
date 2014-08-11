@@ -253,7 +253,7 @@ class Model(NamedElement):
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, \
-        fnvhash(self.all)))
+        fnvhash(self.all.items())))
 
     def __getitem__(self, key):
         return self.all[key]
@@ -599,7 +599,7 @@ class Package(NamedElement):
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, \
-            fnvhash(self.elems) ))
+            fnvhash(self.elems.items()) ))
 
     def __repr__(self):
         retStr = '\n--------------\npackage %s {\n' % self.name
