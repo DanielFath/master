@@ -1065,6 +1065,19 @@ class Compartment(NamedElement):
         self.elements.add(elem)
         return self
 
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__eq__(self, other) \
+            and self.elements == other.elements
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, \
+                    fnvhash(self.elements)))
+
     def __repr__(self):
         retStr = "comparement %s (%s %s) {\n" % \
             (self.name, self.short_desc, self.long_desc)

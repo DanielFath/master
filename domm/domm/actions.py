@@ -624,7 +624,7 @@ class CompartmentAction(SemanticAction):
 
         for val in filter_children:
             if type(val) is Id:
-                val.name = val._id
+                comp.name = val._id
             elif type(val) is NamedElement:
                 comp.set_from_named(val)
             elif type(val) is Operation and self.is_op:

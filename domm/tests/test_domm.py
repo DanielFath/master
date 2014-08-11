@@ -174,27 +174,35 @@ def test_service():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
         package exception_example {
             service StudentService extends Ext depends Dep1 "Student service" "Gives services to students" {
-
+                [finder]
+                op string getName(datetime from)
+                compartment test {
+                    op char testing()
+                }
             }
         }
     """)["test"]
 
     ext = ClassifierBound(ref = Id("Ext"), type_of = ClassType.Service)
     dep = ClassifierBound(ref = Id("Dep1"), type_of = ClassType.Service)
+    op1 = Operation(type_def = TypeDef(name = "getName", type_of = "string")
+        ).add_param(OpParam(type_def = TypeDef(name = "from", \
+            type_of = "datetime")))
+    op2 = Operation(type_def = TypeDef(name = "testing", type_of = "char"))
+    comp = Compartment(name = "test").add_elem(op2)
+
     service1 = Service(name = "StudentService", \
         short_desc = "Student service", \
         long_desc = "Gives services to students", \
         extends = ext, depends = [dep]
-        )
+        ).add_constraint_spec(ConstraintSpec(ident = Id("finder"))
+        ).add_operation(op1).add_op_compartment(comp)
+
     expected1 = Model(name = "test").add_package(Package(name = "exception_example"
         ).add_elem(service1))
 
-
-    expected1 == parsed1
-
-    print("expected1 == parserd", expected1.all["exception_example"] == parsed1.all["exception_example"])
-    print("expected1.all", parsed1.all["exception_example"]["StudentService"])
-    print("parsed1.all", expected1.all["exception_example"]["StudentService"])
+    print("parsed1   ", parsed1)
+    print("expected1 ", expected1)
     print("parsed1   hash", hash(parsed1))
     print("expected1 hash", hash(expected1))
 
