@@ -99,7 +99,6 @@ def test_tagType():
     assert hash(parsed1) == hash(expected1)
     assert hash(parsed1) != hash(unexpected1)
 
-
 def test_package():
     parsed1 = DommParser().string_into_ast(""" model test
         package example {
@@ -169,7 +168,6 @@ def test_exception():
 
     assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
 
-
 def test_service():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
         package exception_example {
@@ -207,3 +205,27 @@ def test_service():
     print("expected1 hash", hash(expected1))
 
     assert parsed1 == expected1
+    assert hash(parsed1) == hash(expected1)
+
+def test_value_object():
+    parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
+        package vo_example {
+            valueObject example {
+                prop string X
+            }
+        }""")["test"]
+
+    vo1 = ValueObject(name = "example").add_prop(Property(type_def = TypeDef(
+        name = "X", type_of = "string")))
+    pack1 = Package(name = "vo_example")
+    pack1.add_elem(vo1)
+    expected1 = Model(name = "test").add_package(pack1)
+
+    print("vo1", vo1)
+    print("parsed1   ", parsed1)
+    print("expected1 ", expected1)
+    print("parsed1   hash", hash(parsed1))
+    print("expected1 hash", hash(expected1))
+
+    assert parsed1 == expected1
+    assert hash(parsed1) == hash(expected1)
