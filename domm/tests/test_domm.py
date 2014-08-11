@@ -33,12 +33,14 @@ def test_dataType():
 
     expected1 = DataType(name = "Name")
     assert parsed1 == expected1
+    assert hash(parsed1) == hash(expected1)
 
-    parsed3 = DommParser().string_into_ast("""model simple
+    parsed2 = DommParser().string_into_ast("""model simple
         dataType Name "Name of person" "Detailed description of field" """)["simple"]["Name"]
 
-    expected3 = DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field")
-    assert parsed3 ==  expected3
+    expected2 = DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field")
+    assert parsed2 ==  expected2
+    assert hash(parsed2) == hash(expected2)
 
 def test_enum():
     parsed1 = DommParser().string_into_ast(""" model enum package test {
@@ -64,6 +66,8 @@ def test_enum():
 
     assert parsed1 == expected1
     assert parsed1 != unexpected1
+    assert hash(parsed1) == hash(expected1)
+    assert hash(parsed1) != hash(unexpected1)
 
 def test_tagType():
     parsed1 = DommParser().string_into_ast("""model test
@@ -91,7 +95,9 @@ def test_tagType():
         ).add_constraint(Constraint(built_in = True, constr_type = ConstraintType.Validator, tag = tag4))
 
     assert parsed1 == expected1
-    assert not parsed1 == unexpected1
+    assert parsed1 != unexpected1
+    assert hash(parsed1) == hash(expected1)
+    assert hash(parsed1) != hash(unexpected1)
 
 
 def test_package():
@@ -116,6 +122,8 @@ def test_package():
 
     assert parsed1 == expected1
     assert parsed1 != unexpected1
+    assert hash(parsed1) == hash(expected1)
+    assert hash(parsed1) != hash(unexpected1)
 
 def test_exception():
     parsed1 = DommParser().string_into_ast(""" model test
@@ -145,13 +153,22 @@ def test_exception():
     expected1 = Model(name = "test").add_package(Package(name = "exception_example"
             ).add_elem(exec1))
 
+    unexec1 = ExceptionType(name = "GlDos", short_desc = "Result has been modified")
+
+    unexpected1 = Model(name = "test").add_package(Package(name = "exception_example").add_elem(unexec1))
+
     print("parsed1 ", parsed1)
     print("expected1 ", expected1)
     print("parsed1   hash", hash(parsed1))
     print("expected1 hash", hash(expected1))
 
     assert parsed1 == expected1
+    assert parsed1 != unexpected1
+    assert hash(parsed1) == hash(expected1)
+    assert hash(parsed1) != hash(unexpected1)
+
     assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
+
 
 def test_service():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
