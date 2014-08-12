@@ -1214,10 +1214,14 @@ class ValueObject(NamedElement, NamespacedObject):
     def __init__(self, name = None, short_desc = None, long_desc = None,\
         extends = None, depends = None, namespace = None):
         super(ValueObject, self).__init__(name, short_desc, long_desc)
-        self.extends = extends
+        self.extends = None
         self.dependencies = []
-        if depends and type(depends) is list:
-            self.dependencies = depends
+
+        if self.extends:
+            self.set_extends(extends)
+        if self.depends and len(self.depends) > 0:
+            self.set_dependencies(depends)
+
         self.constraints = set()
         self.props = set()
         self._namespace = namespace
