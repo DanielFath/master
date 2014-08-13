@@ -233,3 +233,6 @@ def test_value_object():
 
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
+
+def test_service_object():
+    pass
