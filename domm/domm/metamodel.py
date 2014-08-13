@@ -1442,7 +1442,7 @@ class Entity(NamedElement, NamespacedObject):
     def __eq__(self, other):
         if type(self) is type(other):
             return NamedElement.__eq__(self,other) \
-            and self.elems == other.elems and self.extends == other.extenn ds\
+            and self.elems == other.elems and self.extends == other.extends\
             and self.dependencies == other.dependencies\
             and self.constraints == other.constraints
         return False
