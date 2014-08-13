@@ -210,22 +210,18 @@ def test_service():
 def test_value_object():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
         package vo_example {
-            valueObject example extends Ext1 depends d1, d2 {
+            valueObject example {
                 prop string X
             }
         }""")["test"]
 
-    type_def = TypeDef(name = "X", type_of = "string")
-    ext1 = ClassifierBound(ref = Id("Ext1"), type_of = ClassType.ValueObject)
-    deps = [ClassifierBound(ref = Id("d1"), type_of = ClassType.Entity),
-            ClassifierBound(ref = Id("d2"), type_of = ClassType.Entity)]
-    vo1 = ValueObject(name = "example", extends = ext1, depends = deps
-        ).add_prop(Property(\
-        type_def = type_def))
+    vo1 = ValueObject(name = "example").add_prop(Property(type_def = TypeDef(
+        name = "X", type_of = "string")))
     pack1 = Package(name = "vo_example")
     pack1.add_elem(vo1)
     expected1 = Model(name = "test").add_package(pack1)
 
+    print("vo1", vo1)
     print("parsed1   ", parsed1)
     print("expected1 ", expected1)
     print("parsed1   hash", hash(parsed1))
@@ -233,6 +229,3 @@ def test_value_object():
 
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
-
-def test_service_object():
-    pass
