@@ -1320,6 +1320,34 @@ class Key(object):
         retStr += "}"
         return retStr
 
+class Repr(object):
+    """Models textual represnetation of the entity metamodel"""
+    def __init__(self):
+        super(Repr, self).__init__()
+        self.parts = []
+
+    def add_elem(self, elem):
+        self.parts.append(elem)
+        return self
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.parts == other.parts
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return fnvhash(self.parts)
+
+    def __repr__(self):
+        retStr += "repr "
+        for x in self.parts:
+            retStr += "    %s" % x
+        retStr += "}"
+        return retStr
+
 class Entity(NamedElement, NamespacedObject):
     """
     Models the entity of a DOMMLite metamodel. Entity is a data structure
@@ -1331,6 +1359,8 @@ class Entity(NamedElement, NamespacedObject):
         self.extends = None
         self.dependencies = []
         self.elems = dict()
+        self.key = None
+        self.repr = None
 
         if self.extends:
             self.set_extends(extends)
