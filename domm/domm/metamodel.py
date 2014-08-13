@@ -1286,3 +1286,108 @@ class ValueObject(NamedElement, NamespacedObject):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
             fnvhash(self.props)))
+
+class Entity(NamedElement, NamespacedObject):
+    """
+    Models the entity of a DOMMLite metamodel. Entity is a data structure
+    with it's corresponding fields, relationships and methods.
+    """
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
+        extends = None, depends = None, namespace = None):
+        super(Entity, self).__init__(name, short_desc, long_desc)
+        self.extends = None
+        self.dependencies = []
+        self.elems = dict()
+
+        if self.extends:
+            self.set_extends(extends)
+        if self.depends and len(self.depends) > 0:
+            self.set_dependencies(depends)
+
+        self.constraints = set()
+        self.props = set()
+        self.opers = set()
+        self.op_compartments = dict()
+        self.prop_compartments = dict()
+        self._namespace = namespace
+        self._check()
+
+    def set_extends(self, extends):
+        assert type(extends) is ClassifierBound
+        self.extends = extends
+        self.extends.type_of = ClassType.Entity
+        return self
+
+    def set_dependencies(self, deps):
+        assert type(deps) is list
+        for val in deps:
+            val.type_of = ClassType.Service
+            self.dependencies.append(val)
+        return self
+
+    def add_constraint_spec(self, constr):
+        assert type(constr) is ConstraintSpec
+        self.constraints.add(constr)
+        return self
+
+    def add_operation(self, oper):
+        assert type(oper) is Operation
+        self.elems[oper.name] = oper
+        return self
+
+    def add_prop(self, prop):
+        assert type(prop) is Property
+        self.elems[prop.name] = prop
+        return self
+
+    def add_comparment(self, compartment):
+        assert type(compartment) is Compartment
+        if compartment.is_op:
+            self.op_compartments.add(compartment.name)
+            for op in compartment:
+                self.add_operation(op)
+        else:
+            self.prop_compartments.add(compartment.name)
+            for prop in compartment:
+                self.add_prop(prop)
+        return self
+
+    def __repr__(self):
+        retStr = " Entity %s (%s %s)" %\
+            (self.name, self.short_desc, self.long_desc)
+
+        if self.extends:
+             retStr += " extends %s " % self.extends
+
+        if self.dependencies and len(self.dependencies) > 0:
+            retStr += " depends "
+            for val in self.dependencies:
+                retStr += " %s " % val
+
+        retStr += "{\n"
+
+        if self.constraints and len(self.constraints) > 0:
+            retStr += print_constraints(self.constraints)
+
+
+        for op in self.elems:
+            retStr += "    %s" % op
+        retStr += "}"
+
+        return retStr
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return NamedElement.__eq__(self,other) \
+            and self.elems == other.elems and self.extends == other.extends\
+            and self.dependencies == other.dependencies\
+            and self.constraints == other.constraints
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.name, self.short_desc, self.long_desc, self.extends,
+            fnvhash(dependencies), fnvhash(self.constraints),
+            fnvhash(elems.items())))
