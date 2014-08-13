@@ -1291,6 +1291,35 @@ class ValueObject(NamedElement, NamespacedObject):
             fnvhash(self.dependencies), fnvhash(self.constraints),
             fnvhash(self.props)))
 
+class Key(object):
+    """Models a key of the entity metamodel"""
+    def __init__(self):
+        super(Key, self).__init__()
+        self.props = set()
+
+    def add_prop(self, prop):
+        assert type(prop) is Property
+        self.props.add(prop)
+        return self
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.props == other.props
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return fnvhash(self.props)
+
+    def __repr__(self):
+        retStr += "key {\n"
+        for x in self.props:
+            retStr += "    %s\n" % x
+        retStr += "}"
+        return retStr
+
 class Entity(NamedElement, NamespacedObject):
     """
     Models the entity of a DOMMLite metamodel. Entity is a data structure
