@@ -1356,6 +1356,8 @@ class Entity(NamedElement, NamespacedObject):
         self.extends = None
         self.dependencies = []
         self.elems = dict()
+        self.key = None
+        self.repr = None
 
         if self.extends:
             self.set_extends(extends)
@@ -1369,6 +1371,16 @@ class Entity(NamedElement, NamespacedObject):
         self.prop_compartments = dict()
         self._namespace = namespace
         self._check()
+
+    def set_key(self, key):
+        assert type(key) is Key
+        self.key = key
+        return self
+
+    def set_repr(self, repr):
+        assert type(key) is Repr
+        self.repr = None
+        return self
 
     def set_extends(self, extends):
         assert type(extends) is ClassifierBound
@@ -1427,6 +1439,11 @@ class Entity(NamedElement, NamespacedObject):
         if self.constraints and len(self.constraints) > 0:
             retStr += print_constraints(self.constraints)
 
+        if self.key:
+            retStr += "    {}\n".format(self.key)
+
+        if self.repr:
+            retStr += "    {}\n".format(self.repr)
 
         for op in self.elems:
             retStr += "    %s" % op
@@ -1439,6 +1456,7 @@ class Entity(NamedElement, NamespacedObject):
             return NamedElement.__eq__(self,other) \
             and self.elems == other.elems and self.extends == other.extends\
             and self.dependencies == other.dependencies\
+            and self.key == other.key and self.repr == other.repr\
             and self.constraints == other.constraints
         return False
 
@@ -1448,4 +1466,4 @@ class Entity(NamedElement, NamespacedObject):
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(dependencies), fnvhash(self.constraints),
-            fnvhash(elems.items())))
+            fnvhash(elems.items()), self.key, self.repr))
