@@ -1339,10 +1339,14 @@ class Repr(object):
         return fnvhash(self.parts)
 
     def __repr__(self):
-        retStr += "repr "
-        for x in self.parts:
-            retStr += "    %s" % x
-        retStr += "}"
+        retStr = "repr "
+        for i,x in enumerate(self.parts):
+            if i > 0 :
+                retStr += "+"
+            if type(x) is str:
+                retStr += " `%s` " % x
+            elif type(x) is ClassifierBound:
+                retStr += " %s " % x
         return retStr
 
 
