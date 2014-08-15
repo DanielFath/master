@@ -1431,17 +1431,17 @@ class Entity(NamedElement, NamespacedObject):
 
         retStr += "{\n"
 
-        if self.constraints and len(self.constraints) > 0:
-            retStr += print_constraints(self.constraints)
-
         if self.key:
-            retStr += "    {}\n".format(self.key)
+            retStr += "\n    {}\n".format(self.key)
 
         if self.repr:
-            retStr += "    {}\n".format(self.repr)
+            retStr += "\n    {}\n".format(self.repr)
 
-        for op in self.elems:
-            retStr += "    %s" % op
+        if self.constraints and len(self.constraints) > 0:
+            retStr += "    {}\n".format(print_constraints(self.constraints))
+
+        for op in self.elems.values():
+            retStr += "    {}\n".format(op)
         retStr += "}"
 
         return retStr
