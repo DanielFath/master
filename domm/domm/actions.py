@@ -728,7 +728,21 @@ class ValueObjectAction(SemanticAction):
 
 class KeyAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        pass
+        if parser.debugDomm:
+            print("DEBUG KeyAction children  ", children)
+
+        key = Key()
+
+        filter_children = (x for x in children if type(x) is Property)
+
+        for x in filter_children:
+            key.add_prop(x)
+
+        if parser.debugDomm:
+            print("DEBUG KeyAction returns ", key)
+
+        return key
+
 
 class PropRefAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -762,4 +776,9 @@ class ReprAction(SemanticAction):
 
 class EntityAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        pass
+        if parser.debugDomm:
+            print("DEBUG Entered EntityAction (children)", children)
+
+        ent = Entity()
+
+
