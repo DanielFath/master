@@ -1366,7 +1366,7 @@ class Entity(NamedElement, NamespacedObject):
 
         if self.extends:
             self.set_extends(extends)
-        if self.depends and len(self.depends) > 0:
+        if self.dependencies and len(self.dependencies) > 0:
             self.set_dependencies(depends)
 
         self.constraints = set()
