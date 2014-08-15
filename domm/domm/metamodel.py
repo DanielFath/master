@@ -1382,9 +1382,9 @@ class Entity(NamedElement, NamespacedObject):
         self.key = key
         return self
 
-    def set_repr(self, repr):
-        assert type(key) is Repr
-        self.repr = None
+    def set_repr(self, arg):
+        assert type(arg) is Repr
+        self.repr = arg
         return self
 
     def set_extends(self, extends):
@@ -1405,26 +1405,16 @@ class Entity(NamedElement, NamespacedObject):
         self.constraints.add(constr)
         return self
 
-    def add_operation(self, oper):
-        assert type(oper) is Operation
-        self.elems[oper.name] = oper
-        return self
-
-    def add_prop(self, prop):
-        assert type(prop) is Property
-        self.elems[prop.name] = prop
+    def add_feature(self, feat):
+        assert type(feat) is Operation or type(feat) is Property
+        self.elems[feat.name] = feat
         return self
 
     def add_comparment(self, compartment):
         assert type(compartment) is Compartment
-        if compartment.is_op:
-            self.op_compartments.add(compartment.name)
-            for op in compartment:
-                self.add_operation(op)
-        else:
-            self.prop_compartments.add(compartment.name)
-            for prop in compartment:
-                self.add_prop(prop)
+        if compartment.elems:
+            for op in compartment.elems:
+                self.add_feature(op)
         return self
 
     def __repr__(self):
