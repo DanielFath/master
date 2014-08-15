@@ -1460,5 +1460,5 @@ class Entity(NamedElement, NamespacedObject):
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
-            fnvhash(dependencies), fnvhash(self.constraints),
-            fnvhash(elems.items()), self.key, self.repr))
+            fnvhash(self.dependencies), fnvhash(self.constraints),
+            fnvhash(self.elems.items()), self.key, self.repr))
