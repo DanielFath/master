@@ -26,7 +26,7 @@ class ModelAction(SemanticAction):
             if type(val) is Id:
                 model.name = val._id
             elif type(val) is NamedElement:
-                model.set_desc(val.short_desc, val.long_desc)
+                model.set_descs(val)
             elif type(val) is DataType or type(val) is Enumeration:
                 model.add_type(val)
             elif type(val) is Constraint:
@@ -114,7 +114,7 @@ class EnumAction(SemanticAction):
             if type(val) is Id:
                 enum.name = val._id
             elif type(val) is NamedElement:
-                enum.set_from_named(val)
+                enum.set_descs(val)
             elif type(val) is EnumLiteral:
                 enum.add_literal(val)
 
@@ -140,7 +140,7 @@ class CommonTagAction(SemanticAction):
             elif type(value) is ApplyDef:
                 tag.applies = value
             elif type(value) is NamedElement:
-               tag.set_from_named(value)
+               tag.set_descs(value)
 
 
         if parser.debugDomm:
@@ -214,7 +214,7 @@ class DataTypeAction(SemanticAction):
             if type(val) is NamedElement:
                 if parser.debugDomm:
                     print("DEBUG DataTypeAction entered (val): ", val)
-                data_type.set_from_named(val)
+                data_type.set_descs(val)
             elif type(val) is Id:
                 data_type.name = val._id
 
@@ -275,8 +275,7 @@ class PackageAction(SemanticAction):
             if type(val) is Id:
                 package.set_name(val._id)
             elif type(val) is NamedElement:
-                package.set_desc(short_desc = val.short_desc,\
-                                 long_desc = val.long_desc)
+                package.set_descs(val)
             elif type(val) is Constraint:
                 package.add_constraint(val)
             else:
@@ -480,7 +479,7 @@ class PropertyAction(SemanticAction):
                 if prop.type_def is None:
                     prop.type_def = TypeDef()
 
-                prop.type_def.set_desc(val.short_desc, val.long_desc)
+                prop.type_def.set_descs(val)
 
         if parser.debugDomm:
             print("DEBUG PropertyAction returns: ", prop)
@@ -504,8 +503,7 @@ class ExceptionAction(SemanticAction):
             if type(val) is Id:
                 exception.name = val._id
             elif type(val) is NamedElement:
-                exception.set_desc(short_desc = val.short_desc,\
-                                    long_desc = val.long_desc)
+                exception.set_descs(val)
             elif type(val) is Property:
                 exception.add_prop(val)
 
@@ -582,7 +580,7 @@ class OpParamAction(SemanticAction):
             if type(val) is TypeDef:
                 param.type_def = val
             elif type(val) is NamedElement:
-                param.set_from_named(val)
+                param.set_descs(val)
             elif type(val) is SpecsObj:
                 for x in val:
                     param.constraints.add(x)
@@ -613,7 +611,7 @@ class OperationAction(SemanticAction):
             if type(val) is TypeDef:
                 oper.type_def = val
             elif type(val) is NamedElement:
-                oper.set_from_named(val)
+                oper.set_descs(val)
             elif val == "ordered":
                 oper.ordered = True
             elif val == "unique":
@@ -651,7 +649,7 @@ class CompartmentAction(SemanticAction):
             if type(val) is Id:
                 comp.name = val._id
             elif type(val) is NamedElement:
-                comp.set_from_named(val)
+                comp.set_descs(val)
             elif type(val) is Operation and self.is_op:
                 comp.add_elem(val)
             elif type(val) is Property and not self.is_op:
@@ -677,7 +675,7 @@ class ServiceAction(SemanticAction):
             if type(val) is Id:
                 service.name = val._id
             elif type(val) is NamedElement:
-                service.set_desc(val.short_desc, val.long_desc)
+                service.set_descs(val)
             elif type(val) is ExtObj:
                 if parser.debugDomm:
                     print("DEBUG Entered ServiceAction extends ", service)
@@ -710,7 +708,7 @@ class ValueObjectAction(SemanticAction):
             if type(val) is Id:
                 val_obj.name = val._id
             elif type(val) is NamedElement:
-                val_obj.set_from_named(val)
+                val_obj.set_descs(val)
             elif type(val) is ExtObj:
                 val_obj.set_extends(val.ref)
             elif type(val) is DepObj:
@@ -785,7 +783,7 @@ class EntityAction(SemanticAction):
             if type(val) is Id:
                 ent.name = val._id
             elif type(val) is NamedElement:
-                ent.set_from_named(val)
+                ent.set_descs(val)
             elif type(val) is Key:
                 ent.set_key(val)
             elif type(val) is Repr:

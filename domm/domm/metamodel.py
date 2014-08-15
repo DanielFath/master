@@ -155,11 +155,7 @@ class NamedElement(object):
         self.short_desc = short_desc
         self.long_desc = long_desc
 
-    def set_desc(self, short_desc, long_desc):
-        self.short_desc = short_desc
-        self.long_desc = long_desc
-
-    def set_from_named(self, named_el):
+    def set_descs(self, named_el):
         assert type(named_el) is NamedElement
         assert named_el is not None
         self.short_desc = named_el.short_desc
