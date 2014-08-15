@@ -231,4 +231,38 @@ def test_value_object():
     assert hash(parsed1) == hash(expected1)
 
 def test_entity():
-    pass
+    parsed1 = DommParser(debugDomm = True).string_into_ast("""
+        model test
+
+        package ent_example {
+            entity example extends Ex depends D1{
+                key {
+                    prop int id
+                }
+            }
+        }
+        """)["test"]
+
+    key1 = Key().add_prop(Property(type_def = TypeDef(name = "id", type_of = "int")))
+    ext1 = ClassifierBound(ref = Id("Ex"), type_of = ClassType.Entity)
+    dep1 = ClassifierBound(ref = Id("D1"), type_of = ClassType.Service)
+
+
+    ent1 = Entity(name = "example"
+        ).set_key(key1
+        ).set_extends(ext1
+        ).set_dependencies([dep1])
+    pack1 = Package(name = "ent_example").add_elem(ent1)
+    expected1 = Model(name = "test").add_package(pack1)
+
+    parsed1 == expected1
+
+    print("ent1 ", ent1)
+    print("parsed1 ", parsed1)
+    print("expected1 ", expected1)
+    print("parsed1   hash", hash(parsed1))
+    print("expected1 hash", hash(expected1))
+
+    assert parsed1 == expected1
+    assert hash(parsed1) == hash(expected1)
+
