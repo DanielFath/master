@@ -618,7 +618,7 @@ class Package(NamedElement):
         return self
 
     def __eq__(self, other):
-        if type(other) is type(self):
+        if type(self) is type(other):
             return self.name == other.name \
              and self.short_desc == other.short_desc\
              and self.long_desc == other.long_desc\
