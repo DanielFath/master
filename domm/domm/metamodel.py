@@ -1311,7 +1311,7 @@ class Key(object):
         return fnvhash(self.props)
 
     def __repr__(self):
-        retStr += "key {\n"
+        retStr = "key {\n"
         for x in self.props:
             retStr += "    %s\n" % x
         retStr += "}"
