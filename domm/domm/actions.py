@@ -800,7 +800,7 @@ class EntityAction(SemanticAction):
             elif type(val) is Compartment:
                 ent.add_comparment(val)
             elif type(val) is Operation or type(val) is Property:
-                ent.add_feat(val)
+                ent.add_feature(val)
 
         if parser.debugDomm:
             print("DEBUG Entered EntityAction returns", ent)
