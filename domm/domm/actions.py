@@ -781,4 +781,28 @@ class EntityAction(SemanticAction):
 
         ent = Entity()
 
+        for val in children:
+            if type(val) is Id:
+                ent.name = val._id
+            elif type(val) is NamedElement:
+                ent.set_from_named(val)
+            elif type(val) is Key:
+                ent.set_key(val)
+            elif type(val) is Repr:
+                ent.set_repr(val)
+            elif type(val) is ExtObj:
+                ent.set_extends(val.ref)
+            elif type(val) is DepObj:
+                ent.set_dependencies(val.rels)
+            elif type(val) is SpecsObj:
+                for x in val.specs:
+                    ent.add_constraint_spec(x)
+            elif type(val) is Compartment:
+                ent.add_comparment(val)
+            elif type(val) is Operation or type(val) is Property:
+                ent.add_feat(val)
 
+        if parser.debugDomm:
+            print("DEBUG Entered EntityAction returns", ent)
+
+        return ent
