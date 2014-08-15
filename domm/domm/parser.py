@@ -111,7 +111,8 @@ def key():              return Kwd("key"), "{", OneOrMore(prop), "}"
 # age, ID number, place of residence, etc.
 def ent_repr():         return Kwd("repr"), repr_param, \
                             ZeroOrMore("+", repr_param)
-def repr_param():       return [string, prop]
+def repr_param():       return [string, prop_ref]
+def prop_ref():         return ident
 
 # Constraint definition defines a set of limitations to a type
 # for instance we can define that some elements are between certain values.
