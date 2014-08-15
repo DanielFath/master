@@ -33,7 +33,7 @@ def print_constraints(constraints):
         retStr += "["
         for c in constraints:
             if c.ident:
-                retStr += "%s " % c.ident._id
+                retStr += " %s " % c.ident._id
             if c.parameters:
                 retStr += "("
                 for par in c.parameters:
