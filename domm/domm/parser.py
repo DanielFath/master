@@ -232,10 +232,16 @@ oper.sem = OperationAction()
 op_param.sem = OpParamAction()
 oper_compart.sem = CompartmentAction(is_op = True)
 
+#Semantic actions for entity components
+key.sem = KeyAction()
+ent_repr.sem = ReprAction()
+prop_ref.sem = PropRefAction()
+
 # Semantic action for classifiers
 exception.sem = ExceptionAction()
 service.sem = ServiceAction()
 value_object.sem = ValueObjectAction()
+entity.sem = EntityAction()
 
 class DommParser(ParserPython):
     """

@@ -725,3 +725,41 @@ class ValueObjectAction(SemanticAction):
             print("DEBUG ServiceAction returns ", val_obj)
 
         return val_obj
+
+class KeyAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        pass
+
+class PropRefAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG PropRefAction children  ", children)
+        retVal = ClassifierBound(ref = Id(node.value),\
+            type_of = ClassType.Property)
+
+        if parser.debugDomm:
+            print("DEBUG PropRefAction returns  ", retVal)
+
+        return retVal
+
+
+class ReprAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        if parser.debugDomm:
+            print("DEBUG ReprAction children ", children)
+
+        rep = Repr()
+
+        filter_children = (x for x in children if x != "+")
+
+        for val in filter_children:
+            rep.add_elem(val)
+
+        if parser.debugDomm:
+            print("DEBUG ReprAction returns ", rep)
+
+        return rep
+
+class EntityAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        pass
