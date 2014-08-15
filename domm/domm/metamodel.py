@@ -907,7 +907,8 @@ class ClassType(Enum):
     ValueObject = 3,
     ExceptType = 4,
     DataType = 5,
-    Constraint = 6
+    Constraint = 6,
+    Property = 7
 
 class ClassifierBound(object):
     """
