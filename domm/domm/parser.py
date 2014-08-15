@@ -89,8 +89,9 @@ def classifier():       return [entity, service, value_object, exception,\
 # Defines an entity in DOMMLite model that often represents actors
 # in the business model
 def entity():           return Kwd("entity"), ident, Optional(ext_def),\
-                            Optional(oper), Optional(named_elem),\
-                            "{", key, ent_repr, \
+                            Optional(dep_def), Optional(oper),\
+                            Optional(named_elem),\
+                            "{", key, Optional(ent_repr), \
                             Optional(constr_speclist), ZeroOrMore(feature),\
                             ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
