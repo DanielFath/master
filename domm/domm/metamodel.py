@@ -934,7 +934,7 @@ class ClassifierBound(object):
         return False
 
     def __ne__(self, other):
-        return not self.__init__(other)
+        return not self.__eq__(other)
 
     def __hash__(self):
         return hash((self.ref, self.type_of))
