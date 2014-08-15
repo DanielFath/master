@@ -1407,7 +1407,7 @@ class Entity(NamedElement, NamespacedObject):
 
     def add_feature(self, feat):
         assert type(feat) is Operation or type(feat) is Property
-        self.elems[feat.name] = feat
+        self.elems[feat.type_def.name] = feat
         return self
 
     def add_comparment(self, compartment):
