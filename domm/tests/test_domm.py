@@ -10,8 +10,14 @@ with pytest.raises(NoMatch):
 with pytest.raises(TypeExistsError):
     DommParser().string_into_ast("model simple dataType a dataType a")
 
-with pytest.raises(TypeExistsError):
-    DommParser().string_into_ast("model simple dataType a dataType a")
+with pytest.raises(DuplicateFeatureError):
+    DommParser().string_into_ast("""model simple package test {
+            entity test {
+                key { prop int id}
+                prop string X
+                prop int X
+            }
+        }""")
 
 def test_model():
     assert DommParser().string_into_ast("model simple")["simple"] == Model(name="simple")

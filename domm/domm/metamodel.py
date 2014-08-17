@@ -1401,8 +1401,12 @@ class Entity(NamedElement, NamespacedObject):
         self.constraints.add(constr)
         return self
 
-    def add_feature(self, feat):
+    def add_feature(self, feat, is_compartment = False):
         assert type(feat) is Operation or type(feat) is Property
+        if feat.type_def.name in self.elems:
+            raise DuplicateFeatureError(feat.type_def.name)
+        if not is_compartment:
+            self.features.add(feat)
         self.elems[feat.type_def.name] = feat
         return self
 

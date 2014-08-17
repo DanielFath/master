@@ -60,3 +60,12 @@ class DuplicatePropertyError(DommError):
     def __init__(self, name):
         super(DuplicatePropertyError, self).__init__("")
         self.message = ' Property with name <"%s"> already declared ' % (name)
+
+class DuplicateFeatureError(DommError):
+    """
+    Error raised when two properties in a field have same name
+    """
+    def __init__(self, name):
+        super(DuplicateFeatureError, self).__init__("")
+        self.message = ' Feature with name <"%s"> already exists ' % (name)
+
