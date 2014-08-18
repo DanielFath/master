@@ -1089,7 +1089,7 @@ class Compartment(NamedElement):
         if self.is_op:
             assert type(elem) is Operation
         else:
-            assert type(elem) is Property
+            assert type(elem) is Operation or type(elem) is Property
         self.elements.add(elem)
         return self
 
