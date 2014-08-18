@@ -1124,6 +1124,14 @@ class Compartment(NamedElement):
         retStr += "}"
         return retStr
 
+    def __getitem__(self, key):
+        retval = None
+        for val in self.elements:
+            if key == val.name:
+                retval = val
+                break
+        return retval
+
 class Service(NamedElement, NamespacedObject):
     """
     Service classifier meta-model.
@@ -1136,8 +1144,9 @@ class Service(NamedElement, NamespacedObject):
         if depends and type(depends) is list:
             self.dependencies = depends
         self.constraints = set()
+        self.elems = dict()
         self.operations = set()
-        self.op_compartments = set()
+        self.op_compartments = dict()
         self._namespace = namespace
         self._check()
 
@@ -1161,11 +1170,14 @@ class Service(NamedElement, NamespacedObject):
 
     def add_operation(self, oper):
         assert type(oper) is Operation
-        self.operations.add(oper)
+        self.elems[oper.type_def.name] = oper
+        self.operations.add(oper.type_def.name)
         return self
 
     def add_op_compartment(self, compartment):
-        self.op_compartments.add(compartment)
+        self.op_compartments[compartment.name] = compartment
+        for val in self.op_compartments.elements:
+            self.elems[val.type_def.name] = val
         return self
 
     def __repr__(self):
@@ -1202,8 +1214,7 @@ class Service(NamedElement, NamespacedObject):
             and self.extends == other.extends\
             and self.dependencies == other.dependencies\
             and self.constraints == other.constraints\
-            and self.operations == other.operations\
-            and self.op_compartments == other.op_compartments
+            and self.elems == other.elems
         return False
 
     def __ne__(self, other):
@@ -1212,7 +1223,13 @@ class Service(NamedElement, NamespacedObject):
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
-            fnvhash(self.operations), fnvhash(self.op_compartments)))
+            fnvhash(self.elems.items())))
+
+    def __getitem__(self, key):
+        if key in self.op_compartments:
+            return self.op_compartments[key]
+        else:
+            return self.elems[key]
 
 class ValueObject(NamedElement, NamespacedObject):
     """
@@ -1225,7 +1242,7 @@ class ValueObject(NamedElement, NamespacedObject):
         if depends and type(depends) is list:
             self.dependencies = depends
         self.constraints = set()
-        self.props = set()
+        self.props = dict()
         self._namespace = namespace
         self._check()
 
@@ -1249,7 +1266,7 @@ class ValueObject(NamedElement, NamespacedObject):
 
     def add_prop(self, prop):
         assert type(prop) is Property
-        self.props.add(prop)
+        self.props[prop.type_def.name] = prop
         return self
 
     def __repr__(self):
@@ -1291,7 +1308,10 @@ class ValueObject(NamedElement, NamespacedObject):
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
-            fnvhash(self.props)))
+            fnvhash(self.props.items())))
+
+    def __getitem__(self, key):
+        return self.prop[key]
 
 class Key(object):
     """Models a key of the entity metamodel"""
@@ -1353,7 +1373,6 @@ class Repr(object):
             elif type(x) is ClassifierBound:
                 retStr += " %s " % x
         return retStr
-
 
 class Entity(NamedElement, NamespacedObject):
     """
@@ -1470,3 +1489,9 @@ class Entity(NamedElement, NamespacedObject):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
             fnvhash(self.elems.items()), self.key, self.repr))
+
+    def __getitem__(self, key):
+        if key in self.compartments:
+            return self.compartments[key]
+        else:
+            return self.elems[key]
