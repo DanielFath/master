@@ -1176,9 +1176,8 @@ class Service(NamedElement, NamespacedObject):
 
     def add_op_compartment(self, compartment):
         self.op_compartments[compartment.name] = compartment
-        for compartment in self.op_compartments:
-            for val in compartment.elements:
-                self.elems[val.type_def.name] = val
+        for val in compartment.elements:
+            self.elems[val.type_def.name] = val
         return self
 
     def __repr__(self):
