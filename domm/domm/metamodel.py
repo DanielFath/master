@@ -1078,6 +1078,15 @@ class Compartment(NamedElement):
     Class that denotes a named group of either operations or properties.
     Generally used to respresent things like logical/visual grouping of
     elements, for example tabs.
+
+    Args:
+        name(str):  name of compartment
+        short_desc(str): Short description of the compartment
+        long_desc(str): Long description of the compartment
+        is_op(bool): Compartemnts can be operation compartments,  if this
+            parameter is True, or feature compartment if argument is False.
+            Operation compartment which only store operations or feature that
+            store operations or properties
     """
     def __init__(self, name = None, short_desc = None, long_desc = None,\
         is_op = True):
