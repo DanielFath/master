@@ -1366,10 +1366,8 @@ class Entity(NamedElement, NamespacedObject):
             self.set_dependencies(depends)
 
         self.constraints = set()
-        self.props = set()
-        self.opers = set()
-        self.op_compartments = dict()
-        self.prop_compartments = dict()
+        self.features = set()
+        self.compartments = dict()
         self._namespace = namespace
         self._check()
 
@@ -1413,8 +1411,9 @@ class Entity(NamedElement, NamespacedObject):
     def add_comparment(self, compartment):
         assert type(compartment) is Compartment
         if compartment.elems:
+            self.compartments[self.compartment.name] = compartment
             for op in compartment.elems:
-                self.add_feature(op)
+                self.add_feature(op, True)
         return self
 
     def __repr__(self):
