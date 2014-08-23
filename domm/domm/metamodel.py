@@ -894,7 +894,7 @@ class ExceptionType(NamedElement, NamespacedObject):
     def __getitem__(self, key):
         return self.props[key]
 
-class ClassType(Enum):
+class Ref(Enum):
     """
     Represents possible classifier type amongst the one of specified
     """
@@ -913,28 +913,28 @@ class CrossRef(object):
 
     This class models said behavior
     """
-    def __init__(self, ref = None, type_of = None):
-        super(ClassifierBound, self).__init__()
         assert type(ref) is Id
-        if type_of:
-            assert type(type_of) is ClassType
+    def __init__(self, ref = None, ref_type = None):
+        super(CrossRef, self).__init__()
+        if ref_type:
+            assert type(ref_type) is Ref
         self.ref = ref
-        self.type_of = type_of
+        self.ref_type = ref_type
         self.bound = None
 
     def __repr__(self):
-        return "%s (of type %s)" % (self.ref._id, self.type_of)
+        return "%s (of type %s)" % (self.ref._id, self.ref_type)
 
     def __eq__(self, other):
         if type(self) is type(other):
-            return self.ref == other.ref and self.type_of == other.type_of
+            return self.ref == other.ref and self.ref_type == other.ref_type
         return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.ref, self.type_of))
+        return hash((self.ref, self.ref_type))
 
 class OpParam(NamedElement):
     """docstring for OpParam"""
@@ -1032,7 +1032,7 @@ class Operation(NamedElement):
 
     def add_throws_exception(self, exception):
         assert type(exception) is CrossRef
-        assert exception.type_of == ClassType.ExceptType
+        assert exception.ref_type == Ref.ExceptType
         self.throws.append(exception)
         return self
 
@@ -1153,13 +1153,13 @@ class Service(NamedElement, NamespacedObject):
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
-        self.extends.type_of = ClassType.Service
+        self.extends.ref_type = Ref.Service
         return self
 
     def set_dependencies(self, deps):
         assert type(deps) is list
         for val in deps:
-            val.type_of = ClassType.Service
+            val.ref_type = Ref.Service
             self.dependencies.append(val)
         return self
 
@@ -1249,13 +1249,13 @@ class ValueObject(NamedElement, NamespacedObject):
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
-        self.extends.type_of = ClassType.ValueObject
+        self.extends.ref_type = Ref.ValueObject
         return self
 
     def set_dependencies(self, deps):
         assert type(deps) is list
         for val in deps:
-            val.type_of = ClassType.Entity
+            val.ref_type = Ref.Entity
             self.dependencies.append(val)
         return self
 
@@ -1412,13 +1412,13 @@ class Entity(NamedElement, NamespacedObject):
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
-        self.extends.type_of = ClassType.Entity
+        self.extends.ref_type = Ref.Entity
         return self
 
     def set_dependencies(self, deps):
         assert type(deps) is list
         for val in deps:
-            val.type_of = ClassType.Service
+            val.ref_type = Ref.Service
             self.dependencies.append(val)
         return self
 

@@ -530,7 +530,7 @@ class ExtDefAction(SemanticAction):
             if type(val) is Id:
                 retVal = ExtObj(ref = CrossRef(\
                                         ref = val,
-                                        type_of = ClassType.Entity))
+                                        ref_type = Ref.Entity))
 
                 if parser.debugDomm:
                     print("DEBUG ExtDefAction returned ", retVal)
@@ -625,7 +625,7 @@ class OperationAction(SemanticAction):
                     oper.add_constraint_spec(x)
             elif type(val) is Id:
                 exc = CrossRef(ref = val, \
-                                      type_of = ClassType.ExceptType)
+                                      ref_type = Ref.ExceptType)
                 oper.add_throws_exception(exc)
 
         if parser.debugDomm:
@@ -747,7 +747,7 @@ class PropRefAction(SemanticAction):
         if parser.debugDomm:
             print("DEBUG PropRefAction children  ", children)
         retVal = CrossRef(ref = Id(node.value),\
-            type_of = ClassType.Property)
+            ref_type = Ref.Property)
 
         if parser.debugDomm:
             print("DEBUG PropRefAction returns  ", retVal)
