@@ -219,13 +219,13 @@ class Qid(object):
         return fnvhash(self.path)
 
     def __repr__(self):
-        retStr = "Qid("
+        retval = "Qid("
         for i, part in enumerate(path):
             if i > 0:
-                retStr += "."
-            retStr += i
-        retStr += ")"
-        return retStr
+                retval += "."
+            retval += part
+        retval += ")"
+        return retval
 
 
 
