@@ -30,7 +30,7 @@ def ident():            return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])*')
 def qual_ident():       return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])* \
                                 (\.[a-zA-Z_]([a-zA-Z_]|[0-9])*)+')
 def integer():          return _(r'([1-9][0-9]*)|[0-9]')
-def rel_id():       return [ident, qual_ident]
+def rel_id():           return [ident, qual_ident]
 
 # Defines the starting rules for all types
 # defines categorization of said types into data_types and constraints

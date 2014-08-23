@@ -64,6 +64,7 @@ class NamedElementAction(SemanticAction):
                     retVal.short_desc = val
                 else:
                     retVal.long_desc = val
+
         if parser.debugDomm:
             print("Debug NamedElementAction returns ", retVal)
 
@@ -625,7 +626,7 @@ class OperationAction(SemanticAction):
                     oper.add_constraint_spec(x)
             elif type(val) is Id:
                 exc = CrossRef(ref = val, \
-                                      ref_type = Ref.ExceptType)
+                               ref_type = Ref.ExceptType)
                 oper.add_throws_exception(exc)
 
         if parser.debugDomm:
