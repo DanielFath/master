@@ -187,8 +187,8 @@ def test_service():
         }
     """)["test"]
 
-    ext = ClassifierBound(ref = Id("Ext"), type_of = ClassType.Service)
-    dep = ClassifierBound(ref = Id("Dep1"), type_of = ClassType.Service)
+    ext = CrossRef(ref = Id("Ext"), type_of = ClassType.Service)
+    dep = CrossRef(ref = Id("Dep1"), type_of = ClassType.Service)
     op1 = Operation(type_def = TypeDef(name = "getName", type_of = "string")
         ).add_param(OpParam(type_def = TypeDef(name = "from", \
             type_of = "datetime")))
@@ -250,8 +250,8 @@ def test_entity():
         """)["test"]
 
     key1 = Key().add_prop(Property(type_def = TypeDef(name = "id", type_of = "int")))
-    ext1 = ClassifierBound(ref = Id("Ex"), type_of = ClassType.Entity)
-    dep1 = ClassifierBound(ref = Id("D1"), type_of = ClassType.Service)
+    ext1 = CrossRef(ref = Id("Ex"), type_of = ClassType.Entity)
+    dep1 = CrossRef(ref = Id("D1"), type_of = ClassType.Service)
 
 
     ent1 = Entity(name = "example"

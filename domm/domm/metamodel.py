@@ -906,7 +906,7 @@ class ClassType(Enum):
     Constraint = 6,
     Property = 7
 
-class ClassifierBound(object):
+class CrossRef(object):
     """
     Tracks a relation used to refer to other classifier.
     For example an Entity may depend on a service or extend another Entity.
@@ -1031,7 +1031,7 @@ class Operation(NamedElement):
         return self
 
     def add_throws_exception(self, exception):
-        assert type(exception) is ClassifierBound
+        assert type(exception) is CrossRef
         assert exception.type_of == ClassType.ExceptType
         self.throws.append(exception)
         return self
@@ -1151,7 +1151,7 @@ class Service(NamedElement, NamespacedObject):
         self._check()
 
     def set_extends(self, extends):
-        assert type(extends) is ClassifierBound
+        assert type(extends) is CrossRef
         self.extends = extends
         self.extends.type_of = ClassType.Service
         return self
@@ -1247,7 +1247,7 @@ class ValueObject(NamedElement, NamespacedObject):
         self._check()
 
     def set_extends(self, extends):
-        assert type(extends) is ClassifierBound
+        assert type(extends) is CrossRef
         self.extends = extends
         self.extends.type_of = ClassType.ValueObject
         return self
@@ -1370,7 +1370,7 @@ class Repr(object):
                 retStr += "+"
             if type(x) is str:
                 retStr += " `%s` " % x
-            elif type(x) is ClassifierBound:
+            elif type(x) is CrossRef:
                 retStr += " %s " % x
         return retStr
 
@@ -1410,7 +1410,7 @@ class Entity(NamedElement, NamespacedObject):
         return self
 
     def set_extends(self, extends):
-        assert type(extends) is ClassifierBound
+        assert type(extends) is CrossRef
         self.extends = extends
         self.extends.type_of = ClassType.Entity
         return self

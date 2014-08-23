@@ -528,7 +528,7 @@ class ExtDefAction(SemanticAction):
         # there are only two elements keyword and identifer
         for val in children:
             if type(val) is Id:
-                retVal = ExtObj(ref = ClassifierBound(\
+                retVal = ExtObj(ref = CrossRef(\
                                         ref = val,
                                         type_of = ClassType.Entity))
 
@@ -560,7 +560,7 @@ class DepDefAction(SemanticAction):
 
         for val in children:
             if type(val) is Id:
-                list_dependencies.append(ClassifierBound(ref = val))
+                list_dependencies.append(CrossRef(ref = val))
 
         retVal = DepObj(rels = list_dependencies)
 
@@ -624,7 +624,7 @@ class OperationAction(SemanticAction):
                 for x in val.specs:
                     oper.add_constraint_spec(x)
             elif type(val) is Id:
-                exc = ClassifierBound(ref = val, \
+                exc = CrossRef(ref = val, \
                                       type_of = ClassType.ExceptType)
                 oper.add_throws_exception(exc)
 
@@ -746,7 +746,7 @@ class PropRefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:
             print("DEBUG PropRefAction children  ", children)
-        retVal = ClassifierBound(ref = Id(node.value),\
+        retVal = CrossRef(ref = Id(node.value),\
             type_of = ClassType.Property)
 
         if parser.debugDomm:
