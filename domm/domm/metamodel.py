@@ -913,9 +913,9 @@ class CrossRef(object):
 
     This class models said behavior
     """
-        assert type(ref) is Id
     def __init__(self, ref = None, ref_type = None):
         super(CrossRef, self).__init__()
+        assert type(ref) is Id or type(ref) is Qid
         if ref_type:
             assert type(ref_type) is Ref
         self.ref = ref
