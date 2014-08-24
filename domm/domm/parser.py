@@ -100,8 +100,8 @@ def service():          return Kwd("service"), ident, Optional(ext_def),\
                             "{", Optional(constr_speclist),\
                             ZeroOrMore(oper), ZeroOrMore(oper_compart), "}"
 
-def ext_def():          return Kwd("extends"), ident
-def dep_def():          return Kwd("depends"), ident, ZeroOrMore(",", ident)
+def ext_def():          return Kwd("extends"), rel_id
+def dep_def():          return Kwd("depends"), rel_id, ZeroOrMore(",", rel_id)
 
 # An entity contains a key through which it is referenced.
 # This models something analogous to a complex database key.
@@ -120,9 +120,9 @@ def prop_ref():         return ident
 # For examples grades of a student are between 1 and 5 (or A and F)
 def constr_speclist():  return "[", constr_spec, ZeroOrMore(",", constr_spec),\
                             "]"
-def constr_spec():      return ident, Optional("(", constr_param, \
+def constr_spec():      return rel_id, Optional("(", constr_param, \
                             ZeroOrMore(",", constr_param), ")"),
-def constr_param():     return [string, ident, integer]
+def constr_param():     return [string, rel_id, integer]
 
 # Feature represents a combinationf of properties and operation which
 # are features of other classifiers
@@ -136,9 +136,9 @@ def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),\
                             Kwd("unique"), Kwd("readonly"), Kwd("required")]),\
                             Optional("+"), type_def, Optional(ref), \
                             Optional(constr_speclist), Optional(named_elem)
-def type_def():         return ident,  Optional("[", Optional(integer),"]"),\
+def type_def():         return rel_id,  Optional("[", Optional(integer),"]"),\
                             ident
-def ref():              return "<>", ident
+def ref():              return "<>", rel_id
 
 # Defines set of operations you can perform on an entity.
 # Operations have parameters they take in, exceptions their throw, like
