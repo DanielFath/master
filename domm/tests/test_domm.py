@@ -20,29 +20,29 @@ with pytest.raises(DuplicateFeatureError):
         }""")
 
 def test_model():
-    assert DommParser().string_into_ast("model simple")["simple"] == Model(name="simple")
+    assert DommParser().string_into_ast("model simple") == Model(name="simple")
 
     simple2 = Model(name="simple", short_desc="short_desc")
-    assert DommParser().string_into_ast('model simple "short_desc" ')["simple"] == simple2
+    assert DommParser().string_into_ast('model simple "short_desc" ') == simple2
 
 
     simple3 = Model(name="simple", short_desc="short_desc", long_desc="long_desc")
-    assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ')["simple"] == simple3
+    assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ') == simple3
 
-    assert DommParser().string_into_ast('model simple1 "short_desc"  "long_desc"' )["simple1"] != simple3
-    assert DommParser().string_into_ast('model simple  "short_desc1" "long_desc"' )["simple"]  != simple3
-    assert DommParser().string_into_ast('model simple  "short_desc"  "long_desc1"')["simple"]  != simple3
+    assert DommParser().string_into_ast('model simple1 "short_desc"  "long_desc"' ) != simple3
+    assert DommParser().string_into_ast('model simple  "short_desc1" "long_desc"' ) != simple3
+    assert DommParser().string_into_ast('model simple  "short_desc"  "long_desc1"') != simple3
 
 def test_dataType():
     parsed1 = DommParser().string_into_ast("""model simple
-        dataType Name""")["simple"]["Name"]
+        dataType Name""")["Name"]
 
     expected1 = DataType(name = "Name")
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
 
     parsed2 = DommParser().string_into_ast("""model simple
-        dataType Name "Name of person" "Detailed description of field" """)["simple"]["Name"]
+        dataType Name "Name of person" "Detailed description of field" """)["Name"]
 
     expected2 = DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field")
     assert parsed2 ==  expected2
@@ -54,7 +54,7 @@ def test_enum():
         R "Red"
         G "Green"
         B "Blue"
-    }}""")["enum"]["test"]["Color"]
+    }}""")["test"]["Color"]
 
     expected1 = Enumeration(name = "Color", short_desc = "Color desc."
         ).add_all_literals([
@@ -81,7 +81,7 @@ def test_tagType():
         buildinTagType plural (_string) appliesTo _entity _valueObject
         validatorType example
         buildinValidator text_example "short desc" "long description"
-    """)["test"]
+    """)
 
     tag1 = CommonTag(name = "orderBy", constr_def = ConstrDef(["_ref", "..."]), applies = ApplyDef(to_entity = True))
     tag2 = CommonTag(name = "plural", constr_def = ConstrDef(["_string"]), applies = ApplyDef(to_entity = True, to_value_object = True))
@@ -109,7 +109,7 @@ def test_package():
     parsed1 = DommParser().string_into_ast(""" model test
         package example {
         }
-        """)["test"]
+        """)
 
     pack1 = Package(name = "example"
         )
@@ -138,7 +138,7 @@ def test_exception():
                 prop +string[2] message <> testing [isValidErrCode(2, "string", X), finder]  "error message" "message"
             }
         }
-    """)["test"]
+    """)
 
     type_def1 = TypeDef(name = "message", type_of = "string", short_desc = "error message" , long_desc = "message")
     type_def1.set_multi(2)
@@ -185,7 +185,7 @@ def test_service():
                 }
             }
         }
-    """)["test"]
+    """)
 
     ext = CrossRef(ref = Id("Ext"), ref_type = Ref.Service)
     dep = CrossRef(ref = Id("Dep1"), ref_type = Ref.Service)
@@ -219,7 +219,7 @@ def test_value_object():
             valueObject example {
                 prop string X
             }
-        }""")["test"]
+        }""")
 
     vo1 = ValueObject(name = "example").add_prop(Property(type_def = TypeDef(
         name = "X", type_of = "string")))
@@ -247,7 +247,7 @@ def test_entity():
                 }
             }
         }
-        """)["test"]
+        """)
 
     key1 = Key().add_prop(Property(type_def = TypeDef(name = "id", type_of = "int")))
     ext1 = CrossRef(ref = Id("Ex"), ref_type = Ref.Entity)
