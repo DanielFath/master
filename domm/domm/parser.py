@@ -26,11 +26,11 @@ def named_elem():       return [(string, string), string]
 
 # Defines basic literalls
 def string():           return '"', _('[^"]*'),'"'
-def ident():            return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])*')
+def name():            return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])*')
 def qual_ident():       return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])* \
                                 (\.[a-zA-Z_]([a-zA-Z_]|[0-9])*)+')
 def integer():          return _(r'([1-9][0-9]*)|[0-9]')
-def rel_id():           return [ident, qual_ident]
+def rel_id():           return [name, qual_ident]
 
 # Defines the starting rules for all types
 # defines categorization of said types into data_types and constraints
@@ -38,13 +38,13 @@ def types():            return [data_types, constraint_type]
 # Defines data_types as either user made types, built-in types (e.g. integer, string)
 # and enumerations of elements
 def data_types():       return [user_type, built_type, enum]
-def user_type():        return Kwd("dataType"), ident, Optional(named_elem)
-def built_type():       return Kwd("buildinDataType"), ident, Optional(named_elem)
+def user_type():        return Kwd("dataType"), name, Optional(named_elem)
+def built_type():       return Kwd("buildinDataType"), name, Optional(named_elem)
 
 # Defines the rules for enumeration literals
-def enum():             return Kwd("enum"), ident, Optional(named_elem),\
+def enum():             return Kwd("enum"), name, Optional(named_elem),\
                                 "{", OneOrMore(enum_literals), "}"
-def enum_literals():    return ident, string, Optional(named_elem)
+def enum_literals():    return name, string, Optional(named_elem)
 
 # Defines rules for constraint types
 # Constraint types are defined as either a tagType (which may be built-in)
@@ -66,7 +66,7 @@ def builtin_tag():      return Kwd("buildinTagType"), common_tag
 def validator_type():   return [user_validator, builtin_valid]
 def user_validator():   return Kwd("validatorType"), common_tag
 def builtin_valid():    return Kwd("buildinValidator"), common_tag
-def common_tag():       return ident, Optional(constr_def),\
+def common_tag():       return name, Optional(constr_def),\
                                 Optional(apply_def), Optional(named_elem)
 def constr_def():       return [("(", [elipsis, (constr_type, ",", elipsis)],\
                                 ")"), ("(", constr_type, ZeroOrMore(",",\
@@ -78,7 +78,7 @@ def constr_type():      return [Kwd("_string"), Kwd("_int"), Kwd("_ref")]
 def elipsis():          return Kwd("...")
 
 # Defines package which is a unit of code organization, which may contain other nested packages
-def package():          return Kwd("package"), ident, Optional(named_elem),\
+def package():          return Kwd("package"), name, Optional(named_elem),\
                                 "{", ZeroOrMore(pack_elem), "}"
 def pack_elem():        return [package,classifier]
 
@@ -88,14 +88,14 @@ def classifier():       return [entity, service, value_object, exception,\
 
 # Defines an entity in DOMMLite model that often represents actors
 # in the business model
-def entity():           return Kwd("entity"), ident, Optional(ext_def),\
+def entity():           return Kwd("entity"), name, Optional(ext_def),\
                             Optional(dep_def), Optional(oper),\
                             Optional(named_elem),\
                             "{", key, Optional(ent_repr), \
                             Optional(constr_speclist), ZeroOrMore(feature),\
                             ZeroOrMore(feature_compart), "}"
 # Defines service in DOMMLite model that provides one or more operations.
-def service():          return Kwd("service"), ident, Optional(ext_def),\
+def service():          return Kwd("service"), name, Optional(ext_def),\
                             Optional(dep_def), Optional(named_elem),\
                             "{", Optional(constr_speclist),\
                             ZeroOrMore(oper), ZeroOrMore(oper_compart), "}"
@@ -113,8 +113,7 @@ def key():              return Kwd("key"), "{", OneOrMore(prop), "}"
 def ent_repr():         return Kwd("repr"), repr_param, \
                             ZeroOrMore("+", repr_param)
 def repr_param():       return [string, prop_ref]
-def prop_ref():         return ident
-
+def prop_ref():         return name
 # Constraint definition defines a set of limitations to a type
 # for instance we can define that some elements are between certain values.
 # For examples grades of a student are between 1 and 5 (or A and F)
@@ -137,7 +136,7 @@ def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),\
                             Optional("+"), type_def, Optional(ref), \
                             Optional(constr_speclist), Optional(named_elem)
 def type_def():         return rel_id,  Optional("[", Optional(integer),"]"),\
-                            ident
+                            name
 def ref():              return "<>", rel_id
 
 # Defines set of operations you can perform on an entity.
@@ -146,8 +145,8 @@ def ref():              return "<>", rel_id
 def oper():             return Kwd("op"), ZeroOrMore([Kwd("ordered"),\
                             Kwd("unique"), Kwd("required")]), type_def,"(", \
                             Optional(op_param, ZeroOrMore(",", op_param)),\
-                            ")", Optional("throws", ident, ZeroOrMore(",", \
-                            ident) ), Optional(constr_speclist), \
+                            ")", Optional("throws", rel_id, ZeroOrMore(",", \
+                            rel_id) ), Optional(constr_speclist), \
                             Optional(named_elem)
 
 def op_param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"),\
@@ -156,25 +155,25 @@ def op_param():           return ZeroOrMore([Kwd("ordered"), Kwd("unique"),\
 
 # Feature and operation compartments, group a set of feature
 # or operations into a single logical part
-def feature_compart():  return Kwd("compartment"), ident, Optional(named_elem)\
+def feature_compart():  return Kwd("compartment"), name, Optional(named_elem)\
                             , "{", ZeroOrMore(feature), "}"
 
-def oper_compart():     return Kwd("compartment"), ident, Optional(named_elem)\
+def oper_compart():     return Kwd("compartment"), name, Optional(named_elem)\
                             , "{", ZeroOrMore(oper), "}"
 
 # Value objects are objects that have no operations, only properties
-def value_object():     return Kwd("valueObject"), ident, Optional(ext_def),\
+def value_object():     return Kwd("valueObject"), name, Optional(ext_def),\
                             Optional(dep_def), Optional(named_elem), \
                             "{",Optional(constr_def), ZeroOrMore(prop), "}"
 
 # Defines exceptions in DOMMLite, which are entities that are used for
 # reporting errors.
-def exception():        return Kwd("exception"), ident, Optional(named_elem),\
+def exception():        return Kwd("exception"), name, Optional(named_elem),\
                             "{", ZeroOrMore(prop), "}"
 
 # Defines the model rule of DOMMLite
 # which is a container for one or more types or packages
-def model() :           return Kwd("model"), ident, Optional(named_elem),\
+def model() :           return Kwd("model"), name, Optional(named_elem),\
                             ZeroOrMore([user_type, constraint_type]),\
                             ZeroOrMore(package)
 
@@ -190,7 +189,7 @@ domm.sem = DommAction()
 model.sem = ModelAction()
 # Basic types
 string.sem = StringAction()
-ident.sem = IdAction()
+name.sem = IdAction()
 qual_ident.sem = QidAction()
 integer.sem = IntAction()
 
