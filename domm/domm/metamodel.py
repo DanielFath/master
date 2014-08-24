@@ -208,7 +208,7 @@ class Qid(object):
             self.path = path
 
     @property
-    def _id(self):
+    def _canon(self):
         retval = ""
         for i, part in enumerate(path):
             if i > 0:
@@ -216,6 +216,12 @@ class Qid(object):
             retval += part
         return retval
 
+    @property
+    def _id(self):
+        if self.path and len(self.path) > 0:
+            return self.path[-1]
+        else:
+            return None
     def __eq__(self, other):
         if type(self) is type(other):
             return self.path == other.path
