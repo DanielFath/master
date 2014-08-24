@@ -222,6 +222,11 @@ class Qid(object):
             return self.path[-1]
         else:
             return None
+
+    def is_resolved():
+        return len(self.path) > 1
+
+
     def __eq__(self, other):
         if type(self) is type(other):
             return self.path == other.path
