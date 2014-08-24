@@ -4,20 +4,22 @@ from  domm.error import TypeExistsError
 from  domm.parser import DommParser
 from  domm.metamodel import *
 
-with pytest.raises(NoMatch):
-    DommParser().parse("")
+def test_empty():
+    with pytest.raises(NoMatch):
+        DommParser().parse("")
+def test_duplicate_datatype():
+    with pytest.raises(TypeExistsError):
+        DommParser().string_into_ast("model simple dataType a dataType a")
 
-with pytest.raises(TypeExistsError):
-    DommParser().string_into_ast("model simple dataType a dataType a")
-
-with pytest.raises(DuplicateFeatureError):
-    DommParser().string_into_ast("""model simple package test {
-            entity test {
-                key { prop int id}
-                prop string X
-                prop int X
-            }
-        }""")
+def test_duplicate_prop_name():
+    with pytest.raises(DuplicateFeatureError):
+        DommParser().string_into_ast("""model simple package test {
+                entity test {
+                    key { prop int id}
+                    prop string X
+                    prop int X
+                }
+            }""")
 
 def test_model():
     assert DommParser().string_into_ast("model simple") == Model(name="simple")
