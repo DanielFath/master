@@ -207,6 +207,15 @@ class Qid(object):
         if path and len(path) > 0:
             self.path = path
 
+    @property
+    def _id(self):
+        retval = ""
+        for i, part in enumerate(path):
+            if i > 0:
+                retval += "."
+            retval += part
+        return retval
+
     def __eq__(self, other):
         if type(self) is type(other):
             return self.path == other.path
