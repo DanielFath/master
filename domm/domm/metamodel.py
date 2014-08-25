@@ -240,7 +240,7 @@ class Qid(object):
 
     def __repr__(self):
         retval = "Qid("
-        for i, part in enumerate(path):
+        for i, part in enumerate(self.path):
             if i > 0:
                 retval += "."
             retval += part
