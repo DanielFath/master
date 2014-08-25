@@ -191,6 +191,7 @@ model.sem = ModelAction()
 string.sem = StringAction()
 name.sem = IdAction()
 qual_ident.sem = QidAction()
+rel_id.sem = RelIdAction()
 integer.sem = IntAction()
 
 # Named element and dataTypes

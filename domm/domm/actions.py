@@ -736,6 +736,14 @@ class KeyAction(SemanticAction):
 
         return key
 
+class RelIdAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        retval = None
+        if type(children[0]) is Id:
+            retval = Qid([children[0]._id])
+        elif type(children[0]) is Qid:
+            retval = children[0]
+        return retval
 
 class PropRefAction(SemanticAction):
     def first_pass(self, parser, node, children):
