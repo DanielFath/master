@@ -202,10 +202,13 @@ class Qid(object):
     """
     def __init__(self, path):
         super(Qid, self).__init__()
-        assert type(path) is list
+        assert type(path) is list or type(path) is str
         self.path = []
-        if path and len(path) > 0:
-            self.path = path
+        if type(path) is list:
+            if path and len(path) > 0:
+                self.path = path
+        elif type(path) is str:
+            self.path = [path]
 
     @property
     def _canon(self):
