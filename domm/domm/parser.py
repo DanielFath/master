@@ -121,7 +121,7 @@ def constr_speclist():  return "[", constr_spec, ZeroOrMore(",", constr_spec),\
                             "]"
 def constr_spec():      return rel_id, Optional("(", constr_param, \
                             ZeroOrMore(",", constr_param), ")"),
-def constr_param():     return [string, rel_id, integer]
+def constr_param():     return [string, name, integer]
 
 # Feature represents a combinationf of properties and operation which
 # are features of other classifiers
@@ -215,7 +215,6 @@ builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
 type_def.sem = TypeDefAction()
 constr_spec.sem = ConstraintSpecAction()
 constr_speclist.sem = ConstraintSpecListAction()
-constr_param.sem = ConstraintParamAction()
 
 # Semantic action for package
 package.sem = PackageAction()

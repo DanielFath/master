@@ -145,11 +145,11 @@ def test_exception():
     type_def1 = TypeDef(name = "message", type_of = "string", short_desc = "error message" , long_desc = "message")
     type_def1.set_multi(2)
 
-    rel1 = Relationship(containment = True, opposite_end = Id("testing"))
+    rel1 = Relationship(containment = True, opposite_end = Qid("testing"))
 
     prop2 = Property(type_def = type_def1, relation = rel1
-        ).add_constraint_spec(ConstraintSpec(ident = Id("isValidErrCode"), parameters = [2, "string", Id("X")])
-        ).add_constraint_spec(ConstraintSpec(ident = Id("finder")))
+        ).add_constraint_spec(ConstraintSpec(ident = Qid("isValidErrCode"), parameters = [2, "string", Id("X")])
+        ).add_constraint_spec(ConstraintSpec(ident = Qid("finder")))
 
     prop1 = Property(type_def = TypeDef(name = "errCode", type_of = "int"))
 
@@ -169,12 +169,13 @@ def test_exception():
     print("parsed1   hash", hash(parsed1))
     print("expected1 hash", hash(expected1))
 
+    assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
+    assert parsed1["exception_example"]["ResultNotFound"]["message"] == prop2
+
     assert parsed1 == expected1
     assert parsed1 != unexpected1
     assert hash(parsed1) == hash(expected1)
     assert hash(parsed1) != hash(unexpected1)
-
-    assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
 
 def test_service():
     parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
@@ -189,8 +190,8 @@ def test_service():
         }
     """)
 
-    ext = CrossRef(ref = Id("Ext"), ref_type = Ref.Service)
-    dep = CrossRef(ref = Id("Dep1"), ref_type = Ref.Service)
+    ext = CrossRef(ref = Qid("Ext"), ref_type = Ref.Service)
+    dep = CrossRef(ref = Qid("Dep1"), ref_type = Ref.Service)
     op1 = Operation(type_def = TypeDef(name = "getName", type_of = "string")
         ).add_param(OpParam(type_def = TypeDef(name = "from", \
             type_of = "datetime")))
@@ -201,7 +202,7 @@ def test_service():
         short_desc = "Student service", \
         long_desc = "Gives services to students", \
         extends = ext, depends = [dep]
-        ).add_constraint_spec(ConstraintSpec(ident = Id("finder"))
+        ).add_constraint_spec(ConstraintSpec(ident = Qid("finder"))
         ).add_operation(op1).add_op_compartment(comp)
 
     expected1 = Model(name = "test").add_package(Package(name = "exception_example"
@@ -252,8 +253,8 @@ def test_entity():
         """)
 
     key1 = Key().add_prop(Property(type_def = TypeDef(name = "id", type_of = "int")))
-    ext1 = CrossRef(ref = Id("Ex"), ref_type = Ref.Entity)
-    dep1 = CrossRef(ref = Id("D1"), ref_type = Ref.Service)
+    ext1 = CrossRef(ref = Qid("Ex"), ref_type = Ref.Entity)
+    dep1 = CrossRef(ref = Qid("D1"), ref_type = Ref.Service)
 
 
     ent1 = Entity(name = "example"
@@ -273,4 +274,3 @@ def test_entity():
 
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
-

@@ -283,9 +283,9 @@ class TypeDefAction(SemanticAction):
         type_def = TypeDef()
 
         for ind, val in enumerate(children):
-            if type(val) is Id and ind == 0:
+            if type(val) is Qid:
                 type_def.set_type(val._id)
-            elif type(val) is Id and ind != 0:
+            elif type(val) is Id:
                 type_def.name = val._id
             elif val == "[":
                 type_def.container = True
@@ -302,18 +302,18 @@ class ConstraintSpecAction(SemanticAction):
         temp_spec = ConstraintSpec()
 
         # We filter for strings to remove all `(` `)` `,` strings from children
-        filter_children = (x for x in children if type(x) is not str)
+        filter_children = (x for x in children if x != "," and x != "(" and x != ")")
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecAction enter (children): ", children)
 
         for ind, val in enumerate(filter_children):
-            if type(val) is Id and ind == 0:
+            if type(val) is Qid:
                 temp_spec.ident = val
-            elif type(val) is Id and ind != 0:
+            elif type(val) is Id:
                 temp_spec.add_param(val)
-            elif type(val) is StrObj :
-                temp_spec.add_param(val.content)
+            elif type(val) is str:
+                temp_spec.add_param(val)
             elif type(val) is int:
                 temp_spec.add_param(val)
 
@@ -321,36 +321,6 @@ class ConstraintSpecAction(SemanticAction):
             print("DEBUG ConstraintSpecAction returns: ", temp_spec)
 
         return temp_spec
-
-class StrObj(object):
-    """Helper class for string in StrObj"""
-    def __init__(self, content = ""):
-        super(StrObj, self).__init__()
-        self.content = content
-
-    def __repr__(self):
-        return "StrObj[%s]" % self.content
-
-
-class ConstraintParamAction(SemanticAction):
-    """
-    This action is used to get string content of a ConstraintSpec without
-    getting comma or quotation marks.
-    """
-    def first_pass(self, parser, node, children):
-        # Since this only appears when string is involved, we
-        # just assume the second child is the strings content
-        # Parse tree looks a bit like this:
-        #   (") (string) (")
-        string_param = ""
-        for x in children:
-            if x != '"':
-                string_param = StrObj(x)
-
-        if parser.debugDomm:
-            print("DEBUG ConstraintParamAction returns: ", string_param)
-
-        return string_param
 
 class SpecsObj(object):
     """Helper class for ConstrainSpecsAction"""
@@ -402,7 +372,7 @@ class RefAction(SemanticAction):
         retVal = None
 
         for val in children:
-            if type(val) is Id:
+            if type(val) is Qid:
                 retVal = RefObj(val)
 
         if parser.debugDomm:
@@ -522,7 +492,7 @@ class ExtDefAction(SemanticAction):
             print("DEBUG ExtDefAction enter (children) ", children)
         # there are only two elements keyword and identifer
         for val in children:
-            if type(val) is Id:
+            if type(val) is Qid:
                 retVal = ExtObj(ref = CrossRef(\
                                         ref = val,
                                         ref_type = Ref.Entity))
@@ -554,7 +524,7 @@ class DepDefAction(SemanticAction):
             print("DEBUG Entered DepDefAction (children)", children)
 
         for val in children:
-            if type(val) is Id:
+            if type(val) is Qid:
                 list_dependencies.append(CrossRef(ref = val))
 
         retVal = DepObj(rels = list_dependencies)
@@ -618,7 +588,7 @@ class OperationAction(SemanticAction):
             elif type(val) is SpecsObj:
                 for x in val.specs:
                     oper.add_constraint_spec(x)
-            elif type(val) is Id:
+            elif type(val) is Qid:
                 exc = CrossRef(ref = val, \
                                ref_type = Ref.ExceptType)
                 oper.add_throws_exception(exc)

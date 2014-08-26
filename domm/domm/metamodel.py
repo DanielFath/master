@@ -938,7 +938,7 @@ class CrossRef(object):
     """
     def __init__(self, ref = None, ref_type = None):
         super(CrossRef, self).__init__()
-        assert type(ref) is Id or type(ref) is Qid
+        assert type(ref) is Qid
         if ref_type:
             assert type(ref_type) is Ref
         self.ref = ref
@@ -1220,13 +1220,12 @@ class Service(NamedElement, NamespacedObject):
         if self.constraints and len(self.constraints) > 0:
             retStr += print_constraints(self.constraints)
 
+        retStr += print_partial_map(self.elems, self.operations)
+
         if self.op_compartments:
-            for compartment in self.op_compartments:
+            for compartment in self.op_compartments.values():
                 retStr += "\n%s\n" % compartment
 
-
-        for op in self.operations:
-            retStr += "    %s" % op
         retStr += "}"
 
         return retStr
