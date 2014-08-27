@@ -244,7 +244,7 @@ def test_entity():
         model test
 
         package ent_example {
-            entity example extends Ex depends D1{
+            entity example extends std.Ex depends D1{
                 key {
                     prop int id
                 }
@@ -253,7 +253,7 @@ def test_entity():
         """)
 
     key1 = Key().add_prop(Property(type_def = TypeDef(name = "id", type_of = "int")))
-    ext1 = CrossRef(ref = Qid("Ex"), ref_type = Ref.Entity)
+    ext1 = CrossRef(ref = Qid(["std","Ex"]), ref_type = Ref.Entity)
     dep1 = CrossRef(ref = Qid("D1"), ref_type = Ref.Service)
 
 
