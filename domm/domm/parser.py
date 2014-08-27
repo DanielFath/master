@@ -26,11 +26,10 @@ def named_elem():       return [(string, string), string]
 
 # Defines basic literalls
 def string():           return '"', _('[^"]*'),'"'
-def name():            return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])*')
-def qual_ident():       return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])* \
-                                (\.[a-zA-Z_]([a-zA-Z_]|[0-9])*)+')
+def name():             return _(r'[a-zA-Z_]([a-zA-Z_]|[0-9])*')
+def qual_ident():       return _(r'([a-zA-Z_]([a-zA-Z_]|[0-9])*\.)*[a-zA-Z_]([a-zA-Z_]|[0-9])*')
 def integer():          return _(r'([1-9][0-9]*)|[0-9]')
-def rel_id():           return [name, qual_ident]
+def rel_id():           return [qual_ident, name]
 
 # Defines the starting rules for all types
 # defines categorization of said types into data_types and constraints
