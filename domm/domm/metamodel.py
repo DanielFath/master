@@ -592,9 +592,6 @@ class ConstrDef(object):
             self.constraints.append(constr)
         return self
 
-    def verify(self, field):
-        pass
-
     def __eq__(self, other):
         if type(other) is type(self):
             return self.__dict__ == other.__dict__
