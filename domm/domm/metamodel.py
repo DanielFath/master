@@ -404,8 +404,6 @@ class Constraint(NamespacedObject):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            # WARNING can't use __dict__ == __dict__ because
-            # namespace is transient
             return self.built_in == other.built_in and self.tag == other.tag and self.constr_type == other.constr_type
         else:
             return False
