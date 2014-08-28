@@ -81,7 +81,7 @@ class IdAction(SemanticAction):
     Represents actions done when identifier is found
     """
     def first_pass(self, parser, node, children):
-        return Id(node.value, namespace = parser.namespace)
+        return Id(node.value)
 
 class QidAction(SemanticAction):
     """
@@ -113,7 +113,6 @@ class EnumAction(SemanticAction):
             elif type(val) is EnumLiteral:
                 enum.add_literal(val)
 
-        enum.set_namespace(parser.namespace)
 
         return enum
 
@@ -216,7 +215,6 @@ class DataTypeAction(SemanticAction):
         if parser.debugDomm:
             print("DEBUG DataTypeAction returns: ", data_type)
 
-        data_type.set_namespace(parser.namespace)
 
         return data_type
 
@@ -249,8 +247,6 @@ class ConstraintAction(SemanticAction):
                 constraint.tag = i
             elif type(i) is Id:
                 constraint.name = i._id
-
-        constraint.set_namespace(parser.namespace)
 
         if parser.debugDomm:
             print("DEBUG ConstraintAction returns: ", constraint)

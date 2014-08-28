@@ -173,14 +173,13 @@ class NamedElement(object):
         return 'Named element { short_desc = "%s" long_desc  = "%s" }' %\
         (self.short_desc, self.long_desc)
 
-class Id(NamespacedObject):
+class Id(object):
     """
     Id that represents a name of a type or a parameter
     """
-    def __init__(self, ident, namespace = None):
-        super(Id, self).__init__(namespace)
+    def __init__(self, ident):
+        super(Id, self).__init__()
         self._id = ident;
-        self._check()
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -308,15 +307,12 @@ class Model(NamedElement):
     def __getitem__(self, key):
         return self.all[key]
 
-class DataType(NamedElement, NamespacedObject):
+class DataType(NamedElement):
 
 
-    def __init__(self, name = None, short_desc = None, long_desc = None, built_in = False, namespace = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None, built_in = False):
         super(DataType, self).__init__(name, short_desc, long_desc)
-        self._namespace = namespace
         self.built_in = built_in
-        self._check()
-
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
@@ -367,18 +363,17 @@ class ConstraintType(Enum):
     Tag = 1,
     Validator = 2
 
-class Constraint(NamespacedObject):
+class Constraint(object):
     """
     A unified container for tagTypes and validators,
     both built-in and user defined.
     """
 
-    def __init__(self, tag = None, built_in = False, constr_type = None, namespace = None):
-        super(Constraint, self).__init__(namespace)
+    def __init__(self, tag = None, built_in = False, constr_type = None):
+        super(Constraint, self).__init__()
         self.tag = tag
         self.built_in = built_in
         self.constr_type = constr_type
-        self._check()
 
     def __repr__(self):
         retStr = '\n'
@@ -414,15 +409,12 @@ class Constraint(NamespacedObject):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-class Enumeration(NamedElement, NamespacedObject):
+class Enumeration(NamedElement):
 
 
-    def __init__(self, name = None, short_desc = None,\
-        long_desc = None, namespace = None):
+    def __init__(self, name = None, short_desc = None,long_desc = None) :
         super(Enumeration, self).__init__(name, short_desc, long_desc)
-        self._namespace = namespace
         self.literals = set()
-        self._check()
 
     def add_all_literals(self, list_literals):
         assert type(list_literals) is list
@@ -861,18 +853,14 @@ class Property(object):
             (self.type_def.short_desc, self.type_def.long_desc)
         return retStr
 
-class ExceptionType(NamedElement, NamespacedObject):
+class ExceptionType(NamedElement):
     """
     Exception object describing models
     """
 
-    def __init__(self, name = None, short_desc = None, long_desc = None,\
-        namespace = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None):
         super(ExceptionType, self).__init__(name, short_desc, long_desc)
         self.props = dict()
-        self._namespace = namespace
-        self._check()
-
 
     def add_prop(self, prop):
         # In exception we can't for example have two same named fields
@@ -1150,12 +1138,12 @@ class Compartment(NamedElement):
                 break
         return retval
 
-class Service(NamedElement, NamespacedObject):
+class Service(NamedElement):
     """
     Service classifier meta-model.
     """
     def __init__(self, name = None, short_desc = None, long_desc = None,\
-        extends = None, depends = None, namespace = None):
+        extends = None, depends = None):
         super(Service, self).__init__(name, short_desc, long_desc)
         self.extends = extends
         self.dependencies = []
@@ -1165,8 +1153,6 @@ class Service(NamedElement, NamespacedObject):
         self.elems = dict()
         self.operations = set()
         self.op_compartments = dict()
-        self._namespace = namespace
-        self._check()
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
@@ -1248,11 +1234,11 @@ class Service(NamedElement, NamespacedObject):
         else:
             return self.elems[key]
 
-class ValueObject(NamedElement, NamespacedObject):
+class ValueObject(NamedElement):
     """
     """
     def __init__(self, name = None, short_desc = None, long_desc = None,\
-        extends = None, depends = None, namespace = None):
+        extends = None, depends = None):
         super(ValueObject, self).__init__(name, short_desc, long_desc)
         self.extends = extends
         self.dependencies = []
@@ -1260,8 +1246,6 @@ class ValueObject(NamedElement, NamespacedObject):
             self.dependencies = depends
         self.constraints = set()
         self.props = dict()
-        self._namespace = namespace
-        self._check()
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
@@ -1391,13 +1375,13 @@ class Repr(object):
                 retStr += " %s " % x
         return retStr
 
-class Entity(NamedElement, NamespacedObject):
+class Entity(NamedElement):
     """
     Models the entity of a DOMMLite metamodel. Entity is a data structure
     with it's corresponding fields, relationships and methods.
     """
     def __init__(self, name = None, short_desc = None, long_desc = None,\
-        extends = None, depends = None, namespace = None):
+        extends = None, depends = None):
         super(Entity, self).__init__(name, short_desc, long_desc)
         self.extends = None
         self.dependencies = []
@@ -1413,8 +1397,6 @@ class Entity(NamedElement, NamespacedObject):
         self.constraints = set()
         self.features = set()
         self.compartments = dict()
-        self._namespace = namespace
-        self._check()
 
     def set_key(self, key):
         assert type(key) is Key
