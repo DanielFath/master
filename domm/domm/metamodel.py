@@ -171,7 +171,7 @@ class Model(NamedElement):
         self.qual_elems = dict()
         self.unique = dict()
 
-    def add_elem(self, ref, qid, name, err):
+    def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
             if not qid in self.qual_elems:
                 self.qual_elems[qid] = ref
@@ -180,28 +180,23 @@ class Model(NamedElement):
                 else:
                     self.unique[name] = qid
             else:
-                raise err
+                raise DuplicateTypeError(type_of, name)
 
 
     def add_type(self, type_def):
         assert type(type_def) is DataType
-        self.add_elem(type_def, type_def.name, type_def.name, \
-            TypeExistsError(type_def.name))
+        self.add_elem(type_def, type_def.name, type_def.name, "dataType")
         return self
 
     def add_package(self, package):
         assert type(package) is Package
-        # FIXME take qualified ID
-        if package and package.name:
-            self.qual_elems[package.name] = package
+        self.add_elem(package, package.name, package.name, "package")
         return self
 
 
     def add_constraint(self, constr):
         assert type(constr) is Constraint
-        # FIXME verify this works correctly
-        if constr and constr.tag and constr.tag.name:
-            self.qual_elems[constr.tag.name] = constr
+        self.add_elem(constr, constr.name, constr.name, "constraint")
         return self
 
 
