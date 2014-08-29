@@ -116,7 +116,7 @@ class Qid(object):
             if path and len(path) > 0:
                 self.path = path
         elif type(path) is str:
-            self.path = [path]
+            self.path = path.split(".")
 
     @property
     def _canon(self):
