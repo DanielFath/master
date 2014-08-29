@@ -8,22 +8,6 @@ class DommError(Exception):
     def __str__(self):
         return repr(self.message)
 
-class IdExistsError(DommError):
-    """
-    Error raised when id was already declared
-    """
-    def __init__(self, name):
-        super(IdExistsError, self).__init__("")
-        self.message = ' Id <"%s"> already taken ' % (name)
-
-class TypeExistsError(DommError):
-    """
-    Error raised when dataType with same name was already declared
-    """
-    def __init__(self, name):
-        super(TypeExistsError, self).__init__("")
-        self.message = ' dataType <"%s"> already declared ' % (name)
-
 class DuplicateLiteralError(DommError):
     """
     Error raised when there are two or more literals in enum with same name
@@ -40,10 +24,10 @@ class ElipsisMustBeLast(DommError):
         super(ElipsisMustBeLast, self).__init__("")
         self.message = ' The ... must be last element. ' % (name)
 
-class DuplicateTypeError(object):
-    def __init__(self, name):
-        super(DuplicateTypeError, self).__init__()
-        self.message = 'A type with name "%s" already exists!' % (name)
+class DuplicateTypeError(DommError):
+    def __init__(self, type_of, name):
+        super(DuplicateTypeError, self).__init__("")
+        self.message = 'A %s with name "%s" already exists!' % (type_of, name)
 
 class ExceptionExistsError(DommError):
     """

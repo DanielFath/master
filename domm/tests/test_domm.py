@@ -1,6 +1,6 @@
 import pytest
 from  arpeggio import NoMatch
-from  domm.error import TypeExistsError
+from  domm.error import DuplicateTypeError, DuplicateFeatureError
 from  domm.parser import DommParser
 from  domm.metamodel import *
 
@@ -9,7 +9,7 @@ def test_empty():
         DommParser().parse("")
 
 def test_duplicate_datatype():
-    with pytest.raises(TypeExistsError):
+    with pytest.raises(DuplicateTypeError):
         DommParser().string_into_ast("model simple dataType a dataType a")
 
 
