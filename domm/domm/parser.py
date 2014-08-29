@@ -19,7 +19,6 @@ from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
 
 from actions import *
-from metamodel import NamespaceResolver
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return [(string, string), string]
@@ -248,7 +247,6 @@ class DommParser(ParserPython):
     """
     def __init__(self, debugDomm = False, *args, **kwargs):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
-        self.namespace = NamespaceResolver()
         self.debugDomm = debugDomm
 
     def string_into_ast(self, content):
