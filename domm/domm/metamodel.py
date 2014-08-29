@@ -134,6 +134,9 @@ class Qid(object):
         else:
             return None
 
+    def depth():
+        return len(self.path)
+
     def is_resolved():
         return len(self.path) > 1
 
