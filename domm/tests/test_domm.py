@@ -8,6 +8,11 @@ def test_qid():
     qid_from_str = Qid("test.x.a")
     qid = Qid(["test", "x", "a"])
     assert qid_from_str == qid
+    assert qid_from_str.depth() == 3
+
+    qid_outer = Qid(qid.path).add_outer_level("out")
+    assert qid_outer == Qid(["out", "test", "x", "a"])
+    assert qid_outer.depth() == 4
 
 def test_empty():
     with pytest.raises(NoMatch):

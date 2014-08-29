@@ -143,6 +143,10 @@ class Qid(object):
     def is_resolved():
         return len(self.path) > 1
 
+    def add_outer_level(self, outer):
+        assert type(outer) is str
+        self.path.insert(0, outer)
+        return self
 
     def __eq__(self, other):
         if type(self) is type(other):
