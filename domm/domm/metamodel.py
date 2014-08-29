@@ -552,7 +552,7 @@ class Package(NamedElement):
 
     def add_constraint(self, constraint):
         assert type(constraint) is Constraint
-        self.elems[constraint.tag.name] = constraint
+        self.elems[constraint.name] = constraint
         return self
 
     def __eq__(self, other):
