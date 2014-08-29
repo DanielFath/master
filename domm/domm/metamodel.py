@@ -18,7 +18,8 @@ from enum import Enum
 def fnvhash(a):
     """
     Fowler, Noll, Vo Hash function.
-    Copied from this site: http://www.gossamer-threads.com/lists/python/python/679002#679002
+    Copied from this site:
+    http://www.gossamer-threads.com/lists/python/python/679002#679002
     """
     h = 2166136261
     for i in a:
@@ -72,7 +73,9 @@ class NamedElement(object):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.name == other.name and self.short_desc == other.short_desc and self.long_desc == other.long_desc
+            return self.name == other.name\
+                and self.short_desc == other.short_desc\
+                and self.long_desc == other.long_desc
         return False
 
     def __repr__(self):
@@ -224,7 +227,8 @@ class Model(NamedElement):
 class DataType(NamedElement):
 
 
-    def __init__(self, name = None, short_desc = None, long_desc = None, built_in = False):
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
+        built_in = False):
         super(DataType, self).__init__(name, short_desc, long_desc)
         self.built_in = built_in
 
@@ -248,7 +252,8 @@ class CommonTag(NamedElement):
     """
     Common function signature for Tags/Validators
     """
-    def __init__(self, name = None, short_desc = None, long_desc = None, constr_def = None, applies = None):
+    def __init__(self, name = None, short_desc = None, long_desc = None,\
+        constr_def = None, applies = None):
         super(CommonTag, self).__init__(name, short_desc, long_desc)
         self.constr_def = constr_def
         self.applies = applies
@@ -303,9 +308,10 @@ class Constraint(object):
         elif self.built_in == False and self.constr_type == ConstraintType.Tag:
             retStr += 'tagType'
         elif self.built_in == True\
-         and self.constr_type == ConstraintType.Validator:
+          and self.constr_type == ConstraintType.Validator:
             retStr += 'buildinValidator'
-        elif self.built_in == False and self.constr_type == ConstraintType.Validator:
+        elif self.built_in == False \
+          and self.constr_type == ConstraintType.Validator:
             retStr += 'validatorType'
 
         if self.tag is not None:
@@ -320,7 +326,8 @@ class Constraint(object):
 
     def __eq__(self, other):
         if type(other) is type(self):
-            return self.built_in == other.built_in and self.tag == other.tag and self.constr_type == other.constr_type
+            return self.built_in == other.built_in and self.tag == other.tag\
+                and self.constr_type == other.constr_type
         else:
             return False
 
@@ -580,7 +587,8 @@ class Relationship(object):
         opposite_end = ""
         if self.opposite_end:
             opposite_end = "<> %s" % self.opposite_end
-        return " Relationship:  %s (containment:%s)" % (opposite_end, self.containment)
+        return " Relationship:  %s (containment:%s)" % \
+            (opposite_end, self.containment)
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -599,7 +607,8 @@ class TypeDef(NamedElement):
     """
     Models the type signature of fields
     """
-    def __init__(self, name = None, type_of = None, short_desc = None, long_desc = None):
+    def __init__(self, name = None, type_of = None, short_desc = None,\
+        long_desc = None):
         super(TypeDef, self).__init__(name, short_desc, long_desc)
         self.type = type_of
         self.container = False
@@ -651,7 +660,8 @@ class ConstraintSpec(object):
     Constraint specification applies constraint to an bound entity
         ident is the identifier found in first pass of the parser
         parameters is a list of parameters supplied to the constraint
-        bound is the definition of constraint which is bound to other (for equality it won't be considered)
+        bound is the definition of constraint which is bound to other
+        (for equality it won't be considered)
     """
     def __init__(self, ident = None, parameters = None):
         super(ConstraintSpec, self).__init__()
@@ -695,7 +705,8 @@ class Property(object):
     Models properties of entities and other DOMM Classifiers
 
     There is a set of attributes of a property (ordered, unique ...) which
-    describes the Property. After it there is the type_def which is the property's type signature.
+    describes the Property. After it there is the type_def which is the
+    property's type signature.
     Relationship field determines if the field is a relation and to what.
     Constraint fields are referenced constraints applied to this property.
     """
@@ -914,9 +925,8 @@ class Operation(NamedElement):
     This class models the Operation classifier in DOMMLite.
 
     It represents a method that is often used in various DOMMLite objects
-    like ValueObject, Entity or Services. It has name, short and long description
-    and has list of parameters it requires.
-
+    like ValueObject, Entity or Services. It has name, short and long
+    description and has list of parameters it requires.
 
     Example:
         service ExampleService {

@@ -165,7 +165,8 @@ class ConstrDefAction(SemanticAction):
             print("DEBUG ConstrDefAction children: ", children)
 
         # Filter all irrelevant strings from query
-        filter_children = (x for x in children if x != "(" and x != ")" and x != ',')
+        filter_children = (x for x in children\
+                            if x != "(" and x != ")" and x != ',')
 
         for val in filter_children:
             constr_def.add_constr(val)
@@ -298,7 +299,8 @@ class ConstraintSpecAction(SemanticAction):
         temp_spec = ConstraintSpec()
 
         # We filter for strings to remove all `(` `)` `,` strings from children
-        filter_children = (x for x in children if x != "," and x != "(" and x != ")")
+        filter_children = (x for x in children\
+                            if x != "," and x != "(" and x != ")")
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecAction enter (children): ", children)
