@@ -4,6 +4,11 @@ from  domm.error import DuplicateTypeError, DuplicateFeatureError
 from  domm.parser import DommParser
 from  domm.metamodel import *
 
+def test_qid():
+    qid_from_str = Qid("test.x.a")
+    qid = Qid(["test", "x", "a"])
+    assert qid_from_str == qid
+
 def test_empty():
     with pytest.raises(NoMatch):
         DommParser().parse("")
