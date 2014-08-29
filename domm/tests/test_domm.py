@@ -7,11 +7,11 @@ from  domm.metamodel import *
 def test_empty():
     with pytest.raises(NoMatch):
         DommParser().parse("")
+
 def test_duplicate_datatype():
-# FIXME correct passing
-#    with pytest.raises(TypeExistsError):
-#        DommParser().string_into_ast("model simple dataType a dataType a")
-    pass
+    with pytest.raises(TypeExistsError):
+        DommParser().string_into_ast("model simple dataType a dataType a")
+
 
 def test_duplicate_prop_name():
     with pytest.raises(DuplicateFeatureError):

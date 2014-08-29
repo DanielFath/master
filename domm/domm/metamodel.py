@@ -165,42 +165,51 @@ class Model(NamedElement):
     """
     def __init__(self, name =None, short_desc = None, long_desc = None):
         super(Model, self).__init__(name, short_desc, long_desc)
-        self.all = dict()
-        self.types = set()
-        self.constrs = set()
-        self.packages = set()
+        self.qual_elems = dict()
+        self.unique = dict()
+
+    def add_elem(self, ref, qid, name, err):
+        if ref and qid:
+            if not qid in self.qual_elems:
+                self.qual_elems[qid] = ref
+                if name in self.unique:
+                    self.unique[name] = False
+                else:
+                    self.unique[name] = qid
+            else:
+                raise err
+
 
     def add_type(self, type_def):
         assert type(type_def) is DataType
-        if type_def and type_def.name:
-            self.all[type_def.name] = type_def
-            self.types.add(type_def.name)
+        self.add_elem(type_def, type_def.name, type_def.name, \
+            TypeExistsError(type_def.name))
         return self
 
     def add_package(self, package):
         assert type(package) is Package
+        # FIXME take qualified ID
         if package and package.name:
-            self.all[package.name] = package
-            self.types.add(package.name)
+            self.qual_elems[package.name] = package
         return self
 
 
     def add_constraint(self, constr):
         assert type(constr) is Constraint
+        # FIXME verify this works correctly
         if constr and constr.tag and constr.tag.name:
-            self.all[constr.tag.name] = constr
-            self.constrs.add(constr.tag.name)
+            self.qual_elems[constr.tag.name] = constr
         return self
 
 
     def __repr__(self):
         return 'Model "%s" (%s %s)\nall: %s\n' %\
-        (self.name, self.short_desc, self.long_desc, self.all)
+        (self.name, self.short_desc, self.long_desc, self.qual_elems)
 
     def __eq__(self, other):
         if type(other) is type(self):
             return NamedElement.__eq__(self, other)\
-                and self.all == other.all
+                and self.qual_elems == other.qual_elems
         else:
             return False
 
@@ -209,10 +218,10 @@ class Model(NamedElement):
 
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc,\
-        fnvhash(self.all.items())))
+        fnvhash(self.qual_elems.items())))
 
     def __getitem__(self, key):
-        return self.all[key]
+        return self.qual_elems[key]
 
 class DataType(NamedElement):
 
