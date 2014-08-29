@@ -59,6 +59,7 @@ class NamedElement(object):
     that is encountered across various DOMMLite constructs
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
+        super(NamedElement, self).__init__()
         self.name = name
         self.short_desc = short_desc
         self.long_desc = long_desc
@@ -156,8 +157,6 @@ class Qid(object):
             retval += part
         retval += ")"
         return retval
-
-
 
 class Model(NamedElement):
     """
