@@ -294,6 +294,13 @@ class Constraint(object):
         self.built_in = built_in
         self.constr_type = constr_type
 
+    @property
+    def name(self):
+        retval = None
+        if self.tag and self.tag.name:
+            retval = self.tag.name
+        return retval
+
     def __repr__(self):
         retStr = '\n'
         if self.built_in == True and self.constr_type == ConstraintType.Tag:
@@ -307,11 +314,11 @@ class Constraint(object):
             retStr += 'validatorType'
 
         if self.tag is not None:
-            retStr += ' %s ' % self.tag.name
+            retStr += ' %s ' % self.name
             if self.tag.constr_def is not None:
                 retStr += ' %s ' % self.tag.constr_def
             if self.tag.applies is not None:
-                retStr += ' %s ' %self.tag.applies
+                retStr += ' %s ' % self.tag.applies
             retStr += ' "%s" "%s"' % (self.tag.short_desc, self.tag.long_desc)
 
         return retStr
