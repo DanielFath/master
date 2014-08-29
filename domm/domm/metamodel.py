@@ -547,7 +547,8 @@ class Package(NamedElement):
 
     def add_elem(self, element):
         if element and element.name:
-            self.elems[element.name] = element
+            qid = Qid(element.name).add_outer_level(self.name)
+            self.elems[qid] = element
         return self
 
     def add_constraint(self, constraint):
@@ -578,7 +579,11 @@ class Package(NamedElement):
         return retStr
 
     def __getitem__(self, key):
-        return self.elems[key]
+        retval = None
+        for i in self.elems:
+            if i._id == key or i._canon == key:
+                retval = self.elems[i]
+        return retval
 
 class Relationship(object):
     """Describes all properties of a Relationship property"""

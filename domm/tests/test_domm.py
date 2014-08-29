@@ -14,6 +14,19 @@ def test_qid():
     assert qid_outer == Qid(["out", "test", "x", "a"])
     assert qid_outer.depth() == 4
 
+def test_package_id():
+    pack1 = Package(name = "test")
+    prop1 = Property(type_def = TypeDef(name = "X", type_of = "string"))
+    vo1 = ValueObject(name = "example").add_prop(prop1)
+
+    pack1.add_elem(vo1)
+
+    qid = Qid("test.example")
+
+    expected1elems = {qid: vo1}
+
+    assert expected1elems == pack1.elems
+
 def test_empty():
     with pytest.raises(NoMatch):
         DommParser().parse("")
