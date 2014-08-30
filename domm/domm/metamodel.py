@@ -983,6 +983,13 @@ class Operation(NamedElement):
         self.throws = []
         self.constraints = set()
 
+    @property
+    def op_name(self):
+        if self.type_def and self.type_def.name:
+            return self.type_def.name
+        else:
+            return None
+
     def add_param(self, param):
         assert type(param) is OpParam
         self.params.append(param)
@@ -1138,14 +1145,14 @@ class Service(NamedElement):
 
     def add_operation(self, oper):
         assert type(oper) is Operation
-        self.elems[oper.type_def.name] = oper
-        self.operations.add(oper.type_def.name)
+        self.elems[oper.op_name] = oper
+        self.operations.add(oper.op_name)
         return self
 
     def add_op_compartment(self, compartment):
         self.op_compartments[compartment.name] = compartment
         for val in compartment.elements:
-            self.elems[val.type_def.name] = val
+            self.elems[val.op_name] = val
         return self
 
     def __repr__(self):
