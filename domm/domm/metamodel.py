@@ -1138,16 +1138,14 @@ class Service(NamedElement):
 
     def add_operation(self, oper):
         assert type(oper) is Operation
-        qid = Qid(oper.type_def.name).add_outer_level(self.name)
-        self.elems[qid] = oper
-        self.operations.add(qid)
+        self.elems[oper.type_def.name] = oper
+        self.operations.add(oper.type_def.name)
         return self
 
     def add_op_compartment(self, compartment):
         self.op_compartments[compartment.name] = compartment
         for val in compartment.elements:
-            qid = Qid(val.type_def.name).add_outer_level(self.name)
-            self.elems[qid] = val
+            self.elems[val.type_def.name] = val
         return self
 
     def __repr__(self):
