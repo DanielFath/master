@@ -21,7 +21,6 @@ def test_package_id():
     pack1.add_elem(vobj1)
 
     expected1elems = {Qid("test.vo"): vobj1}
-
     assert expected1elems == pack1.elems
 
     pack2 = Package(name = "test")
@@ -29,9 +28,17 @@ def test_package_id():
     excp2 = ExceptionType(name = "except").add_prop(prop2)
     pack2.add_elem(excp2)
 
-    expected2elems = {Qid("test.except") : excp2}
-
+    expected2elems = {Qid("test.except") : excp2, Qid("test.except.X") : prop2}
     assert expected2elems == pack2.elems
+
+    pack3 = Package(name = "test")
+    oper3 = Operation(type_def = TypeDef(name = "X", type_of = "int"))
+    serv3 = Service(name = "service").add_operation(oper3)
+    pack3.add_elem(serv3)
+
+    expected3elems = {Qid("test.service"): serv3, Qid("test.service.X") : oper3}
+    assert expected3elems == pack3.elems
+
 
 def test_empty():
     with pytest.raises(NoMatch):
