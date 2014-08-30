@@ -548,8 +548,18 @@ class Package(NamedElement):
     def add_elem(self, element):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
-            self.elems[qid] = element
+            self._add(qid, element)
+            try:
+                flattened = element._flatten_ns(self.name)
+                for qid, element in flattened.iteritems():
+                    self._add(qid, element)
+            except AttributeError:
+                # We just attempt to read a method or nothing happens
+                pass
         return self
+
+    def _add(self, qid, element):
+        self.elems[qid] = element
 
     def add_constraint(self, constraint):
         assert type(constraint) is Constraint
