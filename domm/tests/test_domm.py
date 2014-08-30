@@ -17,15 +17,21 @@ def test_qid():
 def test_package_id():
     pack1 = Package(name = "test")
     prop1 = Property(type_def = TypeDef(name = "X", type_of = "string"))
-    vo1 = ValueObject(name = "example").add_prop(prop1)
+    vobj1 = ValueObject(name = "vo").add_prop(prop1)
+    pack1.add_elem(vobj1)
 
-    pack1.add_elem(vo1)
-
-    qid = Qid("test.example")
-
-    expected1elems = {qid: vo1}
+    expected1elems = {Qid("test.vo"): vobj1}
 
     assert expected1elems == pack1.elems
+
+    pack2 = Package(name = "test")
+    prop2 = Property(type_def = TypeDef(name = "X", type_of = "string"))
+    excp2 = ExceptionType(name = "except").add_prop(prop2)
+    pack2.add_elem(excp2)
+
+    expected2elems = {Qid("test.except") : excp2}
+
+    assert expected2elems == pack2.elems
 
 def test_empty():
     with pytest.raises(NoMatch):
