@@ -124,7 +124,7 @@ class Qid(object):
     @property
     def _canon(self):
         retval = ""
-        for i, part in enumerate(path):
+        for i, part in enumerate(self.path):
             if i > 0:
                 retval += "."
             retval += part
