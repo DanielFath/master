@@ -828,6 +828,13 @@ class ExceptionType(NamedElement):
 
         return self
 
+    def _flatten_ns(self, prefix):
+        retval = dict()
+        for name, val in self.props.iteritems():
+            namespace = "%s.%s.%s" % (prefix, self.name, name)
+            retval[Qid(namespace)] = val
+        return retval
+
     def __eq__(self, other):
         if type(self) is type(other):
             return NamedElement.__eq__(self, other)\
@@ -1103,6 +1110,13 @@ class Service(NamedElement):
         self.elems = dict()
         self.operations = set()
         self.op_compartments = dict()
+
+    def _flatten_ns(self, prefix):
+        retval = dict()
+        for name, val in self.elems.iteritems():
+            namespace = "%s.%s.%s" % (prefix, self.name, name)
+            retval[Qid(namespace)] = val
+        return retval
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
