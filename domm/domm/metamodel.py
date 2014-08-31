@@ -1203,11 +1203,7 @@ class Service(NamedElement):
         if key in self.op_compartments:
             return self.op_compartments[key]
         else:
-            retval = None
-            for i in self.elems:
-                if i._id == key or i._canon == key:
-                    retval = self.elems[i]
-            return retval
+            return self.elems[key]
 
 class ValueObject(NamedElement):
     """
