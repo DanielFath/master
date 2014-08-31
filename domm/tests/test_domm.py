@@ -46,8 +46,16 @@ def test_package_id():
     pack4.add_elem(enti4)
 
     expected4elems = {Qid("test.ent"): enti4, Qid("test.ent.id") : prop4}
-    print("pack4.elems ", pack4.elems)
     assert expected4elems == pack4.elems
+
+    pack5 = Package(name = "ex")
+    pack5.add_elem(pack4)
+
+    expected5elems = {Qid("ex.test.ent") : enti4, Qid("ex.test.ent.id"): prop4,\
+                         Qid("ex.test"): pack4}
+    print("expected5elems ", expected5elems)
+    print("pack5.elems ", pack5.elems)
+    assert expected5elems == pack5.elems
 
 
 def test_empty():

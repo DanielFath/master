@@ -545,6 +545,12 @@ class Package(NamedElement):
     def set_name(self, name):
         self.name = name
 
+    def _flatten_ns(self, prefix):
+        flatten = dict()
+        for qid, elem in self.elems.iteritems():
+            flatten[qid.add_outer_level(prefix)] = elem
+        return flatten
+
     def add_elem(self, element):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
