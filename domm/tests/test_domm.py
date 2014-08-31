@@ -39,6 +39,16 @@ def test_package_id():
     expected3elems = {Qid("test.service"): serv3, Qid("test.service.X") : oper3}
     assert expected3elems == pack3.elems
 
+    pack4 = Package(name = "test")
+    prop4 = Property(type_def = TypeDef(name = "id", type_of = "int"))
+    key4  = Key().add_prop(prop4)
+    enti4 = Entity(name = "ent").set_key(key4)
+    pack4.add_elem(enti4)
+
+    expected4elems = {Qid("test.ent"): enti4, Qid("test.ent.id") : prop4}
+    print("pack4.elems ", pack4.elems)
+    assert expected4elems == pack4.elems
+
 
 def test_empty():
     with pytest.raises(NoMatch):

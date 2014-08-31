@@ -739,6 +739,13 @@ class Property(object):
         self.relationship = relation
         self.constraints = set()
 
+    @property
+    def name(self):
+        if self.type_def and self.type_def.name:
+            return self.type_def.name
+        else:
+            return None
+
     def add_relationship(self, rel):
         self.relationship = rel
         return self
@@ -1368,6 +1375,16 @@ class Entity(NamedElement):
         self.constraints = set()
         self.features = set()
         self.compartments = dict()
+
+    def _flatten_ns(self, prefix):
+        retval = dict()
+        for key, val in self.elems.iteritems():
+            namespace = "%s.%s.%s" % (prefix, self.name, key)
+            retval[Qid(namespace)] = val
+        for key in self.key.props:
+            namespace = "%s.%s.%s" % (prefix, self.name, key.name)
+            retval[Qid(namespace)] = key
+        return retval
 
     def set_key(self, key):
         assert type(key) is Key
