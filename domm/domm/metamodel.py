@@ -541,31 +541,34 @@ class Package(NamedElement):
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(Package, self).__init__(name, short_desc, long_desc)
         self.elems = dict()
+        self._imported = dict()
 
-    def set_name(self, name):
-        self.name = name
+    def _add(add_map, qid, element):
+        add_map[qid] = element
 
     def _flatten_ns(self, prefix):
         flatten = dict()
         for qid, elem in self.elems.iteritems():
             flatten[qid.add_outer_level(prefix)] = elem
+        for imp_qid, import_val in self._imported.iteritems():
+            flatten[imp_qid.add_outer_level(prefix)] = import_val
         return flatten
+
+    def set_name(self, name):
+        self.name = name
 
     def add_elem(self, element):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
-            self._add(qid, element)
+            self.elems[qid] = element
             try:
                 flattened = element._flatten_ns(self.name)
                 for qid, element in flattened.iteritems():
-                    self._add(qid, element)
+                    self._imported[qid] = element
             except AttributeError:
                 # We just attempt to read a method or nothing happens
                 pass
         return self
-
-    def _add(self, qid, element):
-        self.elems[qid] = element
 
     def add_constraint(self, constraint):
         assert type(constraint) is Constraint
@@ -1230,6 +1233,14 @@ class ValueObject(NamedElement):
             self.dependencies = depends
         self.constraints = set()
         self.props = dict()
+
+    def _flatten_ns(self, prefix):
+        retval = dict()
+        for name, val in self.props.iteritems():
+            namespace = "%s.%s.%s" % (prefix, self.name, name)
+            retval[Qid(namespace)] = val
+        return retval
+
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
