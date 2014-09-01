@@ -248,14 +248,13 @@ class DommParser(ParserPython):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
         self.debugDomm = debugDomm
 
-    def string_into_ast(self, content):
+    def _test_parse(self, content):
         """
         Method that reads a given content, parses it and returns a parsed AST.
         After method retrns AST any used namespace is cleared.
         """
         self.parse(content)
         val = self.getASG()
-        self.namespace = None
         return val
 
 

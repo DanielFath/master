@@ -74,12 +74,12 @@ def test_empty():
 
 def test_duplicate_datatype():
     with pytest.raises(DuplicateTypeError):
-        DommParser().string_into_ast("model simple dataType a dataType a")
+        DommParser()._test_parse("model simple dataType a dataType a")
 
 
 def test_duplicate_prop_name():
     with pytest.raises(DuplicateFeatureError):
-        DommParser().string_into_ast("""model simple package test {
+        DommParser()._test_parse("""model simple package test {
                 entity test {
                     key { prop int id}
                     prop string X
@@ -88,28 +88,28 @@ def test_duplicate_prop_name():
             }""")
 
 def test_model():
-    assert DommParser().string_into_ast("model simple") == Model(name="simple")
+    assert DommParser()._test_parse("model simple") == Model(name="simple")
 
     simple2 = Model(name="simple", short_desc="short_desc")
-    assert DommParser().string_into_ast('model simple "short_desc" ') == simple2
+    assert DommParser()._test_parse('model simple "short_desc" ') == simple2
 
 
     simple3 = Model(name="simple", short_desc="short_desc", long_desc="long_desc")
-    assert DommParser().string_into_ast('model simple "short_desc" "long_desc" ') == simple3
+    assert DommParser()._test_parse('model simple "short_desc" "long_desc" ') == simple3
 
-    assert DommParser().string_into_ast('model simple1 "short_desc"  "long_desc"' ) != simple3
-    assert DommParser().string_into_ast('model simple  "short_desc1" "long_desc"' ) != simple3
-    assert DommParser().string_into_ast('model simple  "short_desc"  "long_desc1"') != simple3
+    assert DommParser()._test_parse('model simple1 "short_desc"  "long_desc"' ) != simple3
+    assert DommParser()._test_parse('model simple  "short_desc1" "long_desc"' ) != simple3
+    assert DommParser()._test_parse('model simple  "short_desc"  "long_desc1"') != simple3
 
 def test_dataType():
-    parsed1 = DommParser().string_into_ast("""model simple
+    parsed1 = DommParser()._test_parse("""model simple
         dataType Name""")["Name"]
 
     expected1 = DataType(name = "Name")
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
 
-    parsed2 = DommParser().string_into_ast("""model simple
+    parsed2 = DommParser()._test_parse("""model simple
         dataType Name "Name of person" "Detailed description of field" """)["Name"]
 
     expected2 = DataType(name = "Name", short_desc = "Name of person", long_desc="Detailed description of field")
@@ -117,7 +117,7 @@ def test_dataType():
     assert hash(parsed2) == hash(expected2)
 
 def test_enum():
-    parsed1 = DommParser().string_into_ast(""" model enum package test {
+    parsed1 = DommParser()._test_parse(""" model enum package test {
     enum Color "Color desc." {
         R "Red"
         G "Green"
@@ -144,7 +144,7 @@ def test_enum():
     assert hash(parsed1) != hash(unexpected1)
 
 def test_tagType():
-    parsed1 = DommParser().string_into_ast("""model test
+    parsed1 = DommParser()._test_parse("""model test
         tagType orderBy (_ref, ...) appliesTo _entity
         buildinTagType plural (_string) appliesTo _entity _valueObject
         validatorType example
@@ -174,7 +174,7 @@ def test_tagType():
     assert hash(parsed1) != hash(unexpected1)
 
 def test_package():
-    parsed1 = DommParser().string_into_ast(""" model test
+    parsed1 = DommParser()._test_parse(""" model test
         package example {
         }
         """)
@@ -199,7 +199,7 @@ def test_package():
     assert hash(parsed1) != hash(unexpected1)
 
 def test_exception():
-    parsed1 = DommParser().string_into_ast(""" model test
+    parsed1 = DommParser()._test_parse(""" model test
         package exception_example {
             exception ResultNotFound "Result has not been found" {
                 prop int errCode
@@ -244,7 +244,7 @@ def test_exception():
     assert hash(parsed1) != hash(unexpected1)
 
 def test_service():
-    parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
+    parsed1 = DommParser(debugDomm = True)._test_parse(""" model test
         package exception_example {
             service StudentService extends Ext depends Dep1 "Student service" "Gives services to students" {
                 [finder]
@@ -283,7 +283,7 @@ def test_service():
     assert hash(parsed1) == hash(expected1)
 
 def test_value_object():
-    parsed1 = DommParser(debugDomm = True).string_into_ast(""" model test
+    parsed1 = DommParser(debugDomm = True)._test_parse(""" model test
         package vo_example {
             valueObject example {
                 prop string X
@@ -306,7 +306,7 @@ def test_value_object():
     assert hash(parsed1) == hash(expected1)
 
 def test_entity():
-    parsed1 = DommParser(debugDomm = True).string_into_ast("""
+    parsed1 = DommParser(debugDomm = True)._test_parse("""
         model test
 
         package ent_example {
