@@ -1,12 +1,6 @@
 from arpeggio import SemanticAction
 from metamodel import *
 
-class DommAction(SemanticAction):
-    """
-    Simple action that returns a dictionary of models
-    """
-    def first_pass(self, parser, node, children):
-        return children[0]
 
 class ModelAction(SemanticAction):
     """

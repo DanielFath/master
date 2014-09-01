@@ -183,7 +183,6 @@ def domm():             return model, EOF
 # Parser rules.
 
 # Root rules
-domm.sem = DommAction()
 model.sem = ModelAction()
 # Basic types
 string.sem = StringAction()
