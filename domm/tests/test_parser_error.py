@@ -24,6 +24,11 @@ def test_duplicate_datatype():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("model simple dataType a dataType a")
 
+def test_duplicate_tagtype():
+    with pytest.raises(DuplicateTypeError):
+        DommParser()._test_parse("model simple tagType b tagType b")
+        DommParser()._test_parse("model simple validator b validator b")
+
 def test_duplicate_prop_name_in_entity():
     with pytest.raises(DuplicateFeatureError):
         DommParser()._test_parse("""model simple package test {
