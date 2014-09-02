@@ -244,15 +244,30 @@ class DommParser(ParserPython):
     """
     Parser of DOMMLite DSL language
     """
-    def __init__(self, debugDomm = False, *args, **kwargs):
+    def __init__(self, skip_crossref = False, debugDomm = False\
+        , *args, **kwargs):
+        """
+        Initializes the parser for DOMMLite language.
+
+        Useful arguments:
+
+        skip_crossref(boolean): when True, the cross referencing of types and
+            their compliance will be skipped. When False all verification of
+            will be done.
+
+        debugDomm(boolean): When true will write DOMM Specific debug
+            information
+        """
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
         self.debugDomm = debugDomm
+        self.skip_crossref = skip_crossref
 
     def _test_parse(self, content):
         """
         Method that reads a given content, parses it and returns a parsed AST.
         After method retrns AST any used namespace is cleared.
         """
+        self.skip_crossref = True
         self.parse(content)
         val = self.getASG()
         return val
