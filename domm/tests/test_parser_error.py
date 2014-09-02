@@ -73,6 +73,16 @@ def test_duplicate_valueobject():
             }
             """)
 
+def test_duplicated_exception():
+    with pytest.raises(DuplicatePropertyError):
+        DommParser()._test_parse("""model simple
+            package test {
+                exception ex {
+                    prop int X
+                    prop string X
+                }
+            }
+            """)
 
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):

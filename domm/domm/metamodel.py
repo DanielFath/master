@@ -861,7 +861,7 @@ class ExceptionType(NamedElement):
         # }
         # Can't exist simultaneously
         if prop.type_def.name in self.props:
-            raise DuplicatePropertyerror(prop.name)
+            raise DuplicatePropertyError(prop.name)
         else:
             self.props[prop.type_def.name] = prop
 
