@@ -40,6 +40,17 @@ def test_duplicate_enums():
             }
         """)
 
+def test_duplicate_valueobject():
+    with pytest.raises(DuplicatePropertyError):
+        DommParser()._test_parse("""model simple
+            package test {
+                valueObject vo {
+                    prop int X
+                    prop string X
+                }
+            }
+            """)
+
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model pack_test

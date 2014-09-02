@@ -1264,6 +1264,9 @@ class ValueObject(NamedElement):
             retval[Qid(namespace)] = val
         return retval
 
+    def _check_prop(self, element):
+        if element.name in self.props:
+            raise DuplicatePropertyError(element.name)
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
@@ -1285,6 +1288,7 @@ class ValueObject(NamedElement):
 
     def add_prop(self, prop):
         assert type(prop) is Property
+        self._check_prop(prop)
         self.props[prop.type_def.name] = prop
         return self
 
