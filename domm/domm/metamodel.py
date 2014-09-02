@@ -54,6 +54,24 @@ def print_partial_map(print_map, partial):
         retStr += "\n%s" % print_map[part]
     return retStr
 
+def type_to_name(element):
+    if type(element) is Entity:
+        return "entity"
+    elif type(element) is Service:
+        return "service"
+    elif type(element) is ValueObject:
+        return "value object"
+    elif type(element) is ExceptionType:
+        return "exception"
+    elif type(element) is DataType:
+        return "data type"
+    elif type(element) is Constraint:
+        return "constraint"
+    elif type(element) is Package:
+        return "package"
+    else:
+        return ""
+
 class NamedElement(object):
     """
     Named element represents short and long description
