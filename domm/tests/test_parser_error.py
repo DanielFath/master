@@ -29,6 +29,23 @@ def test_duplicate_tagtype():
         DommParser()._test_parse("model simple tagType b tagType b")
         DommParser()._test_parse("model simple validator b validator b")
 
+def test_duplicated_package_names():
+    with pytest.raises(DuplicateTypeError):
+        DommParser()._test_parse("""model pack_test
+            package dup {}
+            package dup {}
+            """)
+    DommParser()._test_parse("""model test package not_dup {
+            package not_dup {}
+        }""")
+
+    with pytest.raises(DuplicateTypeError):
+        DommParser()._test_parse("""model dup_test
+            package test {
+                package inner_dup {}
+                package inner_dup {}
+            }""")
+
 def test_duplicate_prop_name_in_entity():
     with pytest.raises(DuplicateFeatureError):
         DommParser()._test_parse("""model simple package test {
