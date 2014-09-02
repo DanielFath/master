@@ -561,7 +561,9 @@ class Package(NamedElement):
         self.elems = dict()
         self._imported = dict()
 
-    def _add(add_map, qid, element):
+    def _checked_add(self, add_map, qid, element):
+        if qid in add_map:
+            raise DuplicateTypeError(type_to_name(element), qid._id)
         add_map[qid] = element
 
     def _flatten_ns(self, prefix):
@@ -578,7 +580,7 @@ class Package(NamedElement):
     def add_elem(self, element):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
-            self.elems[qid] = element
+            self._checked_add(self.elems, qid, element)
             try:
                 flattened = element._flatten_ns(self.name)
                 for qid, element in flattened.iteritems():
