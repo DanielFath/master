@@ -29,7 +29,7 @@ def test_duplicate_tagtype():
         DommParser()._test_parse("model simple tagType b tagType b")
         DommParser()._test_parse("model simple validator b validator b")
 
-def test_enums():
+def test_duplicate_enums():
     with pytest.raises(DuplicateLiteralError):
         DommParser()._test_parse("""model simple
             package test {
