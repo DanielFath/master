@@ -375,8 +375,11 @@ class Enumeration(NamedElement):
 
     def add_literal(self, literal):
         if literal in self.literals:
-            raise DuplicateLiteralError(literal.name)
+            raise DuplicateLiteralError(literal.value)
         else:
+            literals_value = (x.value for x in self.literals)
+            if literal.value in literals_value:
+                raise DuplicateLiteralError(literal.value)
             self.literals.add(literal)
 
     def __hash__(self):

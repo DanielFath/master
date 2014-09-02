@@ -29,6 +29,17 @@ def test_duplicate_tagtype():
         DommParser()._test_parse("model simple tagType b tagType b")
         DommParser()._test_parse("model simple validator b validator b")
 
+def test_enums():
+    with pytest.raises(DuplicateLiteralError):
+        DommParser()._test_parse("""model simple
+            package test {
+                enum DuplicateName {
+                    red "Red"
+                    red "Green"
+                }
+            }
+        """)
+
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model pack_test
@@ -45,6 +56,7 @@ def test_duplicated_package_names():
                 package inner_dup {}
                 package inner_dup {}
             }""")
+
 
 def test_duplicate_prop_name_in_entity():
     with pytest.raises(DuplicateFeatureError):

@@ -12,9 +12,9 @@ class DuplicateLiteralError(DommError):
     """
     Error raised when there are two or more literals in enum with same name
     """
-    def __init__(self, name):
+    def __init__(self, value):
         super(DuplicateLiteralError, self).__init__("")
-        self.message = ' Literal with name "%s" already exist! ' % (name)
+        self.message = ' Literal with value "%s" already exist! ' % (value)
 
 class ElipsisMustBeLast(DommError):
     """
