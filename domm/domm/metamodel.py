@@ -1435,6 +1435,10 @@ class Entity(NamedElement):
         assert type(feat) is Operation or type(feat) is Property
         if feat.type_def.name in self.elems:
             raise DuplicateFeatureError(feat.type_def.name)
+        # Scan keys for duplicated features
+        for key in self.key.props:
+            if key.name == feat.type_def.name:
+                raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
             self.features.add(feat)
         self.elems[feat.type_def.name] = feat
