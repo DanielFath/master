@@ -1164,6 +1164,10 @@ class Service(NamedElement):
             retval[Qid(namespace)] = val
         return retval
 
+    def _check_op(self, oper):
+        if oper.op_name in self.elems:
+            raise DuplicateTypeError("operation", oper.op_name)
+
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
@@ -1184,6 +1188,7 @@ class Service(NamedElement):
 
     def add_operation(self, oper):
         assert type(oper) is Operation
+        self._check_op(oper)
         self.elems[oper.op_name] = oper
         self.operations.add(oper.op_name)
         return self

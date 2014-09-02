@@ -84,6 +84,37 @@ def test_duplicated_exception():
             }
             """)
 
+def test_duplicated_service():
+    with pytest.raises(DuplicateTypeError):
+        DommParser()._test_parse("""model simple
+            package test {
+                service serv {
+                    op int getName()
+                    op string getName()
+                }
+            }
+            """)
+
+    with pytest.raises(DuplicateDependsError):
+        DommParser()._test_parse("""model simple
+            package test {
+                service serv depends X, X {
+                    op int testing()
+                }
+            }
+            """)
+
+    with pytest.raises(DuplicateConstrError):
+        DommParser()._test_parse("""model simple
+            package test {
+                service serv {
+                    [test, test]
+                    op int getName()
+                    op int testing()
+                }
+            }
+            """)
+
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model pack_test
