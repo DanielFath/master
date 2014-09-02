@@ -162,7 +162,7 @@ def oper_compart():     return Kwd("compartment"), name, Optional(named_elem)\
 # Value objects are objects that have no operations, only properties
 def value_object():     return Kwd("valueObject"), name, Optional(ext_def),\
                             Optional(dep_def), Optional(named_elem), \
-                            "{",Optional(constr_def), ZeroOrMore(prop), "}"
+                            "{",Optional(constr_speclist), ZeroOrMore(prop), "}"
 
 # Defines exceptions in DOMMLite, which are entities that are used for
 # reporting errors.
