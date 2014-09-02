@@ -518,16 +518,18 @@ class DepObj(object):
 
 class DepDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
-        list_dependencies = []
+        list_qid = []
 
         if parser.debugDomm:
             print("DEBUG Entered DepDefAction (children)", children)
 
         for val in children:
             if type(val) is Qid:
-                list_dependencies.append(CrossRef(ref = val))
+                if val in list_qid:
+                    raise DuplicateDependsError(val)
+                list_qid.append(val)
 
-        retVal = DepObj(rels = list_dependencies)
+        retVal = DepObj(rels = [CrossRef(ref = x) for x in list_qid])
 
         if parser.debugDomm:
             print("DEBUG Entered DepDefAction returns ", retVal)

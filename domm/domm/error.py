@@ -45,6 +45,14 @@ class DuplicateConstrError(DommError):
         super(DuplicateConstrError, self).__init__("")
         self.message = ' Constraint with name <"%s"> already applied ' % (name)
 
+class DuplicateDependsError(DommError):
+    """
+    Error raised when classifier has duplicate depency declarations
+    """
+    def __init__(self, name):
+        super(DuplicateDependsError, self).__init__("")
+        self.message = ' Depenedcy with name <"%s"> already declared ' % (name)
+
 class DuplicatePropertyError(DommError):
     """
     Error raised when two properties in a field have same name

@@ -62,6 +62,17 @@ def test_duplicate_valueobject():
             }
             """)
 
+    with pytest.raises(DuplicateDependsError):
+        DommParser()._test_parse("""model simple
+            package test {
+                valueObject vo depends X, X, Y {
+                    [test, tester("x")]
+                    prop int X
+                    prop string Y
+                }
+            }
+            """)
+
 
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
