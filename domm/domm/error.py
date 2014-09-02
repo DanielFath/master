@@ -37,6 +37,14 @@ class ExceptionExistsError(DommError):
         super(ExceptionExistsError, self).__init__("")
         self.message = ' exception with name <"%s"> already declared ' % (name)
 
+class DuplicateConstrError(DommError):
+    """
+    Error raised when classifier has duplicate constraintss
+    """
+    def __init__(self, name):
+        super(DuplicateConstrError, self).__init__("")
+        self.message = ' Constraint with name <"%s"> already applied ' % (name)
+
 class DuplicatePropertyError(DommError):
     """
     Error raised when two properties in a field have same name

@@ -51,6 +51,18 @@ def test_duplicate_valueobject():
             }
             """)
 
+    with pytest.raises(DuplicateConstrError):
+        DommParser()._test_parse("""model simple
+            package test {
+                valueObject vo {
+                    [test, test]
+                    prop int X
+                    prop string Y
+                }
+            }
+            """)
+
+
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model pack_test

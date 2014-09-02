@@ -337,11 +337,19 @@ class ConstraintSpecListAction(SemanticAction):
                     children)
 
         for val in filter_children:
+            to_add = None
+
             if type(val) is ConstraintSpec:
-                list_specs.specs.add(val)
+                to_add = val
             elif type(val) is Id:
                 temp = ConstraintSpec(ident = val)
-                list_specs.specs.add(temp)
+                to_add = val
+
+            for spec in list_specs.specs:
+                if to_add.ident == spec.ident:
+                    raise DuplicateConstrError(to_add.ident)
+
+            list_specs.specs.add(to_add)
 
         if parser.debugDomm:
             print("DEBUG ConstraintSpecListAction returns (list_specs): ",\
