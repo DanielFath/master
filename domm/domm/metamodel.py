@@ -1029,6 +1029,10 @@ class Operation(NamedElement):
         else:
             return None
 
+    def _check_throws(self, exception):
+        if exception in self.throws:
+            raise DuplicateExceptionError(self.op_name, exception.ref._canon)
+
     def add_param(self, param):
         assert type(param) is OpParam
         self.params.append(param)
@@ -1042,6 +1046,7 @@ class Operation(NamedElement):
     def add_throws_exception(self, exception):
         assert type(exception) is CrossRef
         assert exception.ref_type == Ref.ExceptType
+        self._check_throws(exception)
         self.throws.append(exception)
         return self
 

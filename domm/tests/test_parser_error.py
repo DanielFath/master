@@ -115,6 +115,64 @@ def test_duplicated_service():
             }
             """)
 
+def test_duplicate_entity():
+    with pytest.raises(DuplicateFeatureError):
+        DommParser()._test_parse("""model simple
+            package test {
+                entity ent {
+                    key {
+                        prop int id
+                    }
+                    op int id()
+                }
+            }""")
+
+    with pytest.raises(DuplicateFeatureError):
+        DommParser()._test_parse("""model simple
+            package test {
+                entity ent {
+                    key {
+                        prop int id
+                    }
+                    prop int id
+                }
+            }""")
+
+    with pytest.raises(DuplicateDependsError):
+        DommParser()._test_parse("""model simple
+            package test {
+                entity ent depends X, X {
+                    key {
+                        prop int id
+                    }
+                }
+            }""")
+
+
+    with pytest.raises(DuplicateConstrError):
+        DommParser()._test_parse("""model simple
+            package test {
+                entity ent {
+                    key {
+                        prop int id
+                    }
+                    [X, X]
+                }
+            }""")
+
+    with pytest.raises(DuplicateExceptionError):
+        DommParser()._test_parse("""model simple
+            package test {
+                entity ent {
+                    key {
+                        prop int id
+                    }
+
+                    op string getName() throws Ex1, Ex1
+                }
+            }""")
+
+
 def test_duplicated_package_names():
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model pack_test

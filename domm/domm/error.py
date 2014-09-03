@@ -29,6 +29,11 @@ class DuplicateTypeError(DommError):
         super(DuplicateTypeError, self).__init__("")
         self.message = 'A %s with name "%s" already exists!' % (type_of, name)
 
+class DuplicateExceptionError(DommError):
+    def __init__(self, op, excp):
+        super(DuplicateExceptionError, self).__init__("")
+        self.message = 'The operation `%s` already throws exception(%s) already exists!' % (op, excp)
+
 class ExceptionExistsError(DommError):
     """
     Error raised when dataType with same name was already declared
