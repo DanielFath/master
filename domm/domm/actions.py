@@ -1,3 +1,10 @@
+##############################################################################
+# Name: actions.py
+# Purpose: Actions used by DOMMLite parser
+# Author: Daniel Fath <daniel DOT fath7 AT gmail DOT com>
+# Copyright: (c) 2014 Daniel Fath <daniel DOT fath7 AT gmail DOT com>
+# License: MIT License
+##############################################################################
 from arpeggio import SemanticAction
 from metamodel import *
 
