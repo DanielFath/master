@@ -219,7 +219,6 @@ class Model(NamedElement):
         self.add_elem(package, package.name, package.name, "package")
         return self
 
-
     def add_constraint(self, constr):
         assert type(constr) is Constraint
         self.add_elem(constr, constr.name, constr.name, "constraint")
@@ -254,6 +253,9 @@ class DataType(NamedElement):
         built_in = False):
         super(DataType, self).__init__(name, short_desc, long_desc)
         self.built_in = built_in
+
+    def _update_parent_model(self, model):
+        pass
 
     def __repr__(self):
         return '\ndataType "%s" built_in(%s) (%s %s)' % (
@@ -373,6 +375,9 @@ class Enumeration(NamedElement):
             self.add_literal(i)
 
         return self
+
+    def _update_parent_model(self, model):
+        pass
 
     def add_literal(self, literal):
         if literal in self.literals:
@@ -579,6 +584,11 @@ class Package(NamedElement):
             flatten[imp_qid.add_outer_level(prefix)] = import_val
         return flatten
 
+    def _update_parent_model(self, model):
+        self._parent_model = model
+        for elem in self.elems.itervalues():
+            elem._update_parent_model(model)
+
     def set_name(self, name):
         self.name = name
 
@@ -586,7 +596,6 @@ class Package(NamedElement):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
             self._checked_add(self.elems, qid, element)
-            element._parent_model = self._parent_model
             try:
                 flattened = element._flatten_ns(self.name)
                 for qid, element in flattened.iteritems():
@@ -726,6 +735,9 @@ class ConstraintSpec(object):
             self.parameters = parameters
         self.bound = None
 
+    def _update_parent_model(self, model):
+        pass#self._parent_model = model
+
     # Returns whether the constraint spec matched by id
     # is compatible with property it is bound to
     # and the parameters provided
@@ -794,7 +806,6 @@ class Property(object):
 
     def add_constraint_spec(self, constraint_spec):
         assert type(constraint_spec) is ConstraintSpec
-        constraint_spec._parent_model = self._parent_model
         self.constraints.add(constraint_spec)
         return self
 
@@ -861,6 +872,18 @@ class ExceptionType(NamedElement):
         self._parent_model = None
         self.props = dict()
 
+    def _update_parent_model(self, model):
+        self._parent_model = model
+        #for prop in props:
+        #    prop._update_parent_model(model)
+
+    def _flatten_ns(self, prefix):
+        retval = dict()
+        for name, val in self.props.iteritems():
+            namespace = "%s.%s.%s" % (prefix, self.name, name)
+            retval[Qid(namespace)] = val
+        return retval
+
     def add_prop(self, prop):
         # In exception we can't for example have two same named fields
         #
@@ -872,17 +895,11 @@ class ExceptionType(NamedElement):
         if prop.type_def.name in self.props:
             raise DuplicatePropertyError(prop.name)
         else:
-            prop._parent_model = self._parent_model
             self.props[prop.type_def.name] = prop
 
         return self
 
-    def _flatten_ns(self, prefix):
-        retval = dict()
-        for name, val in self.props.iteritems():
-            namespace = "%s.%s.%s" % (prefix, self.name, name)
-            retval[Qid(namespace)] = val
-        return retval
+
 
     def __eq__(self, other):
         if type(self) is type(other):
@@ -935,6 +952,9 @@ class CrossRef(object):
         self.ref = ref
         self.ref_type = ref_type
         self.bound = None
+
+    def _update_parent_model(self, model):
+        self._parent_model = model
 
     def __repr__(self):
         return "%s (of type %s)" % (self.ref._id, self.ref_type)
@@ -1034,6 +1054,12 @@ class Operation(NamedElement):
         self.throws = []
         self.constraints = set()
 
+    def _update_parent_model(self, model):
+        pass#self._parent_model = model
+        #for param in self.params:
+        #    param._update_parent_model(model)
+
+
     @property
     def op_name(self):
         if self.type_def and self.type_def.name:
@@ -1052,7 +1078,6 @@ class Operation(NamedElement):
 
     def add_constraint_spec(self, constraint):
         assert type(constraint) is ConstraintSpec
-        constraint_spec._parent_model = self._parent_model
         self.constraints.add(constraint)
         return self
 
@@ -1187,10 +1212,14 @@ class Service(NamedElement):
         if oper.op_name in self.elems:
             raise DuplicateTypeError("operation", oper.op_name)
 
+    def _update_parent_model(self, model):
+        pass#self._parent_model = model
+        #for elem in self.elems.itervalues:
+        #    elem._update_parent_model(model)
+
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
-        self._parent_model = self._parent_model
         self.extends.ref_type = Ref.Service
         return self
 
@@ -1198,20 +1227,17 @@ class Service(NamedElement):
         assert type(deps) is list
         for cross_ref in deps:
             cross_ref.ref_type = Ref.Service
-            cross_ref._parent_model = self._parent_model
             self.dependencies.append(cross_ref)
         return self
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
-        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
     def add_operation(self, oper, is_compartment = False):
         assert type(oper) is Operation
         self._check_op(oper)
-        oper._parent_model = self._parent_model
         self.elems[oper.op_name] = oper
         if not is_compartment:
             self.operations.add(oper.op_name)
@@ -1298,10 +1324,14 @@ class ValueObject(NamedElement):
         if element.name in self.props:
             raise DuplicatePropertyError(element.name)
 
+    def _update_parent_model(self, model):
+        pass#self._parent_model = model
+        #for prop in self.props.itervalues:
+        #    prop._update_parent_model(model)
+
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
-        extends._parent_model = self._parent_model
         self.extends.ref_type = Ref.ValueObject
         return self
 
@@ -1309,20 +1339,17 @@ class ValueObject(NamedElement):
         assert type(deps) is list
         for depend in deps:
             depend.ref_type = Ref.Entity
-            depend._parent_model = self._parent_model
             self.dependencies.append(depend)
         return self
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
-        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
     def add_prop(self, prop):
         assert type(prop) is Property
         self._check_prop(prop)
-        prop._parent_model = self._parent_model
         self.props[prop.type_def.name] = prop
         return self
 
@@ -1455,6 +1482,11 @@ class Entity(NamedElement):
         self.features = set()
         self.compartments = dict()
 
+    def _update_parent_model(self, model):
+        pass#self._parent_model = model
+        #for elem in self.elems.itervalues:
+        #    elem._update_parent_model(model)
+
     def _flatten_ns(self, prefix):
         retval = dict()
         for key, val in self.elems.iteritems():
@@ -1490,7 +1522,6 @@ class Entity(NamedElement):
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
-        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
@@ -1504,7 +1535,6 @@ class Entity(NamedElement):
                 raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
             self.features.add(feat)
-        feat._parent_model = self._parent_model
         self.elems[feat.type_def.name] = feat
         return self
 
