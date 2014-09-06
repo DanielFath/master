@@ -1191,17 +1191,18 @@ class Service(NamedElement):
         self.constraints.add(constr)
         return self
 
-    def add_operation(self, oper):
+    def add_operation(self, oper, is_compartment = False):
         assert type(oper) is Operation
         self._check_op(oper)
         self.elems[oper.op_name] = oper
-        self.operations.add(oper.op_name)
+        if not is_compartment:
+            self.operations.add(oper.op_name)
         return self
 
     def add_op_compartment(self, compartment):
         self.op_compartments[compartment.name] = compartment
-        for val in compartment.elements:
-            self.elems[val.op_name] = val
+        for op in compartment.elements:
+            self.add_operation(op, True)
         return self
 
     def __repr__(self):
