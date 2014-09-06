@@ -6,7 +6,7 @@
 # License: MIT License
 ##############################################################################
 from  domm.metamodel import Qid, Package, Property, ValueObject, Operation,\
-    ExceptionType, Key, Entity, TypeDef, Service
+    ExceptionType, Key, Entity, TypeDef, Service, Model, DataType
 
 def test_qid():
     qid_from_str = Qid("test.x.a")
@@ -70,3 +70,14 @@ def test_namespace_package():
     print("pack5.elems ", pack5.elems)
     assert expected5elems == pack5.elems
     assert expected5imprt == pack5._imported
+
+def test_model_unique():
+    model = Model(name = "test")
+    data  = DataType(name = "id")
+    pack1 = Package(name = "dup").add_elem(data)
+    pack2 = Package(name = "dup").add_elem(data)
+    pack1.add_elem(pack2)
+
+    model.add_package(pack1)
+    print('model.unique["id"] ',model.unique["id"])
+    assert model.unique["id"] == False

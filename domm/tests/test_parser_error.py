@@ -179,15 +179,16 @@ def test_duplicated_package_names():
             package dup {}
             package dup {}
             """)
-    DommParser()._test_parse("""model test package not_dup {
+    par = DommParser()._test_parse("""model test package not_dup {
             package not_dup {}
         }""")
+    par.unique == dict()
 
     with pytest.raises(DuplicateTypeError):
         DommParser()._test_parse("""model dup_test
             package test {
                 package inner_dup {}
-                package inner_dup {}
+               package inner_dup {}
             }""")
 
 
