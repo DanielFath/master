@@ -264,8 +264,8 @@ class DommParser(ParserPython):
 
     def _test_parse(self, content):
         """
-        Method that reads a given content, parses it and returns a parsed AST.
-        After method retrns AST any used namespace is cleared.
+        Method that reads a given content, parses it and returns a parsed AST, without
+        verifying that references are correct
         """
         self.skip_crossref = True
         self.parse(content)
