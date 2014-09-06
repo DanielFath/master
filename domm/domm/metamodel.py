@@ -215,6 +215,7 @@ class Model(NamedElement):
 
     def add_package(self, package):
         assert type(package) is Package
+        package._parent_model = self
         self.add_elem(package, package.name, package.name, "package")
         return self
 
@@ -561,6 +562,7 @@ class Package(NamedElement):
     """
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(Package, self).__init__(name, short_desc, long_desc)
+        self._parent_model = None
         self.elems = dict()
         self._imported = dict()
 
@@ -584,6 +586,7 @@ class Package(NamedElement):
         if element and element.name:
             qid = Qid(element.name).add_outer_level(self.name)
             self._checked_add(self.elems, qid, element)
+            element._parent_model = self._parent_model
             try:
                 flattened = element._flatten_ns(self.name)
                 for qid, element in flattened.iteritems():
@@ -716,6 +719,7 @@ class ConstraintSpec(object):
     """
     def __init__(self, ident = None, parameters = None):
         super(ConstraintSpec, self).__init__()
+        self._parent_model = None
         self.ident = ident
         self.parameters = []
         if parameters and type(parameters) is list:
@@ -762,6 +766,8 @@ class Property(object):
     Constraint fields are referenced constraints applied to this property.
     """
     def __init__(self, type_def = None, relation = None):
+        self._parent_model = None
+
         self.ordered = False
         self.unique = False
         self.readonly = False
@@ -787,6 +793,8 @@ class Property(object):
         return self
 
     def add_constraint_spec(self, constraint_spec):
+        assert type(constraint_spec) is ConstraintSpec
+        constraint_spec._parent_model = self._parent_model
         self.constraints.add(constraint_spec)
         return self
 
@@ -850,6 +858,7 @@ class ExceptionType(NamedElement):
 
     def __init__(self, name = None, short_desc = None, long_desc = None):
         super(ExceptionType, self).__init__(name, short_desc, long_desc)
+        self._parent_model = None
         self.props = dict()
 
     def add_prop(self, prop):
@@ -863,6 +872,7 @@ class ExceptionType(NamedElement):
         if prop.type_def.name in self.props:
             raise DuplicatePropertyError(prop.name)
         else:
+            prop._parent_model = self._parent_model
             self.props[prop.type_def.name] = prop
 
         return self
@@ -918,6 +928,7 @@ class CrossRef(object):
     """
     def __init__(self, ref = None, ref_type = None):
         super(CrossRef, self).__init__()
+        self._parent_model = None
         assert type(ref) is Qid
         if ref_type:
             assert type(ref_type) is Ref
@@ -1003,6 +1014,7 @@ class Operation(NamedElement):
     def __init__(self, short_desc = None, long_desc = None,\
         type_def = None, params = None):
         super(Operation, self).__init__()
+        self._parent_model = None
         self.name = None
         self.short_desc = short_desc
         self.long_desc = long_desc
@@ -1040,6 +1052,7 @@ class Operation(NamedElement):
 
     def add_constraint_spec(self, constraint):
         assert type(constraint) is ConstraintSpec
+        constraint_spec._parent_model = self._parent_model
         self.constraints.add(constraint)
         return self
 
@@ -1153,6 +1166,7 @@ class Service(NamedElement):
     def __init__(self, name = None, short_desc = None, long_desc = None,\
         extends = None, depends = None):
         super(Service, self).__init__(name, short_desc, long_desc)
+        self._parent_model = None
         self.extends = extends
         self.dependencies = []
         if depends and type(depends) is list:
@@ -1176,24 +1190,28 @@ class Service(NamedElement):
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
+        self._parent_model = self._parent_model
         self.extends.ref_type = Ref.Service
         return self
 
     def set_dependencies(self, deps):
         assert type(deps) is list
-        for val in deps:
-            val.ref_type = Ref.Service
-            self.dependencies.append(val)
+        for cross_ref in deps:
+            cross_ref.ref_type = Ref.Service
+            cross_ref._parent_model = self._parent_model
+            self.dependencies.append(cross_ref)
         return self
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
+        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
     def add_operation(self, oper, is_compartment = False):
         assert type(oper) is Operation
         self._check_op(oper)
+        oper._parent_model = self._parent_model
         self.elems[oper.op_name] = oper
         if not is_compartment:
             self.operations.add(oper.op_name)
@@ -1261,6 +1279,7 @@ class ValueObject(NamedElement):
     def __init__(self, name = None, short_desc = None, long_desc = None,\
         extends = None, depends = None):
         super(ValueObject, self).__init__(name, short_desc, long_desc)
+        self._parent_model = None
         self.extends = extends
         self.dependencies = []
         if depends and type(depends) is list:
@@ -1282,24 +1301,28 @@ class ValueObject(NamedElement):
     def set_extends(self, extends):
         assert type(extends) is CrossRef
         self.extends = extends
+        extends._parent_model = self._parent_model
         self.extends.ref_type = Ref.ValueObject
         return self
 
     def set_dependencies(self, deps):
         assert type(deps) is list
-        for val in deps:
-            val.ref_type = Ref.Entity
-            self.dependencies.append(val)
+        for depend in deps:
+            depend.ref_type = Ref.Entity
+            depend._parent_model = self._parent_model
+            self.dependencies.append(depend)
         return self
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
+        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
     def add_prop(self, prop):
         assert type(prop) is Property
         self._check_prop(prop)
+        prop._parent_model = self._parent_model
         self.props[prop.type_def.name] = prop
         return self
 
@@ -1416,6 +1439,7 @@ class Entity(NamedElement):
     def __init__(self, name = None, short_desc = None, long_desc = None,\
         extends = None, depends = None):
         super(Entity, self).__init__(name, short_desc, long_desc)
+        self._parent_model = None
         self.extends = None
         self.dependencies = []
         self.elems = dict()
@@ -1466,6 +1490,7 @@ class Entity(NamedElement):
 
     def add_constraint_spec(self, constr):
         assert type(constr) is ConstraintSpec
+        constr._parent_model = self._parent_model
         self.constraints.add(constr)
         return self
 
@@ -1479,6 +1504,7 @@ class Entity(NamedElement):
                 raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
             self.features.add(feat)
+        feat._parent_model = self._parent_model
         self.elems[feat.type_def.name] = feat
         return self
 
