@@ -138,8 +138,10 @@ def test_package():
     unexpected1 = Model(name = "test").add_package(pack1alt)
 
     print("parsed1 ", parsed1)
+    print("parsed.model ", parsed1["example"]._parent_model)
     print("expected1 ", expected1)
 
+    assert parsed1["example"]._parent_model == expected1
     assert parsed1 == expected1
     assert parsed1 != unexpected1
     assert hash(parsed1) == hash(expected1)
@@ -184,6 +186,9 @@ def test_exception():
 
     assert parsed1["exception_example"]["ResultNotFound"]["errCode"] == prop1
     assert parsed1["exception_example"]["ResultNotFound"]["message"] == prop2
+
+    print("parsed1._parent_model ", parsed1["exception_example"]["ResultNotFound"]._parent_model )
+    assert parsed1["exception_example"]["ResultNotFound"]._parent_model == expected1
 
     assert parsed1 == expected1
     assert parsed1 != unexpected1
