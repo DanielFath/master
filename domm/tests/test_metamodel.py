@@ -18,7 +18,7 @@ def test_qid():
     assert qid_outer == Qid(["out", "test", "x", "a"])
     assert qid_outer.depth() == 4
 
-def test_package_namespace():
+def test_namespace_package():
     pack1 = Package(name = "test")
     prop1 = Property(type_def = TypeDef(name = "X", type_of = "string"))
     vobj1 = ValueObject(name = "vo").add_prop(prop1)
