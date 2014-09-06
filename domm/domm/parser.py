@@ -272,6 +272,16 @@ class DommParser(ParserPython):
         val = self.getASG()
         return val
 
+    def _test_crossref(self, content):
+        """
+        Method that reads a given content, parses it and returns a parsed AST, but
+        verifies that references are correct
+        """
+        self.skip_crossref = False
+        self.parse(content)
+        retval = self.getASG
+        return retval
+
 
 
 if __name__ == "__main__":
