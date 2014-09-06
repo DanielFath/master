@@ -196,6 +196,14 @@ class Model(NamedElement):
         self.qual_elems = dict()
         self.unique = dict()
 
+    def _flatten_package(self, pack):
+        for qid, elem in pack.elems.iteritems():
+            if type(elem) is not Package:
+                self.add_elem(elem, qid._canon, qid._id, type_to_name(elem))
+        for qid, elem in pack._imported.iteritems():
+            if type(elem) is not Package:
+                self.add_elem(elem, qid._canon, qid._id, type_to_name(elem))
+
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
             if not qid in self.qual_elems:
@@ -215,8 +223,9 @@ class Model(NamedElement):
 
     def add_package(self, package):
         assert type(package) is Package
-        package._parent_model = self
+        package._update_parent_model(self)
         self.add_elem(package, package.name, package.name, "package")
+        self._flatten_package(package)
         return self
 
     def add_constraint(self, constr):
