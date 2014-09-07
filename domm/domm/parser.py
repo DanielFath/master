@@ -279,9 +279,8 @@ class DommParser(ParserPython):
         """
         self.skip_crossref = False
         self.parse(content)
-        retval = self.getASG
-        return retval
-
+        val = self.getASG()
+        return val
 
 
 if __name__ == "__main__":
@@ -310,7 +309,7 @@ if __name__ == "__main__":
         # Then we export it to a dot file in order to visualise it.
         # This is also optional.
         PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
-
+        parser.skip_crossref = False
         parser.getASG()
     else:
         print("Usage: python parser.py file_to_parse")

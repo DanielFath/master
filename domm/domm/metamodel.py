@@ -696,6 +696,7 @@ class TypeDef(NamedElement):
         self.type = type_of
         self.container = False
         self.multi = None
+        self._bound = None
 
     def set_multi(self, multi = None):
         if multi is None:
@@ -809,6 +810,9 @@ class Property(object):
         self.relationship = relation
         self.constraints = set()
 
+    def _update_parent_model(self, model):
+        self._parent_model = model
+
     @property
     def name(self):
         if self.type_def and self.type_def.name:
@@ -894,8 +898,8 @@ class ExceptionType(NamedElement):
 
     def _update_parent_model(self, model):
         self._parent_model = model
-        #for prop in props:
-        #    prop._update_parent_model(model)
+        for prop in self.props.itervalues():
+            prop._update_parent_model(model)
 
     def _flatten_ns(self, prefix):
         retval = dict()

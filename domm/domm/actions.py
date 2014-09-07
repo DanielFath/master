@@ -460,6 +460,34 @@ class PropertyAction(SemanticAction):
 
         return prop
 
+    def second_pass(self, parser, node):
+        # TODO containement, opposite ends
+        if not parser.skip_crossref:
+            if parser.debugDomm:
+                print("Entered Property Action second_pass ",node.type_def)
+            model = node._parent_model
+            qual_str = ""
+            if type(node.type_def.type) is str:
+                type_sign = node.type_def.type
+                if type_sign in model.unique:
+                    if model.unique[type_sign] != False:
+                        type_sign = model.unique[type_sign]
+                qual_str = type_sign
+            elif type(node.type_def.type) is Qid:
+                qual_str = node.type_def.type._canon
+
+            if qual_str in model.qual_elems:
+                bound_elem = model.qual_elems[qual_str]
+                node.type_def._bound = bound_elem
+                # If types aren't simple make a relation
+                if type(bound_elem) is not DataType \
+                    and type(bound_elem) is not Enumeration:
+                    if node.relationship:
+                        node.relationship = Relationship()
+            else:
+                raise TypeNotFoundError(qual_str)
+
+
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:

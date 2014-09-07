@@ -81,3 +81,10 @@ class DuplicateFeatureError(DommError):
         super(DuplicateFeatureError, self).__init__("")
         self.message = ' Feature with name <"%s"> already exists ' % (name)
 
+class TypeNotFoundError(DommError):
+    """
+    Error raised when type isn't found isn't specified
+    """
+    def __init__(self, name):
+        super(TypeNotFoundError, self).__init__("")
+        self.message = 'Type <"%s"> not found ' % name
