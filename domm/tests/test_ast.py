@@ -60,6 +60,12 @@ def test_dataType():
     assert parsed2 ==  expected2
     assert hash(parsed2) == hash(expected2)
 
+def test_validator():
+    parsed1 = DommParser()._test_parse("""model std
+        package std {
+            buildinValidator matchesRegularExpression (_string) appliesTo _prop
+        }""")
+
 def test_enum():
     parsed1 = DommParser()._test_parse(""" model enum package test {
     enum Color "Color desc." {

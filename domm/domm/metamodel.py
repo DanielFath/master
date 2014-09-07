@@ -328,6 +328,9 @@ class Constraint(object):
         self.built_in = built_in
         self.constr_type = constr_type
 
+    def _update_parent_model(self, model):
+        pass
+
     @property
     def name(self):
         retval = None
