@@ -1451,7 +1451,7 @@ class Key(object):
         return retStr
 
 class Repr(object):
-    """Models textual represnetation of the entity metamodel"""
+    """Models textual representation of the entity metamodel"""
     def __init__(self):
         super(Repr, self).__init__()
         self.parts = []
