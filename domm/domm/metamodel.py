@@ -199,10 +199,18 @@ class Model(NamedElement):
     def _flatten_package(self, pack):
         for qid, elem in pack.elems.iteritems():
             if type(elem) is not Package:
-                self.add_elem(elem, qid._canon, qid._id, type_to_name(elem))
+                if type(qid) is Qid:
+                    self.add_elem(elem, qid._canon, qid._id,\
+                        type_to_name(elem))
+                elif type(qid) is str:
+                    self.add_elem(elem, qid, qid, type_to_name(elem))
         for qid, elem in pack._imported.iteritems():
             if type(elem) is not Package:
-                self.add_elem(elem, qid._canon, qid._id, type_to_name(elem))
+                if type(qid) is Qid:
+                    self.add_elem(elem, qid._canon, qid._id,\
+                        type_to_name(elem))
+                elif type(qid) is str:
+                    self.add_elem(elem, qid, qid, type_to_name(elem))
 
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
