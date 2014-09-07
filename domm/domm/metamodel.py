@@ -1494,7 +1494,6 @@ class Entity(NamedElement):
         self.extends = None
         self.dependencies = []
         self.elems = dict()
-        self.key = None
         self.repr = None
 
         if self.extends:
@@ -1504,26 +1503,27 @@ class Entity(NamedElement):
 
         self.constraints = set()
         self.features = set()
+        self.key = set()
         self.compartments = dict()
 
     def _update_parent_model(self, model):
-        pass#self._parent_model = model
-        #for elem in self.elems.itervalues:
-        #    elem._update_parent_model(model)
+        self._parent_model = model
+        for elem in self.elems.itervalues():
+            elem._update_parent_model(model)
 
     def _flatten_ns(self, prefix):
         retval = dict()
         for key, val in self.elems.iteritems():
             namespace = "%s.%s.%s" % (prefix, self.name, key)
             retval[Qid(namespace)] = val
-        for key in self.key.props:
-            namespace = "%s.%s.%s" % (prefix, self.name, key.name)
-            retval[Qid(namespace)] = key
         return retval
 
     def set_key(self, key):
         assert type(key) is Key
-        self.key = key
+        if key and key.props:
+            for prop in key.props:
+                self.add_feature(prop, True)
+                self.key.add(prop.name)
         return self
 
     def set_repr(self, arg):
@@ -1553,10 +1553,6 @@ class Entity(NamedElement):
         assert type(feat) is Operation or type(feat) is Property
         if feat.type_def.name in self.elems:
             raise DuplicateFeatureError(feat.type_def.name)
-        # Scan keys for duplicated features
-        for key in self.key.props:
-            if key.name == feat.type_def.name:
-                raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
             self.features.add(feat)
         self.elems[feat.type_def.name] = feat
@@ -1585,7 +1581,7 @@ class Entity(NamedElement):
         retStr += "{\n"
 
         if self.key:
-            retStr += "\n    {}\n".format(self.key)
+            retStr += print_partial_map(self.elems,self.key)
 
         if self.repr:
             retStr += "\n    {}\n".format(self.repr)
@@ -1604,7 +1600,7 @@ class Entity(NamedElement):
             return NamedElement.__eq__(self,other) \
             and self.elems == other.elems and self.extends == other.extends\
             and self.dependencies == other.dependencies\
-            and self.key == other.key and self.repr == other.repr\
+            and self.repr == other.repr\
             and self.constraints == other.constraints
         return False
 
@@ -1614,7 +1610,7 @@ class Entity(NamedElement):
     def __hash__(self):
         return hash((self.name, self.short_desc, self.long_desc, self.extends,
             fnvhash(self.dependencies), fnvhash(self.constraints),
-            fnvhash(self.elems.items()), self.key, self.repr))
+            fnvhash(self.elems.items()), self.repr))
 
     def __getitem__(self, key):
         if key in self.compartments:
