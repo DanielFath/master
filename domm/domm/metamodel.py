@@ -1349,9 +1349,9 @@ class ValueObject(NamedElement):
             raise DuplicatePropertyError(element.name)
 
     def _update_parent_model(self, model):
-        pass#self._parent_model = model
-        #for prop in self.props.itervalues:
-        #    prop._update_parent_model(model)
+        self._parent_model = model
+        for prop in self.props.itervalues():
+            prop._update_parent_model(model)
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef
@@ -1419,7 +1419,7 @@ class ValueObject(NamedElement):
             fnvhash(self.props.items())))
 
     def __getitem__(self, key):
-        return self.prop[key]
+        return self.props[key]
 
 class Key(object):
     """Models a key of the entity metamodel"""

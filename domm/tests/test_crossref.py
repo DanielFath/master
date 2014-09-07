@@ -31,3 +31,22 @@ def test_simple_prop_crossref():
                 prop int id
             }
         }""")
+
+    all_test = DommParser()._test_crossref("""model y
+    dataType int
+    package all{
+        exception Error {
+            prop int id
+        }
+        valueObject VO {
+            prop int vos
+        }
+        entity Ent {
+            key { prop int stuff}
+        }
+    }
+    """)
+    assert all_test["all"]["VO"]["vos"].type_def._bound == DataType(name = "int")
+
+
+
