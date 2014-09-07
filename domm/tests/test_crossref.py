@@ -46,7 +46,10 @@ def test_simple_prop_crossref():
         }
     }
     """)
-    assert all_test["all"]["VO"]["vos"].type_def._bound == DataType(name = "int")
+    int_type = DataType(name = "int")
+    assert all_test["all"]["VO"]["vos"].type_def._bound == int_type
+    assert all_test["all"]["Error"]["id"].type_def._bound == int_type
+    assert all_test["all"]["Ent"]["stuff"].type_def._bound == int_type
 
 
 
