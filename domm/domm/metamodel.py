@@ -234,6 +234,17 @@ class Model(NamedElement):
             retval = name_or_qid._canon
         return retval
 
+    def get_elem_by_crosref(self, cross_ref):
+        assert type(cross_ref) is CrossRef
+        elem = None
+        qid = self.get_qid(cross_ref.ref._canon)
+        if qid in self.qual_elems:
+            elem = self.qual_elems[qid]
+            if type(elem) is not cross_ref.ref_type.into_type():
+                raise TypeNotFoundError(qid)
+        else:
+            raise TypeNotFoundError(qid)
+        return elem
 
     def add_type(self, type_def):
         assert type(type_def) is DataType
