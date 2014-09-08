@@ -971,6 +971,22 @@ class Ref(Enum):
     Constraint = 6,
     Property = 7
 
+    def into_type(self):
+        if self == Ref.Entity:
+            return Entity
+        elif self == Ref.Service:
+            return Service
+        elif self == Ref.ValueObject:
+            return ValueObject
+        elif self == Ref.ExceptType:
+            return ExceptionType
+        elif self == Ref.DataType:
+            return DataType
+        elif self == Ref.Constraint:
+            return Constraint
+        elif self == Ref.Property:
+            return Property
+
 class CrossRef(object):
     """
     Tracks a relation used to refer to other classifier.
