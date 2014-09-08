@@ -622,6 +622,24 @@ class OperationAction(SemanticAction):
             print("DEBUG OperationAction returns", oper)
         return oper
 
+    def second_pass(self, parser, node):
+        if not parser.skip_crossref:
+            # TODO Check rest of operations
+            if parser.debugDomm:
+                print("DEBUG2: Entered OperationAction, node ", node)
+            model = node._parent_model
+            if parser.debugDomm:
+                print("DEBUG2: Entered OperationAction, model ", model)
+            for exception in node.throws:
+                if parser.debugDomm:
+                    print("DEBUG2: Entered OperationAction, exception ", exception)
+                found_type = model.get_elem_by_crosref(exception)
+                if parser.debugDomm:
+                    print("DEBUG2: Entered OperationAction, exception ", exception)
+                exception._bound = found_type
+
+
+
 class CompartmentAction(SemanticAction):
 
     def __init__(self, is_op = True):

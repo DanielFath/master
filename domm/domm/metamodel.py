@@ -1007,13 +1007,14 @@ class CrossRef(object):
     """
     def __init__(self, ref = None, ref_type = None):
         super(CrossRef, self).__init__()
+        # FIXME: Verify _parent_model is needed
         self._parent_model = None
         assert type(ref) is Qid
         if ref_type:
             assert type(ref_type) is Ref
         self.ref = ref
         self.ref_type = ref_type
-        self.bound = None
+        self._bound = None
 
     def _update_parent_model(self, model):
         self._parent_model = model
@@ -1117,7 +1118,7 @@ class Operation(NamedElement):
         self.constraints = set()
 
     def _update_parent_model(self, model):
-        pass#self._parent_model = model
+        self._parent_model = model
         #for param in self.params:
         #    param._update_parent_model(model)
 
