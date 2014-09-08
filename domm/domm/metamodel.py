@@ -223,6 +223,17 @@ class Model(NamedElement):
             else:
                 raise DuplicateTypeError(type_of, name)
 
+    def get_qid(self, name_or_qid):
+        retval = ""
+        if type(name_or_qid) is str:
+            retval = name_or_qid
+            if name_or_qid in self.unique:
+                if self.unique[name_or_qid] != False:
+                    retval = self.unique[name_or_qid]
+        elif type(name_or_qid) is Qid:
+            retval = name_or_qid._canon
+        return retval
+
 
     def add_type(self, type_def):
         assert type(type_def) is DataType

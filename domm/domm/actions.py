@@ -65,8 +65,6 @@ class NamedElementAction(SemanticAction):
 
         return retVal
 
-
-
 class StringAction(SemanticAction):
     """
     Represents the basic string identified in programm
@@ -463,18 +461,8 @@ class PropertyAction(SemanticAction):
     def second_pass(self, parser, node):
         # TODO containement, opposite ends
         if not parser.skip_crossref:
-            if parser.debugDomm:
-                print("Entered Property Action second_pass ",node.type_def)
             model = node._parent_model
-            qual_str = ""
-            if type(node.type_def.type) is str:
-                type_sign = node.type_def.type
-                if type_sign in model.unique:
-                    if model.unique[type_sign] != False:
-                        type_sign = model.unique[type_sign]
-                qual_str = type_sign
-            elif type(node.type_def.type) is Qid:
-                qual_str = node.type_def.type._canon
+            qual_str = model.get_qid(node.type_def.type)
 
             if qual_str in model.qual_elems:
                 bound_elem = model.qual_elems[qual_str]
