@@ -88,3 +88,44 @@ class TypeNotFoundError(DommError):
     def __init__(self, name):
         super(TypeNotFoundError, self).__init__("")
         self.message = 'Type <"%s"> not found ' % name
+
+class ConstraintDoesntApplyError(DommError):
+    """
+    Error raised when constraints fail the check
+    """
+    def __init__(self, name, field):
+        super(ConstraintDoesntApplyError, self).__init__("")
+        self.message = 'Constraint <"%s"> does not apply to field <"%s"> ' % (name, field)
+
+class WrongConstraintError(DommError):
+    """
+    Error raised when constraints fail the check
+    """
+    def __init__(self, name, param):
+        super(WrongConstraintError, self).__init__("")
+        self.message = 'Constraint <"%s"> does not allow a parameter <"%s"> there ' % (name, param)
+
+class WrongConstraintAtPosError(DommError):
+    """
+    Error raised when constraints fail the check
+    """
+    def __init__(self, name, param, pos):
+        super(WrongConstraintAtPosError, self).__init__("")
+        self.message = 'Constraint <"%s"> does not allow a parameter <"%s"> at position (pos:%s)' \
+                        % (name, param, pos +1)
+
+class NoParameterError(DommError):
+    """
+    Error raised when constraints fail the check
+    """
+    def __init__(self, name):
+        super(NoParameterError, self).__init__("")
+        self.message = 'Constraint <"%s"> has no parameters ' % (name)
+
+class WrongNumberOfParameterError(DommError):
+    """
+    Error raised when constraints fail the check
+    """
+    def __init__(self, name, expected, found):
+        super(WrongNumberOfParameterError, self).__init__("")
+        self.message = 'Constraint <"%s"> at (number of params: %s) not %s ' % (name, expected, found)

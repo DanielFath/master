@@ -173,4 +173,114 @@ def test_depends():
     assert type(dep_vo) is CrossRef
     assert dep_vo._bound == ent1
 
+def test_constraint():
+    cosntr_test = """model x
+    dataType int
+    buildinTagType plural (_string) appliesTo _entity _valueObject
+    buildinTagType all_tag appliesTo _entity _valueObject _service _prop _op _param
+    package test {
+        valueObject Vo1 {
+            [all_tag]
+            prop int vos
+        }
+    }
+    """
+    parsed1 = DommParser()._test_crossref(cosntr_test)
+    vo1_constr = parsed1["test"]["Vo1"].constraints
+    assert type(vo1_constr) is set
+
+    with pytest.raises(ConstraintDoesntApplyError):
+        DommParser()._test_crossref("""model x
+        dataType int
+        buildinTagType ent_only appliesTo _entity
+        package test {
+            valueObject Vo1 {
+                [ent_only]
+                prop int vos
+            }
+        }
+            """)
+
+    with pytest.raises(NoParameterError):
+        DommParser()._test_crossref("""model x
+        dataType int
+        buildinTagType wrong_param  appliesTo _valueObject
+        package test {
+            valueObject Vo1 {
+                [wrong_param(2)]
+                prop int vos
+            }
+        }
+            """)
+
+    # Test pure elipsis
+    DommParser()._test_crossref("""model x
+    dataType int
+    buildinTagType wrong_param (...) appliesTo _valueObject
+    package test {
+        valueObject Vo1 {
+            [wrong_param (2,3,"string",int)]
+            prop int vos
+        }
+    }
+        """)
+
+    # Test partial elipsis
+    DommParser()._test_crossref("""model x
+    dataType int
+    buildinTagType wrong_param (...) appliesTo _valueObject
+    package test {
+        valueObject Vo1 {
+            [wrong_param (2,3,"string",int)]
+            prop int vos
+        }
+    }
+        """)
+
+    # Test partial elipsis
+    DommParser()._test_crossref("""model x
+    dataType int
+    buildinTagType wrong_param (_int,...) appliesTo _valueObject
+    package test {
+        valueObject Vo1 {
+            [wrong_param (2,3,44)]
+            prop int vos
+        }
+    }
+        """)
+    # Test wrong elipsis
+    with pytest.raises(WrongConstraintError):
+        DommParser()._test_crossref("""model x
+        dataType int
+        buildinTagType wrong_param (_string, ...) appliesTo _valueObject
+        package test {
+            valueObject Vo1 {
+                [wrong_param (2)]
+                prop int vos
+            }
+        }
+            """)
+
+    with pytest.raises(WrongNumberOfParameterError):
+        DommParser()._test_crossref("""model x
+        dataType int
+        buildinTagType wrong_param (_int,_int) appliesTo _valueObject
+        package test {
+            valueObject Vo1 {
+                [wrong_param(2,3,2,4,535)]
+                prop int vos
+            }
+        }""")
+
+    with pytest.raises(WrongConstraintAtPosError):
+        DommParser()._test_crossref("""model x
+        dataType int
+        buildinTagType wrong_param (_string, _int) appliesTo _valueObject
+        package test {
+            valueObject Vo1 {
+                [wrong_param ("s", "meh")]
+                prop int vos
+            }
+        }
+            """)
 

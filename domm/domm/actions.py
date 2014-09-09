@@ -765,8 +765,26 @@ class ValueObjectAction(SemanticAction):
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
                     if parser.debugDomm:
-                        print("DEBUG2: Entered ServiceAction, dep found ", \
+                        print("DEBUG2: Entered ValueObjectAction, dep found ", \
                             dep)
+
+            # Check constraints
+            if node.constraints and len(node.constraints) > 0:
+                for constr in node.constraints:
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, constr found"\
+                                    ,constr)
+                    qid = model.get_qid(constr.ident)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, qid found "\
+                                    ,qid)
+                    const_spec = model.qual_elems[qid]
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered Found constr "\
+                                    ,const_spec)
+                    const_spec.check_applies(node, node.name)
+                    const_spec.check_params(constr)
+
 
 
 class KeyAction(SemanticAction):

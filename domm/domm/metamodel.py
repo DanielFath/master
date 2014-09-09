@@ -225,7 +225,8 @@ class Model(NamedElement):
 
     def get_qid(self, name_or_qid):
         retval = ""
-        if type(name_or_qid) is str:
+        if type(name_or_qid) is str \
+            or (type(name_or_qid) is Qid and not name_or_qid.is_resolved):
             retval = name_or_qid
             if name_or_qid in self.unique:
                 if self.unique[name_or_qid] != False:
@@ -347,6 +348,16 @@ class ConstraintType(Enum):
     Tag = 1,
     Validator = 2
 
+def constr_to_type(constr_param):
+    param_type = None
+    if constr_param == "_int":
+        param_type = int
+    elif constr_param == "_string":
+        param_type = str
+    elif constr_param == "_ref":
+        param_type = Qid
+    return param_type
+
 class Constraint(object):
     """
     A unified container for tagTypes and validators,
@@ -361,6 +372,59 @@ class Constraint(object):
 
     def _update_parent_model(self, model):
         pass
+
+    # Returns whether the constraint spec matched by id
+    # is compatible with property it is bound to
+    # and the parameters provided
+    def check_applies(self, field, field_name):
+        if self.tag:
+            if not self.tag.applies.check_applies(field):
+                raise ConstraintDoesntApplyError(self.tag.name, field_name)
+
+    def check_params(self, constr):
+        if self.tag:
+            print("self.tag.constr_def", self.tag.constr_def)
+            print("constr.parameters", constr.parameters)
+            # Check is constraint definition doesn't have any parameter
+            if self.tag.constr_def is None:
+                if len(constr.parameters) > 0:
+                    raise NoParameterError(self.tag.name)
+            elif self.tag.constr_def is not None \
+                and len(self.tag.constr_def.constraints) == 0:
+                if len(constr.parameters) > 0:
+                    raise NoParameterError(self.tag.name)
+            # Check if constraint definition has elipsis
+            elif self.tag.constr_def is not None\
+                    and len(self.tag.constr_def.constraints) == 1\
+                    and self.tag.constr_def.constraints[0] == "..." :
+                return True
+            elif self.tag.constr_def is not None\
+                    and len(self.tag.constr_def.constraints) == 2\
+                    and self.tag.constr_def.constraints[1] == "...":
+                param_type = constr_to_type(self.tag.constr_def.constraints[0])
+                for param in constr.parameters:
+                    if type(param) is not param_type:
+                        raise WrongConstraintError(self.tag.name, param)
+                return True
+            elif self.tag.constr_def is not None\
+                    and len(self.tag.constr_def.constraints) !=\
+                    len(constr.parameters):
+                expected = len(self.tag.constr_def.constraints)
+                found = len(constr.parameters)
+                raise WrongNumberOfParameterError(self.tag.name, expected,\
+                    found)
+            elif self.tag.constr_def is not None\
+                    and len(self.tag.constr_def.constraints) ==\
+                    len(constr.parameters):
+                for pos, param in enumerate(constr.parameters):
+                    constr_def = self.tag.constr_def.constraints[pos]
+                    param_type = constr_to_type(constr_def)
+                    if type(param) is not param_type:
+                        raise WrongConstraintAtPosError(self.tag.name, param,\
+                            pos)
+                return True
+
+
 
     @property
     def name(self):
@@ -499,6 +563,22 @@ class ApplyDef(object):
         self.to_op = to_op
         self.to_value_object = to_value_object
 
+    def check_applies(self, field):
+        retval = False
+        if type(field) is Entity:
+            retval = self.to_entity
+        elif type(field) is Property:
+            retval = self.to_prop
+        elif type(field) is OpParam:
+            retval = self.to_param
+        elif type(field) is Service:
+            retval = self.to_service
+        elif type(field) is Operation:
+            retval = self.to_op
+        elif type(field) is ValueObject:
+            retval = self.to_value_object
+        return retval
+
     def add_apply(self, appl):
         if appl == "_entity":
             if self.to_entity:
@@ -578,6 +658,10 @@ class ConstrDef(object):
         if constraints is not None and type(constraints) is list:
             for i in constraints:
                 self.add_constr(i)
+
+    def check_params(self, constr):
+        size = len(self.constraints)
+        #if size == 0 and constr.
 
     def add_constr(self, constr):
         if "..." in self.constraints:
@@ -772,7 +856,6 @@ class ConstraintSpec(object):
     """
     def __init__(self, ident = None, parameters = None):
         super(ConstraintSpec, self).__init__()
-        self._parent_model = None
         self.ident = ident
         self.parameters = []
         if parameters and type(parameters) is list:
@@ -781,12 +864,6 @@ class ConstraintSpec(object):
 
     def _update_parent_model(self, model):
         pass#self._parent_model = model
-
-    # Returns whether the constraint spec matched by id
-    # is compatible with property it is bound to
-    # and the parameters provided
-    def match_field(self, field):
-        pass
 
     def add_param(self, param):
         self.parameters.append(param)
