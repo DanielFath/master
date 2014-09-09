@@ -355,7 +355,7 @@ def constr_to_type(constr_param):
     elif constr_param == "_string":
         param_type = str
     elif constr_param == "_ref":
-        param_type = Qid
+        param_type = CrossRef
     return param_type
 
 class Constraint(object):
@@ -423,8 +423,6 @@ class Constraint(object):
                         raise WrongConstraintAtPosError(self.tag.name, param,\
                             pos)
                 return True
-
-
 
     @property
     def name(self):
@@ -859,14 +857,32 @@ class ConstraintSpec(object):
         self.ident = ident
         self.parameters = []
         if parameters and type(parameters) is list:
-            self.parameters = parameters
-        self.bound = None
+            for param in parameters:
+                self.add_param(param)
+        self._bound = None
 
     def _update_parent_model(self, model):
         pass#self._parent_model = model
 
+    def _replace_qids(self, model):
+        refs = (x for x in self.parameters if type(x) is CrossRef)
+        for cref in refs:
+            qual_id = model.unique[cref.ref._canon]
+
+            if qual_id is None:
+                raise TypeNotFoundError(cref.ref._canon)
+            else:
+                elem  = model.qual_elems[qual_id]
+                cref.ref = qual_id
+                cref._bound = elem
+
     def add_param(self, param):
-        self.parameters.append(param)
+        if type(param) is Id:
+            qid = Qid(param._id)
+            cross_ref = CrossRef(ref = qid)
+            self.parameters.append(cross_ref)
+        else:
+            self.parameters.append(param)
         return self
 
     def __eq__(self, other):

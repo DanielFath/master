@@ -770,20 +770,28 @@ class ValueObjectAction(SemanticAction):
 
             # Check constraints
             if node.constraints and len(node.constraints) > 0:
-                for constr in node.constraints:
+                for constr_spec in node.constraints:
                     if parser.debugDomm:
                         print("DEBUG2: Entered ValueObjectAction, constr found"\
-                                    ,constr)
-                    qid = model.get_qid(constr.ident)
+                                    ,constr_spec)
+                    qid = model.get_qid(constr_spec.ident)
                     if parser.debugDomm:
                         print("DEBUG2: Entered ValueObjectAction, qid found "\
                                     ,qid)
-                    const_spec = model.qual_elems[qid]
+                    constr_def = model.qual_elems[qid]
                     if parser.debugDomm:
                         print("DEBUG2: Entered Found constr "\
-                                    ,const_spec)
-                    const_spec.check_applies(node, node.name)
-                    const_spec.check_params(constr)
+                                    ,constr_def)
+                    constr_def.check_applies(node, node.name)
+                    constr_def.check_params(constr_spec)
+                    #if parser.debugDomm:
+                    #    print("DEBUG2: model.qual_elems ", model.qual_elems)
+                    #    print("DEBUG2: model.unique ", model.unique)
+                    if parser.debugDomm:
+                        print("DEBUG2: Constr_Spec after replacement "\
+                                    ,constr_spec)
+                    constr_spec._replace_qids(model)
+                    constr_spec._bound = constr_def
 
 
 
