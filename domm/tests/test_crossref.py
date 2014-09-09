@@ -135,3 +135,42 @@ def test_extends():
     print("dep_bound ", ext_ent._bound)
     print("ent1 ", ent1)
     assert ext_ent._bound == ent1
+
+def test_depends():
+    dep_test = """model x
+    package test {
+        dataType int
+        service serv1 {
+            op int getCode()
+        }
+
+        service serv2 depends serv1 {
+            op int getStuff()
+        }
+
+        valueObject vo1 depends ent1 {
+            prop int vo_id
+        }
+
+        entity ent1 depends serv1 {
+            key { prop int id}
+        }
+    }"""
+    parsed1 = DommParser()._test_crossref(dep_test)
+    serv1 = parsed1["test"]["serv1"]
+    dep_serv = parsed1["test"]["serv2"].dependencies[0]
+    assert type(dep_serv) is CrossRef
+    assert type(serv1) is Service
+    assert dep_serv._bound == serv1
+
+    ent1 = parsed1["test"]["ent1"]
+    dep_ent = parsed1["test"]["ent1"].dependencies[0]
+    assert type(ent1) is Entity
+    assert type(dep_ent) is CrossRef
+    assert dep_ent._bound == serv1
+
+    dep_vo = parsed1["test"]["vo1"].dependencies[0]
+    assert type(dep_vo) is CrossRef
+    assert dep_vo._bound == ent1
+
+

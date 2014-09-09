@@ -708,8 +708,16 @@ class ServiceAction(SemanticAction):
             if parser.debugDomm:
                 print("DEBUG2: Entered ServiceAction, parent model ", \
                             model.name)
+            # Bind extending CrossRef if they exist
             if node.extends:
                 model.get_elem_by_crosref(node.extends)
+            # Bind dependencies if they exist
+            if node.dependencies and len(node.dependencies) > 0:
+                for dep in node.dependencies:
+                    model.get_elem_by_crosref(dep)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ServiceAction, dep found ", \
+                            dep)
 
 
 class ValueObjectAction(SemanticAction):
@@ -749,8 +757,17 @@ class ValueObjectAction(SemanticAction):
             if parser.debugDomm:
                 print("DEBUG2: Entered ValueObjectAction, parent model ",\
                         model.name)
+             # Bind extending CrossRef if they exist
             if node.extends:
-                elem = model.get_elem_by_crosref(node.extends)
+                model.get_elem_by_crosref(node.extends)
+            # Bind dependencies if they exist
+            if node.dependencies and len(node.dependencies) > 0:
+                for dep in node.dependencies:
+                    model.get_elem_by_crosref(dep)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ServiceAction, dep found ", \
+                            dep)
+
 
 class KeyAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -849,5 +866,13 @@ class EntityAction(SemanticAction):
             if parser.debugDomm:
                 print("DEBUG2: Entered ValueObjectAction, parent model ",\
                         model.name)
+            # Bind extending CrossRef if they exist
             if node.extends:
-                elem = model.get_elem_by_crosref(node.extends)
+                model.get_elem_by_crosref(node.extends)
+            # Bind dependencies if they exist
+            if node.dependencies and len(node.dependencies) > 0:
+                for dep in node.dependencies:
+                    model.get_elem_by_crosref(dep)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ServiceAction, dep found ", \
+                            dep)
