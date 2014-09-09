@@ -1277,9 +1277,9 @@ class Service(NamedElement):
             raise DuplicateTypeError("operation", oper.op_name)
 
     def _update_parent_model(self, model):
-        pass#self._parent_model = model
-        #for elem in self.elems.itervalues:
-        #    elem._update_parent_model(model)
+        self._parent_model = model
+        for elem in self.elems.itervalues():
+            elem._update_parent_model(model)
 
     def set_extends(self, extends):
         assert type(extends) is CrossRef

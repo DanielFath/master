@@ -629,15 +629,12 @@ class OperationAction(SemanticAction):
                 print("DEBUG2: Entered OperationAction, node ", node)
             model = node._parent_model
             if parser.debugDomm:
-                print("DEBUG2: Entered OperationAction, model ", model)
+                print("DEBUG2: Entered OperationAction, model ", model.name)
             for exception in node.throws:
                 if parser.debugDomm:
-                    print("DEBUG2: Entered OperationAction, exception ", exception)
-                found_type = model.get_elem_by_crosref(exception)
-                if parser.debugDomm:
-                    print("DEBUG2: Entered OperationAction, exception ", exception)
-                exception._bound = found_type
-
+                    print("DEBUG2: Entered OperationAction, exception ",\
+                            exception)
+                model.get_elem_by_crosref(exception)
 
 
 class CompartmentAction(SemanticAction):
@@ -703,6 +700,18 @@ class ServiceAction(SemanticAction):
 
         return service
 
+    def second_pass(self, parser, node):
+        if not parser.skip_crossref:
+            if parser.debugDomm:
+                print("DEBUG2: Entered ServiceAction, node ", node)
+            model = node._parent_model
+            if parser.debugDomm:
+                print("DEBUG2: Entered ServiceAction, parent model ", \
+                            model.name)
+            if node.extends:
+                model.get_elem_by_crosref(node.extends)
+
+
 class ValueObjectAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:
@@ -731,6 +740,17 @@ class ValueObjectAction(SemanticAction):
             print("DEBUG ServiceAction returns ", val_obj)
 
         return val_obj
+
+    def second_pass(self, parser, node):
+        if not parser.skip_crossref:
+            if parser.debugDomm:
+                print("DEBUG2: Entered ValueObjectAction, node ", node)
+            model = node._parent_model
+            if parser.debugDomm:
+                print("DEBUG2: Entered ValueObjectAction, parent model ",\
+                        model.name)
+            if node.extends:
+                elem = model.get_elem_by_crosref(node.extends)
 
 class KeyAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -820,3 +840,14 @@ class EntityAction(SemanticAction):
             print("DEBUG Entered EntityAction returns", ent)
 
         return ent
+
+    def second_pass(self, parser, node):
+        if not parser.skip_crossref:
+            if parser.debugDomm:
+                print("DEBUG2: Entered ValueObjectAction, node ", node)
+            model = node._parent_model
+            if parser.debugDomm:
+                print("DEBUG2: Entered ValueObjectAction, parent model ",\
+                        model.name)
+            if node.extends:
+                elem = model.get_elem_by_crosref(node.extends)
