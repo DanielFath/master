@@ -244,6 +244,7 @@ class Model(NamedElement):
                 raise TypeNotFoundError(qid)
         else:
             raise TypeNotFoundError(qid)
+        cross_ref._bound = elem
         return elem
 
     def add_type(self, type_def):
