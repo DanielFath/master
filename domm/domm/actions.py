@@ -572,7 +572,7 @@ class OpParamAction(SemanticAction):
             elif type(val) is NamedElement:
                 param.set_descs(val)
             elif type(val) is SpecsObj:
-                for x in val:
+                for x in val.specs:
                     param.constraints.add(x)
             elif val == "ordered":
                 param.ordered = True
