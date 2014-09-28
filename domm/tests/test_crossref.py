@@ -181,12 +181,12 @@ def test_constraint():
     package test {
         valueObject Vo1 {
             [all_tag]
-            prop int vos
+            prop int vos [all_tag]
         }
 
         service serv1 {
             [all_tag]
-            op int getStuff()
+            op int getStuff(int val [all_tag]) [all_tag]
         }
 
         entity ent {
@@ -214,6 +214,22 @@ def test_constraint():
     assert type(entity) is set
     assert len(entity) == 1
     assert list(entity)[0]._bound == plural
+
+    prop_constr = parsed1["test"]["Vo1"]["vos"].constraints
+    assert type(prop_constr) is set
+    assert len(prop_constr) == 1
+    assert list(prop_constr)[0]._bound == all_tag
+
+    op_constr = parsed1["test"]["serv1"]["getStuff"].constraints
+    assert type(op_constr) is set
+    assert len(op_constr) == 1
+    assert list(op_constr)[0]._bound == all_tag
+
+    param = parsed1["test"]["serv1"]["getStuff"].params[0]
+    assert type(param) is OpParam
+    assert type(param.constraints) is set
+    assert len(param.constraints) == 1
+    assert list(param.constraints)[0]._bound == all_tag
 
     with pytest.raises(ConstraintDoesntApplyError):
         DommParser()._test_crossref("""model x

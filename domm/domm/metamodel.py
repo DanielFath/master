@@ -383,6 +383,7 @@ class Constraint(object):
 
     def check_params(self, constr):
         if self.tag:
+            # FIXME remove these
             print("self.tag.constr_def", self.tag.constr_def)
             print("constr.parameters", constr.parameters)
             # Check is constraint definition doesn't have any parameter

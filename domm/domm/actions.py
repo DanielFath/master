@@ -475,6 +475,28 @@ class PropertyAction(SemanticAction):
             else:
                 raise TypeNotFoundError(qual_str)
 
+            # Check constraints
+            if node.constraints and len(node.constraints) > 0:
+                for constr_spec in node.constraints:
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, constr found"\
+                                    ,constr_spec)
+                    qid = model.get_qid(constr_spec.ident)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, qid found "\
+                                    ,qid)
+                    constr_def = model.qual_elems[qid]
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered Found constr "\
+                                    ,constr_def)
+                    constr_def.check_applies(node, node.name)
+                    constr_def.check_params(constr_spec)
+                    if parser.debugDomm:
+                        print("DEBUG2: Constr_Spec after replacement "\
+                                    ,constr_spec)
+                    constr_spec._replace_qids(model)
+                    constr_spec._bound = constr_def
+
 
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -635,6 +657,51 @@ class OperationAction(SemanticAction):
                     print("DEBUG2: Entered OperationAction, exception ",\
                             exception)
                 model.get_elem_by_crosref(exception)
+
+            # Check constraints
+            if node.constraints and len(node.constraints) > 0:
+                for constr_spec in node.constraints:
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered OperationAction, constr found"\
+                                    ,constr_spec)
+                    qid = model.get_qid(constr_spec.ident)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered OperationAction, qid found "\
+                                    ,qid)
+                    constr_def = model.qual_elems[qid]
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered Found constr "\
+                                    ,constr_def)
+                    constr_def.check_applies(node, node.name)
+                    constr_def.check_params(constr_spec)
+                    if parser.debugDomm:
+                        print("DEBUG2: Constr_Spec on OperationAction after replacement "\
+                                    ,constr_spec)
+                    constr_spec._replace_qids(model)
+                    constr_spec._bound = constr_def
+
+            if node.params and len(node.params) > 0:
+                for param in node.params:
+                    if param.constraints and len(param.constraints) > 0:
+                        for param_constr in param.constraints:
+                            if parser.debugDomm:
+                                print("DEBUG2: Entered OperationAction, constr found"\
+                                            ,param_constr)
+                            qid = model.get_qid(param_constr.ident)
+                            if parser.debugDomm:
+                                print("DEBUG2: Entered OperationAction, qid found "\
+                                            ,qid)
+                            constr_def = model.qual_elems[qid]
+                            if parser.debugDomm:
+                                print("DEBUG2: Entered Found constr "\
+                                            ,constr_def)
+                            constr_def.check_applies(param, param.name)
+                            constr_def.check_params(param_constr)
+                            if parser.debugDomm:
+                                print("DEBUG2: param_constr on OperationAction after replacement "\
+                                            ,param_constr)
+                            param_constr._replace_qids(model)
+                            param_constr._bound = constr_def
 
 
 class CompartmentAction(SemanticAction):
