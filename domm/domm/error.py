@@ -23,6 +23,14 @@ class DuplicateLiteralError(DommError):
         super(DuplicateLiteralError, self).__init__("")
         self.message = ' Literal with value "%s" already exist! ' % (value)
 
+class DuplicateParamError(DommError):
+    """
+    Error raised when there are two or more parameters have the same name
+    """
+    def __init__(self, value):
+        super(DuplicateParamError, self).__init__("")
+        self.message = ' Operation parameter with value "%s" already declared! ' % (value)
+
 class ElipsisMustBeLast(DommError):
     """
     Error raised when `...` isn't last element in syntax

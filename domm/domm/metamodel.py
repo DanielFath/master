@@ -1231,6 +1231,9 @@ class Operation(NamedElement):
 
     def add_param(self, param):
         assert type(param) is OpParam
+        for p in self.params:
+            if param.name == p.name:
+                raise DuplicateParamError(p.name)
         self.params.append(param)
         return self
 

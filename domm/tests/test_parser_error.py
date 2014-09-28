@@ -210,3 +210,12 @@ def test_duplicate_prop_name_in_entity():
                 }
             }""")
 
+def test_duplicate_op_param():
+    with pytest.raises(DuplicateParamError):
+        DommParser()._test_parse("""
+            model simple
+            package test {
+                service s1 {
+                    op int getDouble(double a, double a)
+                }
+            }""")
