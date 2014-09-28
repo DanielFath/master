@@ -183,11 +183,37 @@ def test_constraint():
             [all_tag]
             prop int vos
         }
+
+        service serv1 {
+            [all_tag]
+            op int getStuff()
+        }
+
+        entity ent {
+            key {
+                prop int key
+            }
+            [plural("2")]
+        }
     }
     """
     parsed1 = DommParser()._test_crossref(cosntr_test)
     vo1_constr = parsed1["test"]["Vo1"].constraints
+    all_tag = parsed1["all_tag"]
     assert type(vo1_constr) is set
+    assert len(vo1_constr) == 1
+    assert list(vo1_constr)[0]._bound == all_tag
+
+    serv1_constr = parsed1["test"]["serv1"].constraints
+    assert type(serv1_constr) is set
+    assert len(serv1_constr) == 1
+    assert list(serv1_constr)[0]._bound == all_tag
+
+    plural = parsed1["plural"]
+    entity = parsed1["test"]["ent"].constraints
+    assert type(entity) is set
+    assert len(entity) == 1
+    assert list(entity)[0]._bound == plural
 
     with pytest.raises(ConstraintDoesntApplyError):
         DommParser()._test_crossref("""model x

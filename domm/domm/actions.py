@@ -719,11 +719,32 @@ class ServiceAction(SemanticAction):
                         print("DEBUG2: Entered ServiceAction, dep found ", \
                             dep)
 
+            # Check constraints
+            if node.constraints and len(node.constraints) > 0:
+                for constr_spec in node.constraints:
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, constr found"\
+                                    ,constr_spec)
+                    qid = model.get_qid(constr_spec.ident)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered ValueObjectAction, qid found "\
+                                    ,qid)
+                    constr_def = model.qual_elems[qid]
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered Found constr "\
+                                    ,constr_def)
+                    constr_def.check_applies(node, node.name)
+                    constr_def.check_params(constr_spec)
+                    if parser.debugDomm:
+                        print("DEBUG2: Constr_Spec after replacement "\
+                                    ,constr_spec)
+                    constr_spec._replace_qids(model)
+                    constr_spec._bound = constr_def
 
 class ValueObjectAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:
-            print("DEBUG Entered ServiceAction (children)", children)
+            print("DEBUG Entered ValueObject (children)", children)
 
         filter_children = (x for x in children if type(x) is not str)
 
@@ -745,7 +766,7 @@ class ValueObjectAction(SemanticAction):
                 val_obj.add_prop(val)
 
         if parser.debugDomm:
-            print("DEBUG ServiceAction returns ", val_obj)
+            print("DEBUG ValueObject returns ", val_obj)
 
         return val_obj
 
@@ -784,11 +805,8 @@ class ValueObjectAction(SemanticAction):
                                     ,constr_def)
                     constr_def.check_applies(node, node.name)
                     constr_def.check_params(constr_spec)
-                    #if parser.debugDomm:
-                    #    print("DEBUG2: model.qual_elems ", model.qual_elems)
-                    #    print("DEBUG2: model.unique ", model.unique)
                     if parser.debugDomm:
-                        print("DEBUG2: Constr_Spec after replacement "\
+                        print("DEBUG2: Constr_Spec ValueObject after replacement "\
                                     ,constr_spec)
                     constr_spec._replace_qids(model)
                     constr_spec._bound = constr_def
@@ -887,10 +905,10 @@ class EntityAction(SemanticAction):
     def second_pass(self, parser, node):
         if not parser.skip_crossref:
             if parser.debugDomm:
-                print("DEBUG2: Entered ValueObjectAction, node ", node)
+                print("DEBUG2: Entered EntityAction, node ", node)
             model = node._parent_model
             if parser.debugDomm:
-                print("DEBUG2: Entered ValueObjectAction, parent model ",\
+                print("DEBUG2: Entered EntityAction, parent model ",\
                         model.name)
             # Bind extending CrossRef if they exist
             if node.extends:
@@ -900,5 +918,27 @@ class EntityAction(SemanticAction):
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
                     if parser.debugDomm:
-                        print("DEBUG2: Entered ServiceAction, dep found ", \
+                        print("DEBUG2: Entered EntityAction, dep found ", \
                             dep)
+
+            # Check constraints
+            if node.constraints and len(node.constraints) > 0:
+                for constr_spec in node.constraints:
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered EntityAction, constr found"\
+                                    ,constr_spec)
+                    qid = model.get_qid(constr_spec.ident)
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered EntityAction, qid found "\
+                                    ,qid)
+                    constr_def = model.qual_elems[qid]
+                    if parser.debugDomm:
+                        print("DEBUG2: Entered Found EntityAction constr "\
+                                    ,constr_def)
+                    constr_def.check_applies(node, node.name)
+                    constr_def.check_params(constr_spec)
+                    if parser.debugDomm:
+                        print("DEBUG2(: Constr_Spec EntityAction after replacement "\
+                                    ,constr_spec)
+                    constr_spec._replace_qids(model)
+                    constr_spec._bound = constr_def
