@@ -8,9 +8,6 @@
 # PEG used to describe a DOMMLite DSL
 # For more information about DOMMLite DSL please consult the guide
 #    Metamodel, model editor and business  applications generator
-# By Igor Dejanović. The work can be found at:
-#   Library of Faculty of Engineering,
-#   Trg Dositeja Obradovića 6, Novi Sad
 ##############################################################################
 from error import *
 from enum import Enum
