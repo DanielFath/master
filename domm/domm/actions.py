@@ -760,6 +760,8 @@ class ServiceAction(SemanticAction):
             # Bind extending CrossRef if they exist
             if node.extends:
                 model.get_elem_by_crosref(node.extends)
+                rel = RelObj(RelType.Extends, node, node.extends._bound)
+                model._add_rel(rel)
             # Bind dependencies if they exist
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:
@@ -811,12 +813,14 @@ class ValueObjectAction(SemanticAction):
              # Bind extending CrossRef if they exist
             if node.extends:
                 model.get_elem_by_crosref(node.extends)
+                rel = RelObj(RelType.Extends, node, node.extends._bound)
+                model._add_rel(rel)
             # Bind dependencies if they exist
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
                     if parser.debugDomm:
-                        print("DEBUG2: Entered ValueObjectAction, dep found ", \
+                        print("DEBUG2: Entered ValueObjectAction, dep found ",\
                             dep)
 
             # Check constraints
@@ -923,6 +927,8 @@ class EntityAction(SemanticAction):
             # Bind extending CrossRef if they exist
             if node.extends:
                 model.get_elem_by_crosref(node.extends)
+                rel = RelObj(RelType.Extends, node, node.extends._bound)
+                model._add_rel(rel)
             # Bind dependencies if they exist
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:

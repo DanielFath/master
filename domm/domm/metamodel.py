@@ -204,6 +204,10 @@ class RelObj(object):
     def __hash__(self):
         return hash((self.rel_type, self.elem_a, self.elem_b))
 
+    def __repr__(self):
+        return " RelObj(%s) %s -> %s " \
+                % (self.rel_type, self.elem_a.name, self.elem_b.name)
+
 class RelType(Enum):
     Extends = 1,
     Depends = 2,
@@ -241,9 +245,9 @@ class Model(NamedElement):
                 elif type(qid) is str:
                     self.add_elem(elem, qid, qid, type_to_name(elem))
 
-    def _add_rels(self, rel):
+    def _add_rel(self, rel):
         assert type(rel) is RelObj
-        self._rels.append(rel)
+        self._rels.add(rel)
 
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
