@@ -183,6 +183,25 @@ class Qid(object):
         retval += ")"
         return retval
 
+class RelObj(object):
+    """Helper object for relationships"""
+    def __init__(self, rel_type, elem_a, elem_b):
+        super(RelObj, self).__init__()
+        self.rel_type = rel_type
+        self.elem_a = elem_a
+        self.elem_b = elem_b
+
+
+class RelType(Enum):
+    Extends = 1,
+    Depends = 2,
+    Bidir = 3,
+    Composite = 4,
+    OneToOne = 5,
+    OneToMany = 6,
+    ManyToMany = 7
+
+
 class Model(NamedElement):
     """
     This class represents the meta model for DOMMLite model
@@ -192,6 +211,7 @@ class Model(NamedElement):
         super(Model, self).__init__(name, short_desc, long_desc)
         self.qual_elems = dict()
         self.unique = dict()
+        self._rels = dict()
 
     def _flatten_package(self, pack):
         for qid, elem in pack.elems.iteritems():
@@ -208,6 +228,10 @@ class Model(NamedElement):
                         type_to_name(elem))
                 elif type(qid) is str:
                     self.add_elem(elem, qid, qid, type_to_name(elem))
+
+    def _add_rels(self, rel):
+        assert type(rel) is RelObj
+        rels.
 
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
