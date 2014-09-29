@@ -91,7 +91,7 @@ def test_operation_type():
     dataType int
     package test {
         service serv1 {
-            op int getCode(int name)
+            op int getCode(int name, int stuff)
         }
     }
     """

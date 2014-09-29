@@ -219,3 +219,11 @@ def test_duplicate_op_param():
                     op int getDouble(double a, double a)
                 }
             }""")
+
+    DommParser()._test_parse("""
+        model simple
+        package test {
+            service s1 {
+                op int getDouble(double a, double b)
+            }
+        }""")
