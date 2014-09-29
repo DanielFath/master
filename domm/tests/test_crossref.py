@@ -85,6 +85,23 @@ def test_simple_throw_crossref():
                 }
             }""")
 
+def test_operation_type():
+    op_test = """
+    model x
+    dataType int
+    package test {
+        service serv1 {
+            op int getCode(int name)
+        }
+    }
+    """
+    parsed1 = DommParser()._test_crossref(op_test)
+    op = parsed1["test"]["serv1"]["getCode"]
+    int_type = parsed1["int"]
+    assert op.type_def._bound == int_type
+    for param in op.params:
+        assert param.type_def._bound == int_type
+
 def test_extends():
     ext_test = """
     model x

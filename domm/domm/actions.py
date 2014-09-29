@@ -662,9 +662,28 @@ class OperationAction(SemanticAction):
             # Check constraints
             check_constraints(node, model, parser.debugDomm, "OperationAction")
 
+            # Check constraints in params
             if node.params and len(node.params) > 0:
                 for param in node.params:
                     check_constraints(param, model, parser.debugDomm, "OperParam")
+
+            # Verify types of return type
+            qual_str = model.get_qid(node.type_def.type)
+
+            if qual_str in model.qual_elems:
+                bound_elem = model.qual_elems[qual_str]
+                node.type_def._bound = bound_elem
+            else:
+                raise TypeNotFoundError(qual_str)
+
+            # Verify types of return params
+            for param in node.params:
+                qual_str = model.get_qid(param.type_def.type)
+                if qual_str in model.qual_elems:
+                    bound_elem = model.qual_elems[qual_str]
+                    param.type_def._bound = bound_elem
+                else:
+                    raise TypeNotFoundError(qual_str)
 
 
 class CompartmentAction(SemanticAction):
