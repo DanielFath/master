@@ -1102,8 +1102,6 @@ class CrossRef(object):
     """
     def __init__(self, ref = None, ref_type = None):
         super(CrossRef, self).__init__()
-        # FIXME: Verify _parent_model is needed
-        self._parent_model = None
         assert type(ref) is Qid
         if ref_type:
             assert type(ref_type) is Ref
