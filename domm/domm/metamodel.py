@@ -191,6 +191,18 @@ class RelObj(object):
         self.elem_a = elem_a
         self.elem_b = elem_b
 
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.rel_type == other.rel_type\
+                and self.elem_a is other.elem_a\
+                and self.elem_b is other.elem_b
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.rel_type, self.elem_a, self.elem_b))
 
 class RelType(Enum):
     Extends = 1,
@@ -211,7 +223,7 @@ class Model(NamedElement):
         super(Model, self).__init__(name, short_desc, long_desc)
         self.qual_elems = dict()
         self.unique = dict()
-        self._rels = dict()
+        self._rels = set()
 
     def _flatten_package(self, pack):
         for qid, elem in pack.elems.iteritems():
@@ -231,7 +243,7 @@ class Model(NamedElement):
 
     def _add_rels(self, rel):
         assert type(rel) is RelObj
-        rels.
+        self._rels.append(rel)
 
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:
