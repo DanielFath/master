@@ -215,8 +215,6 @@ class EnumLiteralAction(SemanticAction):
 
         return literal
 
-
-
 class DataTypeAction(SemanticAction):
     """
     Returns evaluated DataType
@@ -243,7 +241,6 @@ class DataTypeAction(SemanticAction):
 
 
         return data_type
-
 
 class ElipsisAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -397,7 +394,6 @@ class RefObj(object):
     def __repr__(self):
         return " RefObj(%s)" % self.ident._id
 
-
 class RefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         retVal = None
@@ -410,8 +406,6 @@ class RefAction(SemanticAction):
             print("DEBUG RefAction returns: ", retVal)
 
         return retVal
-
-
 
 class PropertyAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -502,7 +496,6 @@ class PropertyAction(SemanticAction):
                 raise TypeNotFoundError(qual_str)
 
             check_constraints(node, model, parser.debugDomm, "PropertyAction")
-
 
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -690,7 +683,6 @@ class OperationAction(SemanticAction):
                 else:
                     raise TypeNotFoundError(qual_str)
 
-
 class CompartmentAction(SemanticAction):
 
     def __init__(self, is_op = True):
@@ -835,7 +827,6 @@ class ValueObjectAction(SemanticAction):
             # Check constraints
             check_constraints(node, model, parser.debugDomm, "ValueObjectAction")
 
-
 class KeyAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:
@@ -873,7 +864,6 @@ class PropRefAction(SemanticAction):
             print("DEBUG PropRefAction returns  ", retVal)
 
         return retVal
-
 
 class ReprAction(SemanticAction):
     def first_pass(self, parser, node, children):

@@ -217,7 +217,6 @@ class RelType(Enum):
     OneToMany = 6,
     ManyToMany = 7
 
-
 class Model(NamedElement):
     """
     This class represents the meta model for DOMMLite model
@@ -555,7 +554,6 @@ class Enumeration(NamedElement):
         retStr += "}"
         return retStr
 
-
 class EnumLiteral(NamedElement):
     """
     Enumeration literal
@@ -827,7 +825,6 @@ class Relationship(object):
 
     def __hash__(self):
         return hash((self.containment, self.opposite_end))
-
 
 class TypeDef(NamedElement):
     """
