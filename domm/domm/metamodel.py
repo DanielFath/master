@@ -953,6 +953,7 @@ class Property(object):
     def __init__(self, type_def = None, relation = None):
         self._parent_model = None
         self._ref = None
+        self._parent = None
 
         self.ordered = False
         self.unique = False
@@ -1072,6 +1073,7 @@ class ExceptionType(NamedElement):
         if prop.type_def.name in self.props:
             raise DuplicatePropertyError(prop.name)
         else:
+            prop._parent = self
             self.props[prop.type_def.name] = prop
 
         return self
@@ -1545,6 +1547,7 @@ class ValueObject(NamedElement):
     def add_prop(self, prop):
         assert type(prop) is Property
         self._check_prop(prop)
+        prop._parent = self
         self.props[prop.type_def.name] = prop
         return self
 
@@ -1726,6 +1729,8 @@ class Entity(NamedElement):
             raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
             self.features.add(feat)
+        if type(feat) is Property:
+            feat._parent = self
         self.elems[feat.type_def.name] = feat
         return self
 

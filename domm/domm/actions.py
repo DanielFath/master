@@ -500,6 +500,9 @@ class PropertyAction(SemanticAction):
                         raise ContainmentError(node.type_def.type)
                     else:
                         model._containment.add(qual_str)
+                        parent = node._parent
+                        part = model.qual_elems[qual_str]
+                        model._add_rel(RelObj(RelType.Composite, parent, part))
 
 
 class ExceptionAction(SemanticAction):
