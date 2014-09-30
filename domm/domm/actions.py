@@ -480,7 +480,7 @@ class PropertyAction(SemanticAction):
         return prop
 
     def second_pass(self, parser, node):
-        # TODO containement, opposite ends
+        # TODO containement, references
         if not parser.skip_crossref:
             model = node._parent_model
             qual_str = model.get_qid(node.type_def.type)
@@ -766,6 +766,8 @@ class ServiceAction(SemanticAction):
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
+                    rel = RelObj(RelType.Depends, node, dep._bound)
+                    model._add_rel(rel)
                     if parser.debugDomm:
                         print("DEBUG2: Entered ServiceAction, dep found ", \
                             dep)
@@ -819,6 +821,8 @@ class ValueObjectAction(SemanticAction):
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
+                    rel = RelObj(RelType.Depends, node, dep._bound)
+                    model._add_rel(rel)
                     if parser.debugDomm:
                         print("DEBUG2: Entered ValueObjectAction, dep found ",\
                             dep)
@@ -933,6 +937,8 @@ class EntityAction(SemanticAction):
             if node.dependencies and len(node.dependencies) > 0:
                 for dep in node.dependencies:
                     model.get_elem_by_crosref(dep)
+                    rel = RelObj(RelType.Depends, node, dep._bound)
+                    model._add_rel(rel)
                     if parser.debugDomm:
                         print("DEBUG2: Entered EntityAction, dep found ", \
                             dep)

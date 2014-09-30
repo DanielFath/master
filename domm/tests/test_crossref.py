@@ -186,19 +186,29 @@ def test_depends():
     parsed1 = DommParser()._test_crossref(dep_test)
     serv1 = parsed1["test"]["serv1"]
     dep_serv = parsed1["test"]["serv2"].dependencies[0]
+    serv2 = parsed1["test"]["serv2"]
+    dep_s2_s1 = RelObj(RelType.Depends, serv2, serv1)
     assert type(dep_serv) is CrossRef
     assert type(serv1) is Service
     assert dep_serv._bound == serv1
+    assert dep_s2_s1 in parsed1._rels
+    assert len(parsed1._rels) == 3
 
     ent1 = parsed1["test"]["ent1"]
     dep_ent = parsed1["test"]["ent1"].dependencies[0]
+    dep_ent1_serv1 = RelObj(RelType.Depends, ent1, serv1)
     assert type(ent1) is Entity
     assert type(dep_ent) is CrossRef
     assert dep_ent._bound == serv1
+    assert dep_ent1_serv1 in parsed1._rels
+
 
     dep_vo = parsed1["test"]["vo1"].dependencies[0]
+    v1 = parsed1["test"]["vo1"]
+    dep_v1_ent1 = RelObj(RelType.Depends, v1, ent1)
     assert type(dep_vo) is CrossRef
     assert dep_vo._bound == ent1
+    assert dep_v1_ent1 in parsed1._rels
 
 def test_constraint():
     cosntr_test = """model x
