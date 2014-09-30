@@ -227,3 +227,57 @@ def test_duplicate_op_param():
                 op int getDouble(double a, double b)
             }
         }""")
+
+def test_reserved_keyword():
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model dataType""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model buildinDataType""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model enum""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model tagType""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model buildinTagType""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model validatorType""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model buildinValidator""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model appliesTo""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model package""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model service""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model entity""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model extends""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model depends""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model key""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model repr""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model prop""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model ordered""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model unique""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model readonly""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model required""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model op""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model throws""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model compartment""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model valueObject""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model exception""")
+    with pytest.raises(KeywordError):
+        DommParser()._test_parse("""model model""")

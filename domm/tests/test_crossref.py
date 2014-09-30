@@ -228,7 +228,7 @@ def test_constraint():
 
         entity ent {
             key {
-                prop int key
+                prop int id
             }
             [plural("2")]
         }

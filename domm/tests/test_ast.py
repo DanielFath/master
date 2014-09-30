@@ -67,7 +67,7 @@ def test_validator():
         }""")
 
 def test_enum():
-    parsed1 = DommParser()._test_parse(""" model enum package test {
+    parsed1 = DommParser()._test_parse(""" model x package test {
     enum Color "Color desc." {
         R "Red"
         G "Green"

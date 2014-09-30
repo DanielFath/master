@@ -101,6 +101,9 @@ class IdAction(SemanticAction):
     Represents actions done when identifier is found
     """
     def first_pass(self, parser, node, children):
+        if node.value in parser.keywords:
+            print("node.value", node.value)
+            raise KeywordError(node.value)
         return Id(node.value)
 
 class QidAction(SemanticAction):
@@ -109,6 +112,8 @@ class QidAction(SemanticAction):
     """
     def first_pass(self, parser, node, children):
         path_list =  node.value.split(".")
+        if path_list[-1] in parser.keywords:
+            raise KeywordError(path_list[-1])
         return Qid(path_list)
 
 class IntAction(SemanticAction):

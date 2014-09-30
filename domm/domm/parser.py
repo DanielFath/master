@@ -237,7 +237,14 @@ service.sem = ServiceAction()
 value_object.sem = ValueObjectAction()
 entity.sem = EntityAction()
 
+
+
 class DommParser(ParserPython):
+    keywords = ["dataType","buildinDataType","enum", "tagType",\
+            "buildinTagType","validatorType", "buildinValidator","appliesTo",\
+            "package","service","entity","extends","depends","key",\
+            "repr","prop","ordered","unique","readonly","required","op",\
+            "throws","compartment","valueObject","exception","model"]
     """
     Parser of DOMMLite DSL language
     """
@@ -258,6 +265,7 @@ class DommParser(ParserPython):
         super(DommParser, self).__init__(domm, None, *args, **kwargs)
         self.debugDomm = debugDomm
         self.skip_crossref = skip_crossref
+
 
     def _test_parse(self, content):
         """

@@ -137,3 +137,11 @@ class WrongNumberOfParameterError(DommError):
     def __init__(self, name, expected, found):
         super(WrongNumberOfParameterError, self).__init__("")
         self.message = 'Constraint <"%s"> at (number of params: %s) not %s ' % (name, expected, found)
+
+class KeywordError(DommError):
+    """
+    Error raised when name matches keyword
+    """
+    def __init__(self, name):
+        super(KeywordError, self).__init__("")
+        self.name = name
