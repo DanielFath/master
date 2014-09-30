@@ -492,9 +492,14 @@ class PropertyAction(SemanticAction):
 
             check_constraints(node, model, parser.debugDomm, "PropertyAction")
 
-            # TODO containement, references
+            # TODO references
             # If node is a reference and it isn't filled
-            if node.relationship and not node._ref:
+            if node.relationship:
+                # Can't allow references to atomic types
+                ref_type = node.type_def._bound
+                if type(ref_type) is DataType or type(ref_type) is Enumeration:
+                    raise WrongReferenceType(node.name, node._parent.name)
+
                 if node.relationship.containment == True:
                     if qual_str in model._containment:
                         raise ContainmentError(node.type_def.type)

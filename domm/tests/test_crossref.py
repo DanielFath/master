@@ -401,3 +401,33 @@ def test_containment():
                 prop +Vo1 vo_stud
             }
         }""")
+
+def test_reference():
+    with pytest.raises(WrongReferenceType):
+        DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            entity Ent {
+                key {
+                    prop int id
+                }
+                prop +int ref
+            }
+        }""")
+
+    with pytest.raises(WrongReferenceType):
+        DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop int vo1
+            }
+            entity Ent {
+                key {
+                    prop int id
+                }
+                prop +int ref <> vo1
+            }
+        }""")
+
+    

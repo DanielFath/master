@@ -190,6 +190,11 @@ class RelObj(object):
         self.rel_type = rel_type
         self.elem_a = elem_a
         self.elem_b = elem_b
+        self.min_a  = 0
+        self.min_b  = 0
+        self.max_a  = 1
+        self.max_b  = 1
+
 
     def __eq__(self, other):
         if type(self) is type(other):
@@ -211,11 +216,8 @@ class RelObj(object):
 class RelType(Enum):
     Extends = 1,
     Depends = 2,
-    Bidir = 3,
-    Composite = 4,
-    OneToOne = 5,
-    OneToMany = 6,
-    ManyToMany = 7
+    Composite = 3,
+    Reference = 4
 
 class Model(NamedElement):
     """
@@ -952,7 +954,6 @@ class Property(object):
     """
     def __init__(self, type_def = None, relation = None):
         self._parent_model = None
-        self._ref = None
         self._parent = None
 
         self.ordered = False

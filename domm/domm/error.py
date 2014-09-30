@@ -153,3 +153,11 @@ class ContainmentError(DommError):
     def __init__(self, name):
         super(ContainmentError, self).__init__("")
         self.message = "The type %s is already in containment." % name
+
+class WrongReferenceType(DommError):
+    """
+    Error when attempting to reference a field that is atomic
+    """
+    def __init__(self, field, cont):
+        super(WrongReferenceType, self).__init__("")
+        self.message = "Field <%s> in %s is attempting to reference atomic type" % (field, cont)
