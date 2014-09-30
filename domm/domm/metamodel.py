@@ -227,6 +227,7 @@ class Model(NamedElement):
         self.qual_elems = dict()
         self.unique = dict()
         self._rels = set()
+        self._containment = set()
 
     def _flatten_package(self, pack):
         for qid, elem in pack.elems.iteritems():
@@ -951,6 +952,7 @@ class Property(object):
     """
     def __init__(self, type_def = None, relation = None):
         self._parent_model = None
+        self._ref = None
 
         self.ordered = False
         self.unique = False

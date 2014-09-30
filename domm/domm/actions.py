@@ -433,17 +433,17 @@ class PropertyAction(SemanticAction):
 
             elif val == "+":
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj on enter: {}\n"\
+                    print("DEBUG PropertyAction  containment on enter: {}\n"\
                             .format(prop.relationship))
 
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 
-                if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj (prop): {}\n"\
-                            .format(prop.relationship))
-
                 prop.relationship.containment = True
+
+                if parser.debugDomm:
+                    print("DEBUG PropertyAction  containment (prop): {}\n"\
+                            .format(prop.relationship))
             elif type(val) is RefObj:
                 if parser.debugDomm:
                     print("DEBUG PropertyAction  RefObj on enter: {}\n"\
@@ -452,14 +452,10 @@ class PropertyAction(SemanticAction):
                 if prop.relationship is None:
                     prop.relationship = Relationship()
 
-                if parser.debugDomm:
-                    print("DEBUG PropertyAction  RefObj (prop): {}\n"\
-                            .format(prop.relationship))
-
                 prop.relationship.opposite_end = val.ident
 
                 if parser.debugDomm:
-                    print("DEBUG PropertyAction After RefObj (prop): {}\n"\
+                    print("DEBUG PropertyAction  RefObj (prop): {}\n"\
                             .format(prop.relationship))
             elif type(val) is SpecsObj:
                 for x in val.specs:
@@ -479,7 +475,6 @@ class PropertyAction(SemanticAction):
         return prop
 
     def second_pass(self, parser, node):
-        # TODO containement, references
         if not parser.skip_crossref:
             model = node._parent_model
             qual_str = model.get_qid(node.type_def.type)
@@ -490,12 +485,22 @@ class PropertyAction(SemanticAction):
                 # If types aren't simple make a relation
                 if type(bound_elem) is not DataType \
                     and type(bound_elem) is not Enumeration:
-                    if node.relationship:
+                    if not node.relationship:
                         node.relationship = Relationship()
             else:
                 raise TypeNotFoundError(qual_str)
 
             check_constraints(node, model, parser.debugDomm, "PropertyAction")
+
+            # TODO containement, references
+            # If node is a reference and it isn't filled
+            if node.relationship and not node._ref:
+                if node.relationship.containment == True:
+                    if qual_str in model._containment:
+                        raise ContainmentError(node.type_def.type)
+                    else:
+                        model._containment.add(qual_str)
+
 
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
@@ -645,7 +650,6 @@ class OperationAction(SemanticAction):
 
     def second_pass(self, parser, node):
         if not parser.skip_crossref:
-            # TODO Check rest of operations
             if parser.debugDomm:
                 print("DEBUG2: Entered OperationAction, node ", node)
             model = node._parent_model

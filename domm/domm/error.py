@@ -144,4 +144,12 @@ class KeywordError(DommError):
     """
     def __init__(self, name):
         super(KeywordError, self).__init__("")
-        self.name = name
+        self.message = "Can't use %s as identifier. That value is a reserved word." % name
+
+class ContainmentError(DommError):
+    """
+    Error raised when element is used in contaiment twice.
+    """
+    def __init__(self, name):
+        super(ContainmentError, self).__init__("")
+        self.message = "The type %s is already in containment." % name

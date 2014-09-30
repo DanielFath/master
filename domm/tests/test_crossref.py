@@ -363,3 +363,25 @@ def test_constraint():
         }
             """)
 
+def test_containment():
+    with pytest.raises(ContainmentError):
+        model = DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop int vo1
+            }
+            entity Ent {
+                key {
+                    prop int id
+                }
+                prop +Vo1 vo_ref
+            }
+            entity Student {
+                key {
+                    prop int indeks
+                }
+                prop +Vo1 vo_stud
+            }
+        }""")
+        print("containment ", model._containment)
