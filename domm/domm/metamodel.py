@@ -155,7 +155,7 @@ class Qid(object):
     def depth(self):
         return len(self.path)
 
-    def is_resolved():
+    def is_resolved(self):
         return len(self.path) > 1
 
     def add_outer_level(self, outer):
@@ -265,11 +265,14 @@ class Model(NamedElement):
     def get_qid(self, name_or_qid):
         retval = ""
         if type(name_or_qid) is str \
-            or (type(name_or_qid) is Qid and not name_or_qid.is_resolved):
-            retval = name_or_qid
-            if name_or_qid in self.unique:
-                if self.unique[name_or_qid] != False:
-                    retval = self.unique[name_or_qid]
+            or (type(name_or_qid) is Qid and not name_or_qid.is_resolved()):
+            needle = name_or_qid
+            if type(name_or_qid) is Qid:
+                needle = name_or_qid._canon
+
+            if needle in self.unique:
+                if self.unique[needle] != False:
+                    retval = self.unique[needle]
         elif type(name_or_qid) is Qid:
             retval = name_or_qid._canon
         return retval
