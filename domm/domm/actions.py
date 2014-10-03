@@ -506,6 +506,7 @@ class PropertyAction(SemanticAction):
 
     def second_pass(self, parser, node):
         if not parser.skip_crossref:
+
             model = node._parent_model
             qual_str = model.get_qid(node.type_def.type)
 
@@ -538,6 +539,104 @@ class PropertyAction(SemanticAction):
                         parent = node._parent
                         part = model.qual_elems[qual_str]
                         model._add_rel(RelObj(RelType.Composite, parent, part))
+                # If this is a one sided relationship
+                elif node.relationship.opposite_end is None:
+
+                    side_a = node._parent
+                    side_b = node.type_def._bound
+                    rel = RelObj(RelType.Reference, side_a, side_b)
+                    rel.min_a = 1
+                    rel.max_a = 1
+                    if node.type_def.container == True:
+                        # -1 denotes cardinality *
+                        rel.max_b = -1
+                    else:
+                        rel.max_b = 1
+
+
+                    if node.required == True:
+                        rel.min_b = 1
+                        rel.min_a = 0
+                    else:
+                        rel.min_b = 0
+                    node._ref = rel
+                # If this is a double side relationship
+                elif node.relationship.opposite_end is not None:
+
+                    parent = node._parent
+                    # Find element that defines the opposite end
+                    opp_str = model.get_qid(node.relationship.opposite_end)
+                    opp_side = None
+
+                    # Extract the opposite side
+                    if opp_str in model.qual_elems:
+                        opp_side = model.qual_elems[opp_str]
+                    else:
+                        not_found = node.relationship.opposite_end._canon
+                        raise TypeNotFoundError(not_found)
+
+                    opp_type = model.qual_elems[\
+                                        model.get_qid(opp_side.type_def.type)]
+                    node_type = node.type_def._bound
+
+
+                    # First make sure that types that in bidirectional ref.
+                    # are of correct type
+                    if opp_type != parent or node_type != opp_side._parent:
+                        raise RefTypeMismatchError(node.name, node_type.name\
+                                , opp_type.name)
+                    # Then make sure that fields that in bidirectional ref.
+                    # are referencing each other and not some other field
+                    # in same classifier
+                    elif opp_side.relationship:
+
+                        if opp_side.relationship.opposite_end:
+                            opp_side_end = opp_side.relationship.opposite_end
+                            this_end = model.get_qid(opp_side_end)
+                            this_side = None
+                            if this_end in model.qual_elems:
+                                this_side = model.qual_elems[this_end]
+                            else:
+                                raise TypeNotFoundError(opp_side_end._canon)
+                            if this_side != node:
+                                raise RefFieldMismatchError(node.name, opp_type.name)
+
+                    # Calculate cardinality
+                    print("node start", node)
+                    side_a = node._parent
+                    side_b = node.type_def._bound
+                    rel = RelObj(RelType.Reference, side_a, side_b)
+
+                    print("node", node)
+                    print("node.type_def.container", node.type_def.container)
+
+                    print("node.required", node.required)
+                    if node.type_def.container == True:
+                        rel.max_b = -1
+                    else:
+                        rel.max_b = 1
+
+                    if node.required == True:
+                        rel.min_b = 1
+                    else:
+                        rel.min_b = 0
+
+                    if opp_side.type_def.container == True:
+                        rel.max_a = -1
+                    else:
+                        rel.max_a = 1
+
+                    if opp_side.required == True:
+                        rel.min_a = 1
+                    else:
+                        rel.min_a = 0
+
+                    print("rel.min_a", rel.min_a)
+                    print("rel.min_b", rel.min_b)
+                    if rel.min_a == 1 and rel.min_b == 1:
+                        raise DoubleRequiredError(node.name, opp_side.name)
+
+
 
 
 class ExceptionAction(SemanticAction):

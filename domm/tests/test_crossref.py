@@ -402,7 +402,7 @@ def test_containment():
             }
         }""")
 
-def test_reference():
+def test_uni_reference():
     with pytest.raises(WrongReferenceType):
         DommParser()._test_crossref("""model x
         package test {
@@ -430,4 +430,91 @@ def test_reference():
             }
         }""")
 
-    
+    parsed1 = DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop int vo1
+            }
+            entity Ent {
+                key {
+                    prop int id
+                }
+                prop Vo1 vo_one_one
+                prop Vo1[] vo_one_many
+                prop required Vo1 req_one
+                prop required Vo1[] req_many
+            }
+        }""")
+    ent = parsed1["test"]["Ent"]
+    vo1 = parsed1["test"]["Vo1"]
+    exp_rel1 = RelObj(RelType.Reference, ent, vo1)
+    one_one = parsed1["test"]["Ent"]["vo_one_one"]._ref
+    assert one_one == exp_rel1
+    assert one_one.min_a == 1
+    assert one_one.max_a == 1
+    assert one_one.min_b == 0
+    assert one_one.max_b == 1
+
+    one_many = parsed1["test"]["Ent"]["vo_one_many"]._ref
+    assert one_many == exp_rel1
+    assert one_many.min_a == 1
+    assert one_many.max_a == 1
+    assert one_many.min_b == 0
+    assert one_many.max_b == -1
+
+    req_one = parsed1["test"]["Ent"]["req_one"]._ref
+    assert req_one == exp_rel1
+    assert req_one.min_a == 0
+    assert req_one.max_a == 1
+    assert req_one.min_b == 1
+    assert req_one.max_b == 1
+
+    req_many = parsed1["test"]["Ent"]["req_many"]._ref
+    assert req_many == exp_rel1
+    assert req_many.min_a == 0
+    assert req_many.max_a == 1
+    assert req_many.min_b == 1
+    assert req_many.max_b == -1
+
+def test_bidir_reference():
+
+    with pytest.raises(RefTypeMismatchError):
+        DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop Vo2 vo1
+            }
+            valueObject Vo2 {
+                prop Vo1 x
+            }
+            valueObject VoErr {
+                prop Vo1 ref <> vo1
+            }
+        }""")
+
+    with pytest.raises(RefFieldMismatchError):
+        DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop VoErr vo1 <> x
+            }
+            valueObject VoErr {
+                prop Vo1 x
+                prop Vo1 err <> vo1
+            }
+        }""")
+
+    with pytest.raises(DoubleRequiredError):
+        parsed = DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop required VoErr vo1 <> x
+            }
+            valueObject VoErr {
+                prop required Vo1 x <> vo1
+            }
+        }""")

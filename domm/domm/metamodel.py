@@ -846,7 +846,6 @@ class TypeDef(NamedElement):
 
     def set_multi(self, multi = None):
         if multi is None:
-            self.container = False
             self.multi = None
         elif multi is not None and multi > 0:
             self.container = True
@@ -958,6 +957,7 @@ class Property(object):
     def __init__(self, type_def = None, relation = None):
         self._parent_model = None
         self._parent = None
+        self._ref = None
 
         self.ordered = False
         self.unique = False

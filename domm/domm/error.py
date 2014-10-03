@@ -161,3 +161,28 @@ class WrongReferenceType(DommError):
     def __init__(self, field, cont):
         super(WrongReferenceType, self).__init__("")
         self.message = "Field <%s> in %s is attempting to reference atomic type" % (field, cont)
+
+class DoubleRequiredError(DommError):
+    """
+    Error when a bi-directional reference has both required parts
+    """
+    def __init__(self, field1, field2):
+        super(DoubleRequiredError, self).__init__("")
+        self.message = "Field <%s> and  field <%s> can't both be required!" % (field1, field2)
+
+class RefTypeMismatchError(DommError):
+    """
+    Error when a bi-directional reference has different declared and target types
+    """
+    def __init__(self, ref, field1, field2):
+        super(RefTypeMismatchError, self).__init__("")
+        self.message = "Expected that ref <%s> has type <%s>, found <%s> instead!" % (ref, field1, field2)
+
+class RefFieldMismatchError(DommError):
+    """
+    Error when a bi-directional reference two different fields in same classifier
+    """
+    def __init__(self, field1, field2):
+        super(RefFieldMismatchError, self).__init__("")
+        self.message = "In bi-directional reference fields <%s> and <%s> must reference each other!" \
+                    % (field1, field2)
