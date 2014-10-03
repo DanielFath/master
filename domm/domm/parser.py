@@ -130,8 +130,8 @@ def prop():             return Kwd("prop"), ZeroOrMore([Kwd("ordered"),\
                             Kwd("unique"), Kwd("readonly"), Kwd("required")]),\
                             Optional("+"), type_def, Optional(ref), \
                             Optional(constr_speclist), Optional(named_elem)
-def type_def():         return rel_id,  Optional("[", Optional(integer),"]"),\
-                            name
+def type_def():         return rel_id,  Optional(multi),name
+def multi():            return Kwd("["), Optional(integer), Kwd("]")
 def ref():              return "<>", rel_id
 
 # Defines set of operations you can perform on an entity.
@@ -207,6 +207,7 @@ builtin_valid.sem = ConstraintAction(built_in = True, is_tag = False)
 user_tag.sem = ConstraintAction(built_in = False, is_tag = True)
 builtin_tag.sem = ConstraintAction(built_in = True, is_tag = True)
 type_def.sem = TypeDefAction()
+multi.sem = MultiAction()
 constr_spec.sem = ConstraintSpecAction()
 constr_speclist.sem = ConstraintSpecListAction()
 

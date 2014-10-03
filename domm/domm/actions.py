@@ -14,10 +14,12 @@ def check_constraints(node, model, debug, action_name):
             if debug:
                 msg = "DEBUG2: Entered %s, constr found" % action_name
                 print(msg, constr_spec)
+
             qid = model.get_qid(constr_spec.ident)
             if debug:
                 msg = "DEBUG2: Entered %s, qid found" % action_name
                 print(msg, qid)
+
             constr_def = model.qual_elems[qid]
             if debug:
                 msg = "DEBUG2: Entered %s, found constr" % action_name
@@ -301,20 +303,48 @@ class TypeDefAction(SemanticAction):
     def first_pass(self, parser, node, children):
         type_def = TypeDef()
 
+        if parser.debugDomm:
+            print("DEBUG TypeDefAction(children) enter: ", children)
+
         for ind, val in enumerate(children):
             if type(val) is Qid:
                 type_def.set_type(val._id)
             elif type(val) is Id:
                 type_def.name = val._id
-            elif val == "[":
-                type_def.container = True
-            elif type(val) is int:
-                type_def.set_multi(val)
+            elif type(val) is MultiObj:
+                type_def.container = val.container
+                type_def.set_multi(val.multi)
 
         if parser.debugDomm:
             print("DEBUG TypeDefAction returns: ", type_def)
 
         return type_def
+
+class MultiObj(object):
+    """Helper object for MultiObj"""
+    def __init__(self, container = True, multi = None):
+        super(MultiObj, self).__init__()
+        self.container = container
+        self.multi = multi
+
+    def __repr__(self):
+        return "MultiObj (container: %s, multi:%s)"\
+                % (self.container, self.multi)
+
+class MultiAction(SemanticAction):
+    def first_pass(self, parser, node, children):
+        retval = MultiObj()
+        if parser.debugDomm:
+            print("DEBUG MultiAction(children) enter: ", children)
+
+        for val in children:
+            if type(val) is int:
+                retval.multi = val
+
+        if parser.debugDomm:
+            print("DEBUG MultiAction returns: ", retval)
+
+        return retval
 
 class ConstraintSpecAction(SemanticAction):
     def first_pass(self, parser, node, children):
