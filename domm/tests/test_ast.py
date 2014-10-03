@@ -245,6 +245,18 @@ def test_value_object():
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
 
+def test_atributes():
+    parsed1 = DommParser()._test_parse("""model test
+        dataType int
+        package example {
+            valueObject vo {
+                prop required readonly int id <> x
+            }
+        }""")
+    i = parsed1["example"]["vo"]["id"]
+    assert i.required
+    assert i.readonly
+
 def test_containter():
     parsed1 = DommParser()._test_parse("""model test
         package example {
