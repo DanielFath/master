@@ -188,6 +188,7 @@ class RelObj(object):
     def __init__(self, rel_type, elem_a, elem_b):
         super(RelObj, self).__init__()
         self.rel_type = rel_type
+        self._super_rel = None
         self.elem_a = elem_a
         self.elem_b = elem_b
         self.min_a  = 0
@@ -228,7 +229,7 @@ class Model(NamedElement):
         super(Model, self).__init__(name, short_desc, long_desc)
         self.qual_elems = dict()
         self.unique = dict()
-        self._rels = set()
+        self._rels = []
         self._containment = set()
 
     def _flatten_package(self, pack):
@@ -249,7 +250,7 @@ class Model(NamedElement):
 
     def _add_rel(self, rel):
         assert type(rel) is RelObj
-        self._rels.add(rel)
+        self._rels.append(rel)
 
     def add_elem(self, ref, qid, name, type_of):
         if ref and qid:

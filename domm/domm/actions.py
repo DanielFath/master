@@ -628,6 +628,11 @@ class PropertyAction(SemanticAction):
                     node._ref = rel
                     model._add_rel(rel)
 
+                    # We signify with this that a relation is part of a
+                    # bigger relation
+                    if opp_side._ref:
+                        opp_side._ref._super_rel = rel
+
 
 
 

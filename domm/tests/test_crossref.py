@@ -550,4 +550,6 @@ def test_bidir_reference():
     assert ref_one_many == expect
     assert ref_req_one == expect
     assert ref_req_many == expect
+    assert len(parsed1._rels) == 8
+
 
