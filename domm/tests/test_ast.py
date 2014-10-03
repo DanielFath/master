@@ -15,24 +15,6 @@ def test_model():
     assert DommParser()._test_parse('model simple "short_desc" ') == simple2
 
 
-    simple3 = Model(name="simple",short_desc="short_desc",long_desc="long_desc")
-    assert DommParser()._test_parse('model simple "short_desc" "long_desc" ') \
-                == simple3
-
-    assert DommParser()._test_parse('model simple1 "short_desc"  "long_desc"' )\
-             != simple3
-    assert DommParser()._test_parse('model simple  "short_desc1" "long_desc"' )\
-             != simple3
-    assert DommParser()._test_parse('model simple  "short_desc"  "long_desc1"')\
-             != simple3
-
-def test_model():
-    assert DommParser()._test_parse("model simple") == Model(name="simple")
-
-    simple2 = Model(name="simple", short_desc="short_desc")
-    assert DommParser()._test_parse('model simple "short_desc" ') == simple2
-
-
     simple3 = Model(name="simple", short_desc="short_desc",\
         long_desc="long_desc")
     assert DommParser()._test_parse('model simple "short_desc" "long_desc" ')\
@@ -262,6 +244,25 @@ def test_value_object():
 
     assert parsed1 == expected1
     assert hash(parsed1) == hash(expected1)
+
+def test_containter():
+    parsed1 = DommParser()._test_parse("""model test
+        package example {
+            valueObject vo {
+                prop int id
+                prop string[] x
+                prop string[2] n2
+            }
+        }""")
+    i = parsed1["example"]["vo"]["id"]
+    x = parsed1["example"]["vo"]["x"]
+    n2 = parsed1["example"]["vo"]["n2"]
+    assert i.type_def.container == False
+    assert x.type_def.container == True
+    assert n2.type_def.container == True
+    assert i.type_def.multi == None
+    assert x.type_def.multi == None
+    assert n2.type_def.multi == 2
 
 def test_entity():
     parsed1 = DommParser(debugDomm = True)._test_parse("""
