@@ -506,7 +506,6 @@ class PropertyAction(SemanticAction):
 
     def second_pass(self, parser, node):
         if not parser.skip_crossref:
-
             model = node._parent_model
             qual_str = model.get_qid(node.type_def.type)
 
@@ -523,7 +522,7 @@ class PropertyAction(SemanticAction):
 
             check_constraints(node, model, parser.debugDomm, "PropertyAction")
 
-            # TODO references
+            rela_type = RelType.Reference
             # If node is a reference and it isn't filled
             if node.relationship:
                 # Can't allow references to atomic types
@@ -536,15 +535,13 @@ class PropertyAction(SemanticAction):
                         raise ContainmentError(node.type_def.type)
                     else:
                         model._containment.add(qual_str)
-                        parent = node._parent
-                        part = model.qual_elems[qual_str]
-                        model._add_rel(RelObj(RelType.Composite, parent, part))
-                # If this is a one sided relationship
-                elif node.relationship.opposite_end is None:
+                        rela_type = RelType.Composite
 
+                # If this is a one sided relationship
+                if node.relationship.opposite_end is None:
                     side_a = node._parent
                     side_b = node.type_def._bound
-                    rel = RelObj(RelType.Reference, side_a, side_b)
+                    rel = RelObj(rela_type, side_a, side_b)
                     rel.min_a = 1
                     rel.max_a = 1
                     if node.type_def.container == True:
@@ -560,9 +557,9 @@ class PropertyAction(SemanticAction):
                     else:
                         rel.min_b = 0
                     node._ref = rel
+                    model._add_rel(rel)
                 # If this is a double side relationship
                 elif node.relationship.opposite_end is not None:
-
                     parent = node._parent
                     # Find element that defines the opposite end
                     opp_str = model.get_qid(node.relationship.opposite_end)
@@ -602,15 +599,10 @@ class PropertyAction(SemanticAction):
                                 raise RefFieldMismatchError(node.name, opp_type.name)
 
                     # Calculate cardinality
-                    print("node start", node)
                     side_a = node._parent
                     side_b = node.type_def._bound
-                    rel = RelObj(RelType.Reference, side_a, side_b)
+                    rel = RelObj(rela_type, side_a, side_b)
 
-                    print("node", node)
-                    print("node.type_def.container", node.type_def.container)
-
-                    print("node.required", node.required)
                     if node.type_def.container == True:
                         rel.max_b = -1
                     else:
@@ -631,10 +623,12 @@ class PropertyAction(SemanticAction):
                     else:
                         rel.min_a = 0
 
-                    print("rel.min_a", rel.min_a)
-                    print("rel.min_b", rel.min_b)
                     if rel.min_a == 1 and rel.min_b == 1:
                         raise DoubleRequiredError(node.name, opp_side.name)
+                    node._ref = rel
+                    model._add_rel(rel)
+
+
 
 
 

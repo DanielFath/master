@@ -518,3 +518,36 @@ def test_bidir_reference():
                 prop required Vo1 x <> vo1
             }
         }""")
+
+    parsed1 = DommParser()._test_crossref("""model x
+        package test {
+            dataType int
+            valueObject Vo1 {
+                prop Vo2 x1
+                prop Vo2 x2
+                prop Vo2[] x3
+                prop Vo2[] x4
+            }
+            valueObject Vo2 {
+                prop Vo1 vo_one_one <> x1
+                prop Vo1[] vo_one_many <> x2
+                prop required Vo1 req_one <> x3
+                prop required Vo1[] req_many <> x4
+            }
+        }""")
+    vo1 = parsed1["test"]["Vo1"]
+    vo2 = parsed1["test"]["Vo2"]
+    ref_one_one  = parsed1["test"]["Vo2"]["vo_one_one"]._ref
+    ref_one_many = parsed1["test"]["Vo2"]["vo_one_many"]._ref
+    ref_req_one  = parsed1["test"]["Vo2"]["req_one"]._ref
+    ref_req_many = parsed1["test"]["Vo2"]["req_many"]._ref
+
+    expect = RelObj(RelType.Reference, vo2, vo1)
+
+    print("ref vo_one_one", parsed1["test"]["Vo2"]["vo_one_one"]._ref)
+
+    assert ref_one_one == expect
+    assert ref_one_many == expect
+    assert ref_req_one == expect
+    assert ref_req_many == expect
+
