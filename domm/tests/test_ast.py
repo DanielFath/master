@@ -5,6 +5,7 @@
 # Copyright: (c) 2014 Daniel Fath <daniel DOT fath7 AT gmail DOT com>
 # License: MIT License
 ##############################################################################
+import pytest
 from  domm.parser import DommParser
 from  domm.metamodel import *
 
@@ -256,6 +257,30 @@ def test_atributes():
     i = parsed1["example"]["vo"]["id"]
     assert i.required
     assert i.readonly
+
+    with pytest.raises(InvalidCollectionProperty):
+        DommParser()._test_parse("""model x
+        package test {
+            valueObject VoErr {
+                prop unique char test
+            }
+        }""")
+
+    with pytest.raises(InvalidCollectionProperty):
+        DommParser()._test_parse("""model x
+        package test {
+            valueObject VoErr {
+                prop ordered char test
+            }
+        }""")
+
+    with pytest.raises(InvalidCollectionProperty):
+        DommParser()._test_parse("""model x
+        package test {
+            valueObject VoErr {
+                prop unique ordered char test
+            }
+        }""")
 
 def test_containter():
     parsed1 = DommParser()._test_parse("""model test

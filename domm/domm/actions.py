@@ -497,6 +497,14 @@ class PropertyAction(SemanticAction):
 
                 prop.type_def.set_descs(val)
 
+        if (prop.ordered or prop.unique) and not prop.type_def.container:
+            txt = ""
+            if prop.ordered:
+                txt += " ordered"
+            if prop.unique:
+                txt += " unique"
+            raise InvalidCollectionProperty(prop.name, txt)
+
         if parser.debugDomm:
             print("DEBUG PropertyAction returns: ", prop)
             print("DEBUG PropertyAction returns prop.relationship", \

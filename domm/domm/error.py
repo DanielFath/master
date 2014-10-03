@@ -162,6 +162,14 @@ class WrongReferenceType(DommError):
         super(WrongReferenceType, self).__init__("")
         self.message = "Field <%s> in %s is attempting to reference atomic type" % (field, cont)
 
+class InvalidCollectionProperty(DommError):
+    """
+    When ordered or unique used on non-collection
+    """
+    def __init__(self, field, tag):
+        super(InvalidCollectionProperty, self).__init__("")
+        self.message = "In field<%s>: Tag(s) <%s> can only be applied on container type!" % (field, tag)
+
 class DoubleRequiredError(DommError):
     """
     Error when a bi-directional reference has both required parts
