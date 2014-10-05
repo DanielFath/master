@@ -226,7 +226,7 @@ dep_def.sem = DepDefAction()
 oper.sem = OperationAction()
 op_param.sem = OpParamAction()
 oper_compart.sem = CompartmentAction(is_op = True)
-
+feature_compart.sem = CompartmentAction(is_op = False)
 #Semantic actions for entity components
 key.sem = KeyAction()
 ent_repr.sem = ReprAction()

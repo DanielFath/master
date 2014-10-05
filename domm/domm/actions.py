@@ -641,11 +641,6 @@ class PropertyAction(SemanticAction):
                     if opp_side._ref:
                         opp_side._ref._super_rel = rel
 
-
-
-
-
-
 class ExceptionAction(SemanticAction):
     def first_pass(self, parser, node, children):
         if parser.debugDomm:

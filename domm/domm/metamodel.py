@@ -1742,10 +1742,10 @@ class Entity(NamedElement):
 
     def add_comparment(self, compartment):
         assert type(compartment) is Compartment
-        if compartment.elems:
-            self.compartments[self.compartment.name] = compartment
-            for op in compartment.elems:
-                self.add_feature(op, True)
+        if compartment.elements:
+            self.compartments[compartment.name] = compartment
+            for part in compartment.elements:
+                self.add_feature(part, True)
         return self
 
     def __repr__(self):
