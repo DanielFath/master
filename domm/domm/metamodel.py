@@ -1733,7 +1733,8 @@ class Entity(NamedElement):
         if feat.type_def.name in self.elems:
             raise DuplicateFeatureError(feat.type_def.name)
         if not is_compartment:
-            self.features.add(feat)
+            self.features.add(feat.name)
+
         if type(feat) is Property:
             feat._parent = self
         self.elems[feat.type_def.name] = feat
