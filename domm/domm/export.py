@@ -196,4 +196,21 @@ digraph %s {
                 elif type(elem) is Entity:
                     self.render_entity(f, elem)
 
+            # Filter relationships that aren't part of another
+            filtered_rels = (x for x in model._rels if x._super_rel is None)
+            for rel in filtered_rels:
+                print("rel ", rel)
+                if rel.rel_type == RelType.Extends:
+                    rel_str = '%s -> %s [arrowhead = empty]\n'\
+                            % (id(rel.elem_a), id(rel.elem_b))
+                    f.write(rel_str)
+                elif rel.rel_type == RelType.Depends:
+                    rel_str = '%s -> %s [style = dashed]\n'\
+                            % (id(rel.elem_a), id(rel.elem_b))
+                    f.write(rel_str)
+                elif rel.rel_type == RelType.Composite:
+                    rel_str = '%s -> %s [dir = both, arrowtail=diamond]\n'\
+                            % (id(rel.elem_a), id(rel.elem_b))
+                    f.write(rel_str)
+
             f.write('\n}\n')
