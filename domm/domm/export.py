@@ -212,5 +212,7 @@ digraph %s {
                     rel_str = '%s -> %s [dir = both, arrowtail=diamond]\n'\
                             % (id(rel.elem_a), id(rel.elem_b))
                     f.write(rel_str)
+                elif rel.rel_type == RelType.Reference:
+                    rel_str = '%s -> %s'
 
             f.write('\n}\n')
