@@ -426,9 +426,6 @@ class Constraint(object):
 
     def check_params(self, constr):
         if self.tag:
-            # FIXME remove these
-            print("self.tag.constr_def", self.tag.constr_def)
-            print("constr.parameters", constr.parameters)
             # Check is constraint definition doesn't have any parameter
             if self.tag.constr_def is None:
                 if len(constr.parameters) > 0:
@@ -903,7 +900,7 @@ class ConstraintSpec(object):
         self._bound = None
 
     def _update_parent_model(self, model):
-        pass#self._parent_model = model
+        pass
 
     def _replace_qids(self, model):
         refs = (x for x in self.parameters if type(x) is CrossRef)
