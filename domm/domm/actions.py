@@ -363,6 +363,8 @@ class ConstraintSpecAction(SemanticAction):
             elif type(val) is Id:
                 temp_spec.add_param(val)
             elif type(val) is str:
+                temp_spec.add_param(unicode(s, "utf-8"))
+            elif type(val) is unicode:
                 temp_spec.add_param(val)
             elif type(val) is int:
                 temp_spec.add_param(val)

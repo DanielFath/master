@@ -9,6 +9,8 @@
 # For more information about DOMMLite DSL please consult the guide
 #    Metamodel, model editor and business  applications generator
 ##############################################################################
+from __future__ import unicode_literals
+
 import sys
 
 from arpeggio import *

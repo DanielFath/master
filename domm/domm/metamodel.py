@@ -396,7 +396,7 @@ def constr_to_type(constr_param):
     if constr_param == "_int":
         param_type = int
     elif constr_param == "_string":
-        param_type = str
+        param_type = unicode
     elif constr_param == "_ref":
         param_type = CrossRef
     return param_type
@@ -922,6 +922,8 @@ class ConstraintSpec(object):
             qid = Qid(param._id)
             cross_ref = CrossRef(ref = qid)
             self.parameters.append(cross_ref)
+        elif type(param) is str:
+            self.parameters.append(unicode(param, 'utf-8'))
         else:
             self.parameters.append(param)
         return self
@@ -993,8 +995,9 @@ class Property(object):
         return self
 
     def __hash__(self):
+        # FIXME this should not be frozenset but fhvhash
         return hash((self.ordered, self.unique, self.readonly,
-            self.type_def, self.relationship, fnvhash(self.constraints)
+            self.type_def, self.relationship, frozenset(self.constraints)
             ))
 
     def __eq__(self, other):
