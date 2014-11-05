@@ -18,6 +18,7 @@ from arpeggio.export import PMDOTExporter, PTDOTExporter
 from arpeggio import RegExMatch as _
 
 from actions import *
+from export import DommExport
 
 # Defines a meta type named element and its sub rules
 def named_elem():       return [(string, string), string]
@@ -273,7 +274,7 @@ class DommParser(ParserPython):
     def _test_parse(self, content):
         """
         Method that reads a given content, parses it and returns a parsed AST, without
-        verifying that references are correct
+        verifying that references are correct. Only used for debugging.
         """
         self.skip_crossref = True
         self.parse(content)
@@ -301,6 +302,8 @@ def parse_file(file_name):
     PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
     parser.skip_crossref = False
     model = parser.getASG()
+    DommExport().export_model(model, "domm_model.dot")
+
 def parse_folder(folder_name):
     pass
 
@@ -326,3 +329,4 @@ if __name__ == "__main__":
             parse_folder(sys.argv[1])
     else:
         print("Usage: python parser.py file_to_parse")
+
