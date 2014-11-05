@@ -290,6 +290,19 @@ class DommParser(ParserPython):
         val = self.getASG()
         return val
 
+def parse_file(file_name):
+    with open(file_name, "r") as dommfile:
+        content = dommfile.read()
+    # We create a parse tree out of textual input_expr
+    parse_tree = parser.parse(content)
+
+    # Then we export it to a dot file in order to visualise it.
+    # This is also optional.
+    PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
+    parser.skip_crossref = False
+    model = parser.getASG()
+def parse_folder(folder_name):
+    pass
 
 if __name__ == "__main__":
     # First parameter is bibtex file
@@ -307,17 +320,9 @@ if __name__ == "__main__":
 
     # We only parse if there is an input
     if len(sys.argv) > 1:
-        with open(sys.argv[1], "r") as dommfile:
-            content = dommfile.read()
-        # An expression we want to evaluate
-
-        # We create a parse tree out of textual input_expr
-        parse_tree = parser.parse(content)
-
-        # Then we export it to a dot file in order to visualise it.
-        # This is also optional.
-        PTDOTExporter().exportFile(parse_tree, "domm_parse_tree.dot")
-        parser.skip_crossref = False
-        parser.getASG()
+        if (sys.argv[1].endswith(".domm")):
+            parse_file(sys.argv[1])
+        else:
+            parse_folder(sys.argv[1])
     else:
         print("Usage: python parser.py file_to_parse")
